@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header class="topbar" th:fragment="siteHeader(active)">
+    <div class="container topbar-inner">
+        <a class="brand" th:href="@{/}">
+            <img th:src="@{/images/logo.png}" alt="Vietravel">
+            <span>Vietravel</span>
+        </a>
+
+        <nav class="nav">
+            <a class="nav-link" th:classappend="${active}=='home'?' is-active':''" th:href="@{/}">Home</a>
+            <a class="nav-link" th:classappend="${active}=='tour'?' is-active':''" href="#">Tour</a>
+            <a class="nav-link" th:classappend="${active}=='destination'?' is-active':''" href="#">Destination</a>
+            <a class="nav-link" th:classappend="${active}=='activities'?' is-active':''" href="#">Activities</a>
+            <a class="nav-link" th:classappend="${active}=='pages'?' is-active':''" href="#">Pages</a>
+            <a class="nav-link" th:classappend="${active}=='contact'?' is-active':''" href="#">Contact</a>
+        </nav>
+
+        <div class="topbar-right">
+            <button class="chip" type="button" id="currencyBtn">USD</button>
+            <a class="nav-link muted" href="#">Help</a>
+            <a class="nav-link" th:href="@{/auth/register}">Sign up</a>
+            <a class="btn-outline" th:href="@{/auth/login}">Log in</a>
+            <button class="burger" type="button" id="burgerBtn" aria-label="Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="mobile-nav" id="mobileNav">
+        <a th:href="@{/}">Home</a>
+        <a href="#">Tour</a>
+        <a href="#">Destination</a>
+        <a href="#">Activities</a>
+        <a href="#">Pages</a>
+        <a href="#">Contact</a>
+        <div class="mobile-actions">
+            <a th:href="@{/auth/register}">Sign up</a>
+            <a th:href="@{/auth/login}">Log in</a>
+        </div>
+    </div>
+</header>
+</body>
+</html>

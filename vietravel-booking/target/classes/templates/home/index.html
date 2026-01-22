@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(
+            pageTitle=${pageTitle},
+            activeNav=${activeNav},
+            content=~{::content},
+            additionalJs=~{::additionalJs}
+      )}">
+
+<th:block th:fragment="content">
+
+    <section class="hero" id="hero">
+        <div class="container hero-inner">
+            <h1 class="hero-title">
+                Cuộc sống là hành trình <span>Khám phá</span><br>
+                Hãy tận hưởng từng khoảnh khắc
+            </h1>
+
+            <form class="searchbar" th:action="@{/tour/tim-kiem}" method="get" id="heroSearch">
+                <div class="sb-item">
+                    <div class="sb-label">Bạn muốn đi đâu?</div>
+                    <div class="sb-input">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <input type="text" name="q" placeholder="Nhập điểm đến (VD: Đà Nẵng, Phú Quốc...)"
+                               th:value="${param.q}">
+                    </div>
+                </div>
+
+                <div class="sb-item">
+                    <div class="sb-label">Thời gian</div>
+                    <div class="sb-input">
+                        <i class="fa-regular fa-calendar"></i>
+                        <input type="text" name="date" placeholder="VD: 05/02 - 14/03"
+                               th:value="${param.date}">
+                    </div>
+                </div>
+
+                <div class="sb-item">
+                    <div class="sb-label">Loại tour</div>
+                    <div class="sb-input">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <select name="type">
+                            <option value="" th:selected="${param.type==null || param.type[0]==''}">Tất cả tour</option>
+                            <option value="city" th:selected="${param.type!=null && param.type[0]=='city'}">Tour thành phố</option>
+                            <option value="beach" th:selected="${param.type!=null && param.type[0]=='beach'}">Tour biển</option>
+                            <option value="cruise" th:selected="${param.type!=null && param.type[0]=='cruise'}">Du thuyền</option>
+                            <option value="hiking" th:selected="${param.type!=null && param.type[0]=='hiking'}">Trekking</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="sb-btn" type="submit" aria-label="Tìm kiếm">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </form>
+
+            <div class="hero-art">
+                <img th:src="@{/images/login-bg.jpg}" alt="Ảnh nền test (login-bg)">
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-head">
+                <h2>Trải nghiệm phổ biến</h2>
+                <a class="seeall" href="#">Xem tất cả</a>
+            </div>
+
+            <div class="popular-grid reveal">
+                <a class="cat big" href="#">
+                    <img th:src="@{/images/login-bg.jpg}" alt="Du thuyền">
+                    <span class="cat-label">Du thuyền</span>
+                </a>
+
+                <div class="popular-right">
+                    <a class="cat" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Tour biển"><span class="cat-label">Tour biển</span></a>
+                    <a class="cat" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Tour thành phố"><span class="cat-label">Tour thành phố</span></a>
+                    <a class="cat" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Bảo tàng"><span class="cat-label">Bảo tàng</span></a>
+                    <a class="cat" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Ẩm thực"><span class="cat-label">Ẩm thực</span></a>
+                    <a class="cat" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Trekking"><span class="cat-label">Trekking</span></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section soft">
+        <div class="container">
+            <div class="section-head">
+                <h2>Tour nổi bật</h2>
+                <a class="seeall" href="#">Xem tất cả</a>
+            </div>
+
+            <div class="cards">
+                <article class="card reveal">
+                    <div class="card-img">
+                        <img th:src="@{/images/login-bg.jpg}" alt="Tour 1">
+                        <span class="pill">Paris, Pháp</span>
+                    </div>
+                    <div class="card-body">
+                        <h3>Khám phá sa mạc Arizona bằng xe địa hình (ATV)</h3>
+                        <div class="meta">
+                            <span><i class="fa-solid fa-star"></i> 4.8 (243)</span><span>•</span><span>4 ngày</span>
+                        </div>
+                        <div class="price">Từ <b>189.25$</b></div>
+                    </div>
+                </article>
+
+                <article class="card reveal">
+                    <div class="card-img">
+                        <img th:src="@{/images/login-bg.jpg}" alt="Tour 2">
+                        <span class="pill">New York, Mỹ</span>
+                    </div>
+                    <div class="card-body">
+                        <h3>Lặn biển ngắm rùa tại Turtle Town (Molokini)</h3>
+                        <div class="meta">
+                            <span><i class="fa-solid fa-star"></i> 4.8 (243)</span><span>•</span><span>4 ngày</span>
+                        </div>
+                        <div class="price">Từ <b>225$</b></div>
+                    </div>
+                </article>
+
+                <article class="card reveal">
+                    <div class="card-img">
+                        <img th:src="@{/images/login-bg.jpg}" alt="Tour 3">
+                        <span class="pill">London, Anh</span>
+                    </div>
+                    <div class="card-body">
+                        <h3>Tham quan Westminster &amp; vé vào Tu viện Westminster</h3>
+                        <div class="meta">
+                            <span><i class="fa-solid fa-star"></i> 4.8 (243)</span><span>•</span><span>4 ngày</span>
+                        </div>
+                        <div class="price">Từ <b>943$</b></div>
+                    </div>
+                </article>
+
+                <article class="card reveal">
+                    <div class="card-img">
+                        <img th:src="@{/images/login-bg.jpg}" alt="Tour 4">
+                        <span class="pill">New York, Mỹ</span>
+                    </div>
+                    <div class="card-body">
+                        <h3>Tour vòng quanh đảo trọn gói (bao gồm bữa trưa)</h3>
+                        <div class="meta">
+                            <span><i class="fa-solid fa-star"></i> 4.8 (243)</span><span>•</span><span>4 ngày</span>
+                        </div>
+                        <div class="price">Từ <b>771$</b></div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section dark">
+        <div class="container">
+            <div class="section-head invert">
+                <h2>Điểm đến thịnh hành</h2>
+                <a class="seeall" href="#">Xem tất cả</a>
+            </div>
+
+            <div class="destinations">
+                <a class="dest reveal" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Bali"><div class="dest-text"><div class="dest-name">Bali</div><div class="dest-sub">100+ tour</div></div></a>
+                <a class="dest reveal" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Roma"><div class="dest-text"><div class="dest-name">Roma</div><div class="dest-sub">100+ tour</div></div></a>
+                <a class="dest reveal" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Phuket"><div class="dest-text"><div class="dest-name">Phuket</div><div class="dest-sub">100+ tour</div></div></a>
+                <a class="dest reveal" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Paris"><div class="dest-text"><div class="dest-name">Paris</div><div class="dest-sub">100+ tour</div></div></a>
+            </div>
+        </div>
+    </section>
+
+</th:block>
+
+<th:block th:fragment="additionalJs">
+    <script th:src="@{/js/home.js}"></script>
+</th:block>
+
+</html>
