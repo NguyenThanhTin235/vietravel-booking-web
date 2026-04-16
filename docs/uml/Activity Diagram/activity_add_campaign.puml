@@ -1,0 +1,26 @@
+@startuml
+title Sơ đồ Hoạt động - Thêm Chiến dịch Khuyến mãi
+
+|Admin|
+start
+:Mở form thêm Campaign;
+:Nhập thông tin (Tên, Mã giảm, Tỉ lệ %, Ngày áp dụng);
+:Nhấn nút "Lưu Chiến dịch";
+
+|Hệ thống|
+:Nhận dữ liệu Campaign;
+:Kiểm tra tính hợp lệ dữ liệu;
+if (Hợp lệ?) then (Có)
+	:Lưu dữ liệu Campaign vào Database;
+	:Trả về xác nhận thành công;
+	|Admin|
+	:Hiển thị chiến dịch mới trên danh sách;
+else (Không)
+	|Hệ thống|
+	:Trả về chi tiết lỗi;
+	|Admin|
+	:Hiển thị yêu cầu chỉnh sửa;
+endif
+
+stop
+@enduml

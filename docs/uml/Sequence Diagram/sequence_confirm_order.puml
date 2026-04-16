@@ -1,0 +1,42 @@
+@startuml
+title Sơ đồ Tuần tự - Xác nhận Đơn hàng
+actor "Staff" as Staff
+participant "Browser" as UI
+participant "StaffBookingController" as Controller
+participant "BookingService" as Service
+participant "BookingRepository" as Repository
+database "Database" as DB
+
+Staff -> UI: Click "Xác nhận" (Confirm Booking)
+activate UI
+UI -> Controller: POST /staff/bookings/{id}/confirm
+activate Controller
+
+Controller -> Service: confirmBookingByStaff(id)
+activate Service
+
+Service -> Repository: findById(id)
+activate Repository
+Repository --> Service: Booking (status=PENDING)
+deactivate Repository
+
+Service -> Service: validate (status is PENDING,\npayment is valid, etc)
+Service -> Service: setStatus(CONFIRMED)
+
+Service -> Repository: save(Booking)
+activate Repository
+Repository -> DB: UPDATE bookings SET status='CONFIRMED'
+DB --> Repository: Success
+Repository --> Service: Saved Booking
+deactivate Repository
+
+Service --> Controller: true (Success)
+deactivate Service
+
+Controller --> UI: Redirect /staff/bookings/process?toast=confirm-success
+deactivate Controller
+
+UI --> Staff: Hiển thị thông báo "Xác nhận thành công"
+deactivate UI
+
+@enduml

@@ -1,0 +1,47 @@
+@startuml
+scale 1.5
+left to right direction
+skinparam packageStyle rectangle
+skinparam dpi 200
+
+actor "Khách vãng lai" as Guest
+actor "Khách hàng" as Customer
+actor "Nhân viên" as Staff
+actor "Quản trị viên" as Admin
+
+Guest <|-- Customer
+
+rectangle "Hệ thống đặt tour Vietravel" {
+
+    Guest --> (Đăng ký tài khoản)
+    Guest --> (Đăng nhập hệ thống)
+    Guest --> (Xem trang chủ)
+    Guest --> (Xem danh sách tour)
+    Guest --> (Xem khuyến mãi)
+    Guest --> (Xem tin tức)
+    Guest --> (Xem chi tiết tour)
+    Guest --> (Gửi yêu cầu liên hệ)
+
+    Customer --> (Đặt tour)
+    Customer --> (Xem lịch sử đặt tour)
+    Customer --> (Xem tour yêu thích)
+    Customer --> (Nhận thông báo)
+
+    (Đặt tour) --> (Thanh toán tour) : <<include>>
+    (Áp dụng khuyến mãi) .> (Đặt tour) : <<extend>>
+    (Hủy tour) .> (Xem lịch sử đặt tour) : <<extend>>
+
+    Staff --> (Tạo booking)
+    Staff --> (Xác nhận booking)
+    Staff --> (Xác nhận hủy tour)
+    Staff --> (Xử lý yêu cầu liên hệ)
+    Staff --> (Xem báo cáo thống kê)
+
+    Admin --> (Quản lý tour)
+    Admin --> (Quản lý lịch khởi hành)
+    Admin --> (Quản lý khuyến mãi)
+    Admin --> (Quản lý tin tức)
+    Admin --> (Quản lý người dùng)
+}
+
+@enduml

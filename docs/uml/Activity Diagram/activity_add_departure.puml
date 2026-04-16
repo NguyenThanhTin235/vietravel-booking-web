@@ -1,0 +1,26 @@
+@startuml
+title Sơ đồ Hoạt động - Thêm Lịch khởi hành
+
+|Admin|
+start
+:Mở trang quản lý Lịch khởi hành;
+:Chọn Tour và nhập ngày đi, số chỗ, giá bán;
+:Nhấn nút "Thêm mới";
+
+|Hệ thống|
+:Nhận request thêm lịch khởi hành;
+:Kiểm tra Tour tồn tại và ngày hợp lệ;
+if (Thông tin hợp lệ?) then (Có)
+	:Tạo và lưu Lịch khởi hành (Departure) vào DB;
+	:Trả về kết quả thành công;
+	|Admin|
+	:Hiển thị thông báo "Thêm thành công";
+else (Không hợp lệ)
+	|Hệ thống|
+	:Trả về thông báo lỗi;
+	|Admin|
+	:Hiển thị thông báo lỗi (VD: Ngày không hợp lệ);
+endif
+
+stop
+@enduml
