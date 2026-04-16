@@ -1,0 +1,129 @@
+@startuml
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 80
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+hide members
+left to right direction
+
+' ================= VIEW =================
+package "View Layer" {
+  together {
+    class LoginPage
+    class DashboardPage
+    class TourListPage
+    class TourDetailPage
+    class BookingPage
+    class PaymentPage
+    class PromotionPage
+    class NewsPage
+    class StaffPage
+  }
+}
+
+' ================= CONTROLLER =================
+package "Controller Layer" {
+  together {
+    class AuthController
+    class TourController
+    class BookingController
+    class PaymentController
+    class PromotionController
+    class NewsController
+    class StaffController
+  }
+}
+
+' ================= SERVICE =================
+package "Service Layer" {
+  together {
+    interface AuthService
+    interface TourService
+    interface BookingService
+    interface PaymentService
+    interface PromotionService
+    interface NewsService
+    interface StaffService
+  }
+}
+
+' ================= REPOSITORY =================
+package "Repository Layer" {
+
+  ' Hàng 1
+  together {
+    interface UserRepository
+    interface TourRepository
+    interface BookingRepository
+    interface PaymentRepository
+    interface NewsRepository
+    interface StaffRepository
+  }
+
+  ' Hàng 2
+  together {
+    interface TourCategoryRepository
+    interface TourLineRepository
+    interface TransportModeRepository
+    interface DestinationRepository
+    interface ItineraryDayRepository
+    interface WishlistRepository
+    interface NotificationRepository
+    interface BranchRepository
+    interface ContactInquiryRepository
+    interface DepartureRepository
+  }
+}
+
+' ================= RELATIONSHIP =================
+
+' View -> Controller
+LoginPage --> AuthController
+DashboardPage --> TourController
+DashboardPage --> BookingController
+DashboardPage --> PaymentController
+DashboardPage --> PromotionController
+DashboardPage --> NewsController
+DashboardPage --> StaffController
+TourListPage --> TourController
+TourDetailPage --> TourController
+BookingPage --> BookingController
+PaymentPage --> PaymentController
+PromotionPage --> PromotionController
+NewsPage --> NewsController
+StaffPage --> StaffController
+
+' Controller -> Service
+AuthController --> AuthService
+TourController --> TourService
+BookingController --> BookingService
+PaymentController --> PaymentService
+PromotionController --> PromotionService
+NewsController --> NewsService
+StaffController --> StaffService
+
+' Service -> Repository
+AuthService --> UserRepository
+AuthService --> NotificationRepository
+AuthService --> ContactInquiryRepository
+AuthService --> BranchRepository
+
+TourService --> TourRepository
+TourService --> TourCategoryRepository
+TourService --> TourLineRepository
+TourService --> TransportModeRepository
+TourService --> DestinationRepository
+TourService --> ItineraryDayRepository
+
+BookingService --> BookingRepository
+BookingService --> DepartureRepository
+BookingService --> WishlistRepository
+
+PaymentService --> PaymentRepository
+NewsService --> NewsRepository
+StaffService --> StaffRepository
+
+@enduml

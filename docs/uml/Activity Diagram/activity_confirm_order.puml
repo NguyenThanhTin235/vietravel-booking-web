@@ -1,0 +1,27 @@
+@startuml
+title Sơ đồ Hoạt động - Xác nhận Đơn hàng
+
+|Staff|
+start
+:Mở danh sách các đơn đặt tour chờ xử lý;
+:Chọn một đơn hàng cụ thể (Booking PENDING);
+:Xem xét chi tiết đơn hàng và trạng thái thanh toán;
+if (Đơn hàng đủ điều kiện xác nhận?) then (Đủ điều kiện)
+	:Nhấn nút "Xác nhận" (Confirm);
+	|Hệ thống|
+	:Xử lý request xác nhận đơn;
+	:Cập nhật trạng thái Booking sang CONFIRMED;
+	:Lưu vào Database;
+	:Trả về kết quả thành công;
+	|Staff|
+	:Hệ thống hiển thị thông báo "Xác nhận thành công";
+else (Không đủ điều kiện / Khách hủy)
+	:Staff chọn "Từ chối" hoặc "Hủy";
+	|Hệ thống|
+	:Cập nhật trạng thái sang CANCELED;
+	|Staff|
+	:Hiển thị đơn hàng đã hủy;
+endif
+
+stop
+@enduml

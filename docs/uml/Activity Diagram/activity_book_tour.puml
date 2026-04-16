@@ -1,0 +1,43 @@
+@startuml
+title Sơ đồ Hoạt động - Đặt Tour và Thanh toán online
+
+|Customer|
+start
+:Xem chi tiết Tour và chọn Lịch khởi hành;
+:Điền thông tin liên hệ và danh sách hành khách;
+:Chọn phương thức thanh toán là VNPay;
+:Nhấn nút "Đặt ngay & Thanh toán";
+
+|Hệ thống|
+:Tiếp nhận thông tin Đặt tour;
+:Kiểm tra số chỗ trống của Lịch khởi hành;
+if (Còn đủ chỗ trống?) then (Có)
+	:Tạo Booking mới (Status: PENDING);
+	:Tạo Payment liên kết với Booking;
+	:Tạo URL thanh toán VNPay;
+	:Trả về URL VNPay cho Customer;
+	|Customer|
+	:Hệ thống chuyển hướng (Redirect) sang trang VNPay;
+	:Thực hiện thanh toán qua thẻ/Ví điện tử;
+	|VNPay Gateway|
+	:Xử lý giao dịch thanh toán;
+	:Chuyển hướng lại (Callback) về Hệ thống;
+	|Hệ thống|
+	:Cập nhật trạng thái Payment (SUCCESS/FAILED);
+	if (Thanh toán thành công?) then (Có)
+		:Tự động gửi Email xác nhận (Tùy chọn);
+		|Customer|
+		:Hiển thị trang thông báo "Đặt tour thành công";
+	else (Thất bại / Hủy)
+		|Customer|
+		:Hiển thị thông báo "Thanh toán thất bại";
+	endif
+else (Hết chỗ)
+	|Hệ thống|
+	:Báo lỗi không đủ chỗ;
+	|Customer|
+	:Hiển thị thông báo lỗi và yêu cầu chọn tour khác;
+endif
+
+stop
+@enduml

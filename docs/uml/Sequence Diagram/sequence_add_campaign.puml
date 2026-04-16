@@ -1,0 +1,34 @@
+@startuml
+title Sơ đồ Tuần tự - Thêm Chiến dịch Khuyến mãi
+actor "Admin" as Admin
+participant "Browser" as UI
+participant "CampaignAdminApiController" as Controller
+participant "CampaignService" as Service
+participant "CampaignRepository" as Repository
+database "Database" as DB
+
+Admin -> UI: Điền thông tin Khuyến mãi\n(Tên, Giảm giá, Ngày bắt đầu/kết thúc) & Submit
+activate UI
+UI -> Controller: POST /api/admin/campaigns (CampaignUpsertRequest)
+activate Controller
+Controller -> Service: create(req)
+activate Service
+
+Service -> Service: Validate Request Data
+Service -> Repository: save(Campaign)
+activate Repository
+Repository -> DB: INSERT INTO campaigns
+activate DB
+DB --> Repository: Success
+deactivate DB
+Repository --> Service: Return saved Campaign
+deactivate Repository
+
+Service --> Controller: Return CampaignResponse
+deactivate Service
+Controller --> UI: 200 OK (Campaign Details)
+deactivate Controller
+UI --> Admin: Hiển thị thông báo thành công
+deactivate UI
+
+@enduml

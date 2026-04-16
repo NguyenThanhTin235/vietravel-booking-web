@@ -1,0 +1,49 @@
+@startuml
+title Sơ đồ Tuần tự - Đặt Tour và Thanh toán (VNPay)
+actor "Customer" as Customer
+participant "Browser" as UI
+participant "BookingCustomerApiController" as Controller
+participant "BookingService" as BService
+participant "PaymentService" as PService
+participant "VnpayService" as VService
+participant "BookingRepository" as BRepo
+participant "PaymentRepository" as PRepo
+database "Database" as DB
+
+Customer -> UI: Chọn Tour, nhập thông tin,\nchọn thanh toán VNPay & Submit
+activate UI
+UI -> Controller: POST /api/customer/bookings/pay (BookingCreateRequest)
+activate Controller
+
+Controller -> BService: createBooking(req)
+activate BService
+BService -> BService: Validate Tour/Departure/Seats
+BService -> BRepo: save(Booking: PENDING)
+activate BRepo
+BRepo -> DB: INSERT INTO bookings
+BRepo --> BService: saved Booking
+deactivate BRepo
+BService --> Controller: Booking
+deactivate BService
+
+Controller -> PService: createPaymentForBooking(booking)
+activate PService
+PService -> PRepo: save(Payment: PENDING)
+activate PRepo
+PRepo -> DB: INSERT INTO payments
+PRepo --> PService: saved Payment
+deactivate PRepo
+PService --> Controller: Payment
+deactivate PService
+
+Controller -> VService: buildPaymentUrl(payment, booking, ipAddress)
+activate VService
+VService --> Controller: String paymentUrl
+deactivate VService
+
+Controller --> UI: 200 OK (BookingCreateResponse w/ paymentUrl)
+deactivate Controller
+UI -> Customer: Redirect to VNPay Payment Gateway
+deactivate UI
+
+@enduml

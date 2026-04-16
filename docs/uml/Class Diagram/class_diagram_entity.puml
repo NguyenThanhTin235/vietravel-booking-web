@@ -1,0 +1,355 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+' ================= ENUM =================
+package "entity.enums" {
+
+enum UserRole {
+  CUSTOMER
+  STAFF
+  ADMIN
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  LOCKED
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+}
+
+enum DestinationType {
+  COUNTRY
+  PROVINCE
+  CITY
+  ATTRACTION
+}
+
+enum StartLocation {
+  HN
+  DN
+  HCM
+}
+
+enum DepartureStatus {
+  OPEN
+  CLOSED
+}
+
+enum PassengerType {
+  ADULT
+  CHILD
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCEL_REQUESTED
+  CANCELED
+  COMPLETED
+}
+
+enum PaymentType {
+  PAY
+  REFUND
+}
+
+enum PaymentMethod {
+  VNPAY_MOCK
+  CASH
+}
+
+enum PaymentStatus {
+  INIT
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum NewsStatus {
+  DRAFT
+  PUBLISHED
+  HIDDEN
+}
+
+enum ContactStatus {
+  NEW
+  READ
+  RESOLVED
+}
+
+}
+
+
+@startuml
+skinparam classAttributeIconSize 0
+
+' ================= ENTITY & ENUM (chuẩn hóa tên thuộc tính giống source code) =================
+package "entity" {
+class User {
+  - Long id
+  - String email
+  - String passwordHash
+  - String role
+  - String status
+  - LocalDateTime createdAt
+  - LocalDateTime updatedAt
+}
+class UserProfile {
+  - Long userId
+  - UserAccount user
+  - String fullName
+  - String phone
+  - String gender
+  - LocalDate dob
+  - String address
+  - String avatar
+  - LocalDateTime updatedAt
+}
+class EmailVerificationCode {
+  - Long id
+  - String email
+  - String codeHash
+  - LocalDateTime expiresAt
+  - LocalDateTime usedAt
+  - int attemptCount
+  - LocalDateTime createdAt
+}
+class Notification {
+  - Long id
+  - UserAccount user
+  - String title
+  - String message
+  - NotificationType type
+  - String link
+  - boolean read
+  - LocalDateTime createdAt
+  - LocalDateTime readAt
+}
+class TourLine {
+  - Long id
+  - String code
+  - String name
+  - BigDecimal minPrice
+  - BigDecimal maxPrice
+  - Boolean isActive
+  - Integer sortOrder
+}
+class TransportMode {
+  - Long id
+  - String code
+  - String name
+  - Boolean isActive
+  - Integer sortOrder
+}
+class TourCategory {
+  - Long id
+  - String name
+  - TourCategory parent
+  - String slug
+  - Integer sortOrder
+  - Boolean isActive
+}
+class Destination {
+  - Long id
+  - String name
+  - DestinationType type
+  - String slug
+  - Boolean isActive
+  - Integer sortOrder
+  - TourCategory category
+}
+class Tour {
+  - Long id
+  - String code
+  - String title
+  - String slug
+  - TourLine tourLine
+  - TransportMode transportMode
+  - Integer durationDays
+  - Integer durationNights
+  - Destination startLocation
+  - BigDecimal basePrice
+  - String summary
+  - String overviewHtml
+  - String additionalInfoHtml
+  - String notesHtml
+  - Boolean isActive
+  - LocalDateTime createdAt
+  - LocalDateTime updatedAt
+  - Set<TourCategory> categories
+  - Set<Destination> destinations
+}
+class Departure {
+  - Long id
+  - Tour tour
+  - LocalDate startDate
+  - Integer capacity
+  - Integer available
+  - BigDecimal priceAdult
+  - BigDecimal priceChild
+  - StartLocation startLocation
+  - DepartureStatus status
+  - LocalDateTime createdAt
+  - LocalDateTime updatedAt
+}
+class ItineraryDay {
+  - Long id
+  - Tour tour
+  - Integer dayNo
+  - String titleRoute
+  - String meals
+  - String contentHtml
+  - Integer sortOrder
+}
+class Wishlist {
+  - WishlistId id
+  - UserAccount user
+  - Tour tour
+  - LocalDateTime createdAt
+}
+class Booking {
+  - Long id
+  - String bookingCode
+  - UserAccount user
+  - UserAccount createdByStaff
+  - Departure departure
+  - String contactName
+  - String contactPhone
+  - String contactEmail
+  - String note
+  - Integer totalAdult
+  - Integer totalChild
+  - BigDecimal totalAmount
+  - BookingStatus status
+  - LocalDateTime createdAt
+  - LocalDateTime updatedAt
+  - List<BookingPassenger> passengers
+}
+class BookingPassenger {
+  - Long id
+  - Booking booking
+  - String fullName
+  - LocalDate dob
+  - PassengerType passengerType
+  - String idNumber
+  - LocalDateTime createdAt
+}
+class Payment {
+  - Long id
+  - Booking booking
+  - PaymentType paymentType
+  - PaymentMethod method
+  - PaymentStatus status
+  - BigDecimal amount
+  - String txnRef
+  - LocalDateTime createdAt
+}
+class News {
+  - Long id
+  - String title
+  - String slug
+  - String thumbnail
+  - String summary
+  - String contentHtml
+  - Integer viewCount
+  - Boolean isFeatured
+  - NewsStatus status
+  - LocalDateTime createdAt
+  - LocalDateTime updatedAt
+}
+class ContactInquiry {
+  - Long id
+  - UserAccount user
+  - String infoType
+  - String fullName
+  - String email
+  - String phone
+  - String companyName
+  - Integer guestCount
+  - String address
+  - String subject
+  - String content
+  - String replyHistory
+  - Integer replyCount
+  - LocalDateTime lastRepliedAt
+  - ContactStatus status
+  - UserAccount handledBy
+  - LocalDateTime createdAt
+  - LocalDateTime updatedAt
+}
+class Branch {
+  - Long id
+  - String region
+  - String name
+  - String address
+  - String hotline
+  - String email
+  - String fax
+  - Boolean isActive
+  - Integer sortOrder
+  - LocalDateTime createdAt
+}
+class Campaign {
+  - Long id
+  - String name
+  - String slug
+  - String description
+  - String bannerUrl
+  - Integer viewCount
+  - LocalDateTime startAt
+  - LocalDateTime endAt
+  - CampaignStatus status
+  - CampaignDiscountType discountType
+  - BigDecimal discountValue
+  - String code
+  - BigDecimal minOrder
+  - BigDecimal maxDiscount
+  - Integer usageLimit
+  - Integer usedCount
+}
+class CampaignScope {
+  - Long id
+  - Campaign campaign
+  - CampaignScopeType scopeType
+  - Long refId
+}
+class CampaignRedemption {
+  - Long id
+  - Campaign campaign
+  - UserAccount user
+  - Booking booking
+  - BigDecimal discountAmount
+  - LocalDateTime usedAt
+}
+}
+
+"User" "1" -- "1" UserProfile : user
+"User" "1" <-- "*" Notification : user
+"User" "1" <-- "*" Booking : user
+"User" "1" <-- "*" Booking : createdByStaff
+"User" "1" <-- "*" Wishlist : user
+"User" "1" <-- "*" ContactInquiry : user
+"User" "1" <-- "*" ContactInquiry : handledBy
+TourLine "1" <-- "*" Tour : tourLine
+TransportMode "1" <-- "*" Tour : transportMode
+TourCategory "1" <-- "*" Tour : categories
+TourCategory "1" <-- "*" Destination : category
+Destination "1" <-- "*" Tour : destinations
+Tour "1" <-- "*" Departure : tour
+Departure "1" <-- "*" Booking : departure
+Booking "1" <-- "*" BookingPassenger : booking
+Booking "1" <-- "*" Payment : booking
+Tour "1" <-- "*" ItineraryDay : tour
+Tour "1" <-- "*" Wishlist : tour
+Campaign "1" <-- "*" CampaignScope : campaign
+Campaign "1" <-- "*" CampaignRedemption : campaign
+"User" "1" <-- "*" CampaignRedemption : user
+Booking "1" <-- "*" CampaignRedemption : booking
+}
+@enduml

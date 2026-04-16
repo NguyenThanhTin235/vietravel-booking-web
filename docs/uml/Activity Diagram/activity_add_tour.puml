@@ -1,0 +1,26 @@
+@startuml
+title Sơ đồ Hoạt động - Thêm Tour
+
+|Admin|
+start
+:Mở form thêm mới Tour;
+:Nhập thông tin Tour (Tên, Mã, Danh mục, Giá...);
+:Nhấn nút "Lưu";
+
+|Hệ thống|
+:Nhận request tạo Tour;
+:Kiểm tra dữ liệu đầu vào (Validation);
+if (Dữ liệu hợp lệ?) then (Có)
+	:Lưu Tour vào Database;
+	:Trả về dữ liệu Tour vừa tạo;
+	|Admin|
+	:Hiển thị thông báo "Thêm thành công";
+else (Không hợp lệ)
+	|Hệ thống|
+	:Trả về lỗi Validation;
+	|Admin|
+	:Hiển thị thông báo lỗi yêu cầu nhập lại;
+endif
+
+stop
+@enduml
