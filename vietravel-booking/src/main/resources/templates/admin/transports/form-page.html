@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin :: layout(
+      pageTitle=${pageTitle},
+      activeMenu=${activeMenu},
+      activeSubMenu=${activeSubMenu},
+      content=~{admin/transports/form :: content},
+      additionalJs=~{::additionalJs}
+)}">
+<th:block th:fragment="additionalJs">
+    <link rel="stylesheet" href="/css/admin-transports.css">
+    <script src="/js/admin-transports.js"></script>
+</th:block>
+</html>

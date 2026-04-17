@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="content">
+    <div class="grid-12">
+
+        <div class="col-12">
+            <div class="kpi-row">
+
+                <div class="card kpi reveal">
+                    <div class="kpi-label">Tổng số tour</div>
+                    <div class="kpi-value"
+                         data-counter
+                         th:attr="data-to=${kpiTours!=null?kpiTours:0}"
+                         th:text="${kpiTours!=null?kpiTours:'0'}">0</div>
+                    <div class="kpi-note">Cập nhật theo dữ liệu hiện có</div>
+                </div>
+
+                <div class="card kpi reveal">
+                    <div class="kpi-label">Lịch khởi hành sắp tới</div>
+                    <div class="kpi-value"
+                         data-counter
+                         th:attr="data-to=${kpiDepartures!=null?kpiDepartures:0}"
+                         th:text="${kpiDepartures!=null?kpiDepartures:'0'}">0</div>
+                    <div class="kpi-note">Trong 30 ngày tới</div>
+                </div>
+
+                <div class="card kpi reveal">
+                    <div class="kpi-label">Đơn chờ xử lý</div>
+                    <div class="kpi-value"
+                         data-counter
+                         th:attr="data-to=${kpiPending!=null?kpiPending:0}"
+                         th:text="${kpiPending!=null?kpiPending:'0'}">0</div>
+                    <div class="kpi-note">Trạng thái PENDING</div>
+                </div>
+
+                <div class="card kpi reveal">
+                    <div class="kpi-label">Doanh thu</div>
+                    <div class="kpi-value"
+                         data-counter
+                         data-currency
+                         th:attr="data-to=${kpiRevenueRaw!=null?kpiRevenueRaw:0}"
+                         th:text="${kpiRevenue!=null?kpiRevenue:'0 ₫'}">0 ₫</div>
+                    <div class="kpi-note">Theo đơn đã thanh toán</div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-8">
+
+            <div class="card reveal" data-skeleton>
+                <div class="card-head">
+                    <div class="card-title">Tổng quan</div>
+                    <div class="card-actions">
+                        <button class="btn btn-ghost" type="button">Tuần</button>
+                        <button class="btn btn-ghost" type="button">Tháng</button>
+                        <button class="btn btn-primary" type="button" data-demo-loading>Tải demo</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="placeholder-chart">Biểu đồ sẽ được tích hợp sau</div>
+                </div>
+            </div>
+
+            <div class="card mt-16 reveal" data-skeleton>
+                <div class="card-head">
+                    <div class="card-title">Đơn đặt tour gần đây</div>
+                    <div class="card-actions" style="display:flex;gap:10px;align-items:center">
+                        <input class="search-input"
+                               style="max-width:240px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:#fff"
+                               data-table-search placeholder="Tìm trong bảng...">
+                        <span style="color:var(--muted);font-weight:700;font-size:13px">
+                            Hiển thị: <span data-table-count>3</span>
+                        </span>
+                        <a class="btn btn-primary" th:href="@{/admin/bookings}">Xem tất cả</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-wrap">
+                        <table class="table" data-table>
+                            <thead>
+                            <tr>
+                                <th>Mã</th>
+                                <th>Khách hàng</th>
+                                <th>Tour</th>
+                                <th>Ngày</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="reveal">
+                                <td>#BK001</td>
+                                <td>Nguyễn Văn A</td>
+                                <td>Đà Nẵng 3N2Đ</td>
+                                <td>25/01/2026</td>
+                                <td>5.990.000 ₫</td>
+                                <td><span class="badge badge-pending">Chờ xử lý</span></td>
+                            </tr>
+                            <tr class="reveal">
+                                <td>#BK002</td>
+                                <td>Trần Thị B</td>
+                                <td>Phú Quốc 4N3Đ</td>
+                                <td>28/01/2026</td>
+                                <td>8.490.000 ₫</td>
+                                <td><span class="badge badge-confirmed">Đã xác nhận</span></td>
+                            </tr>
+                            <tr class="reveal">
+                                <td>#BK003</td>
+                                <td>Lê Văn C</td>
+                                <td>Đà Lạt 2N1Đ</td>
+                                <td>02/02/2026</td>
+                                <td>2.990.000 ₫</td>
+                                <td><span class="badge badge-canceled">Đã hủy</span></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-4">
+
+            <div class="card reveal" data-skeleton>
+                <div class="card-head">
+                    <div class="card-title">Lịch</div>
+                </div>
+                <div class="card-body">
+                    <div class="mini-calendar">
+                        <div class="mini-cal-head">
+                            <span>Tháng 01/2026</span>
+                            <div class="mini-cal-actions">
+                                <button class="icon-btn" type="button">‹</button>
+                                <button class="icon-btn" type="button">›</button>
+                            </div>
+                        </div>
+                        <div class="mini-cal-grid">
+                            <div class="mini-cal-dow">CN</div><div class="mini-cal-dow">T2</div><div class="mini-cal-dow">T3</div><div class="mini-cal-dow">T4</div><div class="mini-cal-dow">T5</div><div class="mini-cal-dow">T6</div><div class="mini-cal-dow">T7</div>
+                            <div class="mini-cal-day muted">29</div><div class="mini-cal-day muted">30</div><div class="mini-cal-day muted">31</div><div class="mini-cal-day">1</div><div class="mini-cal-day">2</div><div class="mini-cal-day">3</div><div class="mini-cal-day">4</div>
+                            <div class="mini-cal-day">5</div><div class="mini-cal-day">6</div><div class="mini-cal-day">7</div><div class="mini-cal-day">8</div><div class="mini-cal-day">9</div><div class="mini-cal-day">10</div><div class="mini-cal-day">11</div>
+                            <div class="mini-cal-day">12</div><div class="mini-cal-day">13</div><div class="mini-cal-day">14</div><div class="mini-cal-day">15</div><div class="mini-cal-day">16</div><div class="mini-cal-day">17</div><div class="mini-cal-day">18</div>
+                            <div class="mini-cal-day">19</div><div class="mini-cal-day">20</div><div class="mini-cal-day">21</div><div class="mini-cal-day today">22</div><div class="mini-cal-day">23</div><div class="mini-cal-day">24</div><div class="mini-cal-day">25</div>
+                            <div class="mini-cal-day">26</div><div class="mini-cal-day">27</div><div class="mini-cal-day">28</div><div class="mini-cal-day">29</div><div class="mini-cal-day">30</div><div class="mini-cal-day">31</div><div class="mini-cal-day muted">1</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-16 reveal" data-skeleton>
+                <div class="card-head">
+                    <div class="card-title">Tour sắp diễn ra</div>
+                </div>
+                <div class="card-body">
+                    <div class="list">
+                        <div class="list-item reveal">
+                            <div class="thumb"></div>
+                            <div class="li-main">
+                                <div class="li-title">Phú Quốc 4N3Đ</div>
+                                <div class="li-sub">Khởi hành: 28/01/2026</div>
+                            </div>
+                            <span class="pill">Còn chỗ</span>
+                        </div>
+
+                        <div class="list-item reveal">
+                            <div class="thumb"></div>
+                            <div class="li-main">
+                                <div class="li-title">Đà Nẵng 3N2Đ</div>
+                                <div class="li-sub">Khởi hành: 25/01/2026</div>
+                            </div>
+                            <span class="pill pill-blue">Sắp đầy</span>
+                        </div>
+
+                        <div class="list-item reveal">
+                            <div class="thumb"></div>
+                            <div class="li-main">
+                                <div class="li-title">Đà Lạt 2N1Đ</div>
+                                <div class="li-sub">Khởi hành: 02/02/2026</div>
+                            </div>
+                            <span class="pill pill-gray">Đang mở</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

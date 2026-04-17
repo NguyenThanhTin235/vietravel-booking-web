@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="adminSidebar(activeMenu,activeSubMenu)">
+    <div class="sidebar-head">
+        <a class="brand" th:href="@{/admin}">
+            <span class="brand-mark">V</span>
+            <span class="brand-text">Vietravel</span>
+        </a>
+        <button class="sidebar-toggle" type="button" data-sidebar-toggle>
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        </button>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a class="nav-item"
+           th:classappend="${activeMenu=='dashboard'} ? ' active' : ''"
+           th:href="@{/admin}">
+            <span class="nav-ic">⌂</span>
+            <span class="nav-tx">Bảng điều khiển</span>
+        </a>
+
+        <div class="nav-section">QUẢN LÝ</div>
+
+        <a class="nav-item"
+           th:classappend="${activeMenu=='users'} ? ' active' : ''"
+           th:href="@{/admin/users}">
+            <span class="nav-ic">👤</span>
+            <span class="nav-tx">Người dùng</span>
+        </a>
+
+        <!-- TOUR (có menu con) -->
+        <div class="nav-group"
+             th:classappend="${activeMenu=='tours'} ? ' open' : ''">
+
+            <!-- đổi a -> button để click chỉ toggle dropdown -->
+            <button class="nav-item nav-item-parent" type="button" data-nav-toggle="tours"
+                    th:classappend="${activeMenu=='tours'} ? ' active' : ''">
+                <span class="nav-ic">🧳</span>
+                <span class="nav-tx">Quản lý Tour</span>
+                <span class="nav-caret">▾</span>
+            </button>
+
+            <div class="nav-sub">
+                <a class="nav-sub-item"
+                   th:classappend="${activeSubMenu=='tour-info'} ? ' active' : ''"
+                   th:href="@{/admin/tours}">
+                    Thông tin tour
+                </a>
+
+                <a class="nav-sub-item"
+                   th:classappend="${activeSubMenu=='tour-lines'} ? ' active' : ''"
+                   th:href="@{/admin/tour-lines}">
+                    Dòng tour
+                </a>
+
+                <a class="nav-sub-item"
+                   th:classappend="${activeSubMenu=='transports'} ? ' active' : ''"
+                   th:href="@{/admin/transports}">
+                    Phương tiện
+                </a>
+
+                <a class="nav-sub-item"
+                   th:classappend="${activeSubMenu=='tour-categories'} ? ' active' : ''"
+                   th:href="@{/admin/tour-categories}">
+                    Danh mục tour
+                </a>
+
+                <a class="nav-sub-item"
+                   th:classappend="${activeSubMenu=='destinations'} ? ' active' : ''"
+                   th:href="@{/admin/destinations}">
+                    Điểm đến
+                </a>
+
+                <a class="nav-sub-item"
+                   th:classappend="${activeSubMenu=='depart-points'} ? ' active' : ''"
+                   th:href="@{/admin/departure-points}">
+                    Điểm khởi hành
+                </a>
+            </div>
+        </div>
+
+        <a class="nav-item"
+           th:classappend="${activeMenu=='departures'} ? ' active' : ''"
+           th:href="@{/admin/departures}">
+            <span class="nav-ic">🗓</span>
+            <span class="nav-tx">Ngày khởi hành</span>
+        </a>
+
+        <a class="nav-item"
+           th:classappend="${activeMenu=='bookings'} ? ' active' : ''"
+           th:href="@{/admin/bookings}">
+            <span class="nav-ic">🧾</span>
+            <span class="nav-tx">Booking</span>
+        </a>
+
+        <a class="nav-item"
+           th:classappend="${activeMenu=='payments'} ? ' active' : ''"
+           th:href="@{/admin/payments}">
+            <span class="nav-ic">💳</span>
+            <span class="nav-tx">Thanh toán</span>
+        </a>
+
+        <div class="nav-section">NỘI DUNG</div>
+
+        <a class="nav-item"
+           th:classappend="${activeMenu=='news'} ? ' active' : ''"
+           th:href="@{/admin/news}">
+            <span class="nav-ic">📰</span>
+            <span class="nav-tx">Tin tức</span>
+        </a>
+
+        <a class="nav-item"
+           th:classappend="${activeMenu=='faq'} ? ' active' : ''"
+           th:href="@{/admin/faq}">
+            <span class="nav-ic">❓</span>
+            <span class="nav-tx">FAQ / Chatbot</span>
+        </a>
+
+        <a class="nav-item"
+           th:classappend="${activeMenu=='branches'} ? ' active' : ''"
+           th:href="@{/admin/branches}">
+            <span class="nav-ic">🏢</span>
+            <span class="nav-tx">Chi nhánh</span>
+        </a>
+
+        <a class="nav-item"
+           th:classappend="${activeMenu=='contacts'} ? ' active' : ''"
+           th:href="@{/admin/contacts}">
+            <span class="nav-ic">✉</span>
+            <span class="nav-tx">Liên hệ khách hàng</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-foot">
+        <a class="nav-item nav-item-ghost" th:href="@{/logout}">
+            <span class="nav-ic">⎋</span>
+            <span class="nav-tx">Đăng xuất</span>
+        </a>
+    </div>
+
+    <!-- JS ngay trong file fragment -->
+    <script th:inline="javascript">
+        (function(){
+            document.addEventListener("click",function(e){
+                var btn=e.target.closest("[data-nav-toggle]");
+                if(!btn)return;
+
+                var group=btn.closest(".nav-group");
+                if(!group)return;
+
+                group.classList.toggle("open");
+            });
+        })();
+    </script>
+</div>
+
+</body>
+</html>
