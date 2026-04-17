@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="adminTopbar(pageTitle, adminName, adminRole)">
+    <div class="topbar-inner">
+        <div class="topbar-left">
+            <h1 class="page-title"
+                th:text="${pageTitle!=null && pageTitle!=''} ? pageTitle : 'Bảng điều khiển'">
+                Bảng điều khiển
+            </h1>
+
+        </div>
+
+        <div class="topbar-center">
+            <div class="search">
+                <span class="search-ic">⌕</span>
+                <input class="search-input" type="text" placeholder="Tìm tour, mã đặt tour, khách hàng...">
+            </div>
+        </div>
+
+        <div class="topbar-right">
+            <button class="icon-btn" type="button" title="Thông báo">
+                <span class="ic">🔔</span>
+            </button>
+
+            <div class="userbox" data-dropdown>
+                <button class="userbox-btn" type="button" data-dropdown-btn>
+                    <span class="avatar"
+                          th:text="${#strings.isEmpty(adminName)} ? 'A' : ${adminName.substring(0,1).toUpperCase()}">A</span>
+
+                    <span class="user-meta">
+                        <span class="user-name"
+                              th:text="${#strings.isEmpty(adminName)} ? 'Quản trị viên' : adminName">
+                            Quản trị viên
+                        </span>
+                        <span class="user-role"
+                              th:text="${#strings.isEmpty(adminRole)} ? 'Admin' : adminRole">
+                            Admin
+                        </span>
+                    </span>
+                    <span class="chev">▾</span>
+                </button>
+
+                <div class="dropdown" data-dropdown-menu>
+                    <a class="dropdown-item" th:href="@{/admin/profile}">Hồ sơ</a>
+                    <a class="dropdown-item" th:href="@{/admin/settings}">Cài đặt</a>
+                    <div class="dropdown-sep"></div>
+                    <a class="dropdown-item dropdown-danger" th:href="@{/logout}">Đăng xuất</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+
+    <div class="tm-page">
+        <nav class="tm-breadcrumb">
+            <a href="/admin">Bảng điều khiển</a><span class="sep">/</span>
+            <a href="/admin/transports">Phương tiện</a>
+        </nav>
+
+        <div class="card reveal tm-card">
+            <div class="tm-wrap" data-page="transport-list">
+                <div class="tm-head">
+                    <div class="tm-title">
+                        <h2>Quản lý phương tiện</h2>
+
+                    </div>
+
+                    <div class="tm-actions">
+                        <label class="tm-chip">
+                            <input id="onlyActive" type="checkbox" checked>
+                            Chỉ hiển thị đang hoạt động
+                        </label>
+                        <a class="tm-btn primary" href="/admin/transports/create">+ Thêm phương tiện</a>
+                    </div>
+                </div>
+
+                <div class="tm-bar">
+                    <div class="tm-search">
+                        <input id="q" class="input" placeholder="Tìm theo code hoặc tên...">
+                        <button id="btnReload" class="tm-btn">Tải lại</button>
+                    </div>
+                    <div id="msg" class="tm-hint"></div>
+                </div>
+
+                <div class="tm-tableWrap">
+                    <table class="tm-table">
+                        <thead>
+                        <tr>
+                            <th style="width:80px;text-align:left">ID</th>
+                            <th style="min-width:160px;text-align:left">Code</th>
+                            <th style="min-width:240px;text-align:left">Tên</th>
+                            <th style="width:160px;text-align:center">Trạng thái</th>
+                            <th style="width:120px;text-align:center">Sắp xếp</th>
+                            <th style="width:220px" class="tm-right">Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody id="rows">
+                        <tr class="tm-skeleton"><td colspan="6"><div class="tm-skel" style="height:14px;width:55%"></div></td></tr>
+                        <tr class="tm-skeleton"><td colspan="6"><div class="tm-skel" style="height:14px;width:75%"></div></td></tr>
+                        <tr class="tm-skeleton"><td colspan="6"><div class="tm-skel" style="height:14px;width:65%"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tmToastWrap" class="tm-toastWrap"></div>
+
+    <div id="tmModal" class="tm-modalBackdrop">
+        <div class="tm-modal">
+            <div class="tm-modalHead">
+                <h3 id="tmModalTitle">Xác nhận</h3>
+                <button id="tmModalClose" class="tm-btn sm">Đóng</button>
+            </div>
+            <div id="tmModalBody" class="tm-modalBody"></div>
+            <div class="tm-modalFoot">
+                <button id="tmModalCancel" class="tm-btn">Hủy</button>
+                <button id="tmModalOk" class="tm-btn danger">Xóa</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

@@ -32,6 +32,12 @@ public class SecurityConfig{
                                 "/favicon.ico"
                         ).permitAll()
 
+                        // ===== API =====
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/staff/**").hasAnyRole("STAFF","ADMIN")
+                        .requestMatchers("/api/customer/**").hasAnyRole("CUSTOMER","ADMIN")
+
+                        // ===== VIEW =====
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/staff/**").hasAnyRole("STAFF","ADMIN")
                         .requestMatchers("/customer/**").hasAnyRole("CUSTOMER","ADMIN")
