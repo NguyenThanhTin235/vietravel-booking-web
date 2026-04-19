@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/staff :: layout(
+      pageTitle='Hồ sơ nhân viên',
+      activeMenu='',
+      activeSubMenu='',
+      content=~{::content},
+      additionalJs=~{::additionalJs}
+)}">
+
+<th:block th:fragment="content">
+    <style>
+        .profile-wrap{padding:10px 0 30px}
+        .profile-card{background:#fff;border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);padding:22px}
+        .profile-head{display:flex;gap:22px;align-items:center;flex-wrap:wrap;border-bottom:1px dashed var(--border);padding-bottom:18px;margin-bottom:18px}
+        .profile-avatar{width:112px;height:112px;border-radius:50%;border:2px solid #e5e7eb;overflow:hidden;background:#f3f4f6;display:flex;align-items:center;justify-content:center}
+        .profile-avatar img{width:100%;height:100%;object-fit:cover;display:none}
+        .profile-avatar-fallback{font-weight:900;color:#94a3b8;font-size:12px;text-transform:uppercase}
+        .profile-meta{display:flex;flex-direction:column;gap:6px}
+        .profile-meta h2{margin:0;font-size:20px;font-weight:900}
+        .profile-email{color:var(--muted);font-weight:700;font-size:13px}
+        .avatar-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+        .btn{background:var(--primary);color:#fff;border:0;border-radius:999px;padding:8px 14px;font-weight:800;font-size:12px;cursor:pointer}
+        .btn:hover{background:var(--primary2)}
+        .btn:disabled{opacity:.6;cursor:not-allowed}
+        .btn-ghost{border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-weight:800;font-size:12px;cursor:pointer}
+        .profile-hint{font-size:12px;color:var(--muted)}
+
+        .profile-msg{display:none;margin:12px 0 16px;padding:10px 12px;border-radius:12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:#0f7a3a;font-weight:800}
+        .profile-msg.err{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);color:#b42318}
+
+        .profile-form{display:flex;flex-direction:column;gap:14px}
+        .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+        .field{display:flex;flex-direction:column;gap:6px}
+        .field label{font-weight:800;font-size:12px}
+        .input{border:1px solid var(--border);border-radius:12px;padding:10px 12px;font-size:14px;outline:none}
+        .input:focus{border-color:var(--primary)}
+        select.input{background:#fff}
+        .actions{display:flex;justify-content:flex-end;margin-top:6px}
+
+        @media(max-width:760px){
+            .grid-2{grid-template-columns:1fr}
+            .profile-head{flex-direction:column;align-items:flex-start}
+        }
+    </style>
+
+    <section class="profile-wrap">
+        <div class="profile-card">
+            <div class="profile-head">
+                <div class="profile-avatar">
+                    <img id="avatarImg" alt="Avatar">
+                    <div class="profile-avatar-fallback" id="avatarFallback">No Avatar</div>
+                </div>
+
+                <div class="profile-meta">
+                    <h2 id="displayName">Nhân viên</h2>
+                    <div class="profile-email" id="displayEmail"></div>
+                    <div class="profile-hint" id="avatarHint"></div>
+                    <div class="avatar-actions">
+                        <label class="btn-ghost" for="avatarFile">Chọn ảnh</label>
+                        <input id="avatarFile" type="file" accept="image/*" hidden>
+                        <button class="btn-ghost" type="button" id="avatarClear">Xóa</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-msg" id="profileMsg"></div>
+
+            <form id="profileForm" class="profile-form" onsubmit="return false;">
+                <div class="grid-2">
+                    <div class="field">
+                        <label>Họ và tên</label>
+                        <input id="fullName" class="input" placeholder="Nhập họ và tên">
+                    </div>
+                    <div class="field">
+                        <label>Email</label>
+                        <input id="email" class="input" type="email" readonly>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="field">
+                        <label>Số điện thoại</label>
+                        <input id="phone" class="input" placeholder="VD: 0901 234 567">
+                    </div>
+                    <div class="field">
+                        <label>Giới tính</label>
+                        <select id="gender" class="input">
+                            <option value="">-- Chọn --</option>
+                            <option value="MALE">Nam</option>
+                            <option value="FEMALE">Nữ</option>
+                            <option value="OTHER">Khác</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="field">
+                        <label>Ngày sinh</label>
+                        <input id="dob" class="input" type="date">
+                    </div>
+                    <div class="field">
+                        <label>Địa chỉ</label>
+                        <input id="address" class="input" placeholder="Số nhà, đường, quận/huyện...">
+                    </div>
+                </div>
+
+                <input id="avatar" type="hidden">
+
+                <div class="actions">
+                    <button class="btn" id="saveBtn" type="submit">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</th:block>
+
+<th:block th:fragment="additionalJs">
+    <script th:src="@{/js/profile.js}"></script>
+</th:block>
+
+</html>

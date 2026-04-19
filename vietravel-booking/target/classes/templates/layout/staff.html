@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+	  th:fragment="layout(pageTitle, activeMenu, activeSubMenu, content, additionalJs)">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title th:text="${pageTitle}?:'Staff'">Staff</title>
+
+	<link rel="stylesheet" th:href="@{/css/admin.css}">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="/css/admin-tour-lines.css">
+	<link rel="stylesheet" href="/css/admin-transports.css">
+	<link rel="stylesheet" href="/css/admin-tour-categories.css">
+	<link rel="stylesheet" href="/css/admin-users.css">
+</head>
+<body>
+
+<div class="admin-shell">
+	<aside class="admin-sidebar">
+		<div th:replace="~{staff/fragments/sidebar :: staffSidebar(${activeMenu},${activeSubMenu})}"></div>
+	</aside>
+
+	<main class="admin-main">
+		<header class="admin-topbar">
+			<div th:replace="~{staff/fragments/topbar :: staffTopbar(
+		pageTitle=${pageTitle},
+		staffName=${staffName},
+		staffRole=${staffRole}
+	)}"></div>
+		</header>
+
+		<section class="admin-content">
+			<div class="admin-container" th:replace="${content}"></div>
+		</section>
+
+		<footer class="admin-footer">
+			<div class="admin-container">
+				<div class="footer-inner">
+					<span>© <span th:text="${#dates.format(#dates.createNow(),'yyyy')}">2026</span> VietravelBooking</span>
+					<div class="footer-links">
+						<a href="#" class="footer-link">Chính sách</a>
+						<a href="#" class="footer-link">Điều khoản</a>
+						<a href="#" class="footer-link">Liên hệ</a>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</main>
+</div>
+
+<script th:src="@{/js/admin.js}"></script>
+<th:block th:replace="${additionalJs}"></th:block>
+
+</body>
+</html>

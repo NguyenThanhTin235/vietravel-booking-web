@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/staff :: layout(
+      pageTitle='Xử lý thắc mắc',
+      activeMenu='inquiries',
+      activeSubMenu='',
+      content=~{::content},
+      additionalJs=~{::additionalJs}
+)}">
+
+<th:block th:fragment="content">
+    <div class="grid-12">
+        <div class="col-8">
+            <div class="card">
+                <div class="card-head">
+                    <div class="card-title">Danh sách thắc mắc</div>
+                    <div class="card-actions">
+                        <input class="search-input"
+                               style="max-width:240px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:#fff"
+                               placeholder="Tìm theo khách hàng...">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="list">
+                        <div class="list-item reveal">
+                            <div class="thumb"></div>
+                            <div class="li-main">
+                                <div class="li-title">Hỏi về lịch khởi hành</div>
+                                <div class="li-sub">Khách: Nguyễn M • 30/01/2026</div>
+                            </div>
+                            <span class="pill">Mới</span>
+                        </div>
+                        <div class="list-item reveal">
+                            <div class="thumb"></div>
+                            <div class="li-main">
+                                <div class="li-title">Yêu cầu đổi ngày</div>
+                                <div class="li-sub">Khách: Trần T • 30/01/2026</div>
+                            </div>
+                            <span class="pill pill-blue">Đang xử lý</span>
+                        </div>
+                        <div class="list-item reveal">
+                            <div class="thumb"></div>
+                            <div class="li-main">
+                                <div class="li-title">Câu hỏi về hoàn tiền</div>
+                                <div class="li-sub">Khách: Lê K • 29/01/2026</div>
+                            </div>
+                            <span class="pill pill-gray">Chưa phản hồi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card">
+                <div class="card-head">
+                    <div class="card-title">Chi tiết thắc mắc</div>
+                </div>
+                <div class="card-body">
+                    <div class="placeholder-chart">Chọn thắc mắc để xem chi tiết</div>
+                    <div style="margin-top:16px;display:flex;gap:10px">
+                        <button class="btn btn-ghost" type="button">Đánh dấu đã xử lý</button>
+                        <button class="btn btn-primary" type="button">Phản hồi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="additionalJs"></th:block>
+
+</html>

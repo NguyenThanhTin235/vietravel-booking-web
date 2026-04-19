@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+
+    <div class="tl-page">
+
+        <nav class="tl-breadcrumb">
+            <a href="/admin">Quản lý Tour</a>
+            <span class="sep">/</span>
+            <span class="current">Điểm đến</span>
+        </nav>
+
+        <div class="card reveal tl-card">
+            <div class="tl-wrap" data-page="destinations-list">
+
+                <div class="tl-head">
+                    <div class="tl-title">
+                        <h2>Quản lý điểm đến</h2>
+                    </div>
+
+                    <div class="tl-actions">
+                        <label class="tl-chip">
+                            <input id="onlyActive" type="checkbox" checked>
+                            Chỉ hiển thị đang hoạt động
+                        </label>
+                        <a class="tl-btn primary" href="/admin/destinations/create">+ Thêm điểm đến</a>
+                    </div>
+                </div>
+
+                <div class="tl-bar">
+                    <div class="tl-search">
+                        <select id="categoryId" class="input" style="min-width:240px">
+                            <option value="">Tất cả danh mục</option>
+                            <option th:each="c:${categories}" th:value="${c.id}" th:text="${c.name}">Danh mục</option>
+                        </select>
+
+                        <input id="q" class="input" placeholder="Tìm theo tên hoặc slug...">
+                        <button id="btnReload" class="tl-btn">Tải lại</button>
+                    </div>
+                    <div id="msg" class="tl-hint"></div>
+                </div>
+
+                <div class="tl-tableWrap">
+                    <table class="tl-table">
+                        <thead>
+                        <tr>
+                            <th style="width:80px">ID</th>
+                            <th style="min-width:220px">Tên</th>
+                            <th style="min-width:220px">Slug</th>
+                            <th style="min-width:220px">Danh mục</th>
+                            <th style="width:140px">Loại</th>
+                            <th style="width:140px">Trạng thái</th>
+                            <th style="width:100px">Sắp xếp</th>
+                            <th style="width:260px" class="tl-right">Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody id="rows">
+                        <tr class="tl-skeleton">
+                            <td colspan="8"><div class="tl-skel" style="height:14px;width:55%"></div></td>
+                        </tr>
+                        <tr class="tl-skeleton">
+                            <td colspan="8"><div class="tl-skel" style="height:14px;width:75%"></div></td>
+                        </tr>
+                        <tr class="tl-skeleton">
+                            <td colspan="8"><div class="tl-skel" style="height:14px;width:65%"></div></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tl-pager">
+                    <div class="tl-pagerLeft">
+                        <span class="tl-hint" id="pageInfo"></span>
+                    </div>
+
+                    <div class="tl-pagerRight">
+                        <button class="tl-btn sm" id="btnPrev">‹ Trước</button>
+                        <div class="tl-pageNums" id="pageNums"></div>
+                        <button class="tl-btn sm" id="btnNext">Sau ›</button>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+
+    <div id="tlToastWrap" class="tl-toastWrap"></div>
+
+    <div id="tlModal" class="tl-modalBackdrop">
+        <div class="tl-modal">
+            <div class="tl-modalHead">
+                <h3 id="tlModalTitle">Xác nhận</h3>
+                <button id="tlModalClose" class="tl-btn sm">Đóng</button>
+            </div>
+            <div id="tlModalBody" class="tl-modalBody"></div>
+            <div class="tl-modalFoot">
+                <button id="tlModalCancel" class="tl-btn">Hủy</button>
+                <button id="tlModalOk" class="tl-btn primary">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="staffTopbar(pageTitle, staffName, staffRole)">
+    <div class="topbar-inner">
+        <div class="topbar-left">
+            <h1 class="page-title"
+                th:text="${pageTitle!=null && pageTitle!=''} ? pageTitle : 'Bảng điều khiển'">
+                Bảng điều khiển
+            </h1>
+        </div>
+
+        <div class="topbar-center">
+            <div class="search">
+                <span class="search-ic">⌕</span>
+                <input class="search-input" type="text" placeholder="Tìm booking, khách hàng...">
+            </div>
+        </div>
+
+        <div class="topbar-right">
+            <button class="icon-btn" type="button" title="Thông báo">
+                <span class="ic">🔔</span>
+            </button>
+
+            <div class="userbox" data-dropdown>
+                <button class="userbox-btn" type="button" data-dropdown-btn>
+                    <span class="avatar">
+                        <img th:if="${currentUserProfile != null and !#strings.isEmpty(currentUserProfile.avatar)}"
+                             th:src="${currentUserProfile.avatar}" alt="avatar">
+                        <span th:if="${currentUserProfile == null or #strings.isEmpty(currentUserProfile.avatar)}">
+                            <span th:if="${currentUserProfile != null and !#strings.isEmpty(currentUserProfile.fullName)}"
+                                  th:text="${currentUserProfile.fullName.substring(0,1).toUpperCase()}">S</span>
+                            <span th:if="${currentUserProfile == null or #strings.isEmpty(currentUserProfile.fullName)}">
+                                <span th:if="${currentUser != null and !#strings.isEmpty(currentUser.email)}"
+                                      th:text="${currentUser.email.substring(0,1).toUpperCase()}">S</span>
+                                <span th:if="${currentUser == null or #strings.isEmpty(currentUser.email)}">S</span>
+                            </span>
+                        </span>
+                    </span>
+
+                    <span class="user-meta">
+                        <span class="user-name">
+                            <span th:if="${currentUserProfile != null and !#strings.isEmpty(currentUserProfile.fullName)}"
+                                  th:text="${currentUserProfile.fullName}">Nhân viên</span>
+                            <span th:if="${currentUserProfile == null or #strings.isEmpty(currentUserProfile.fullName)}">
+                                <span th:if="${currentUser != null and !#strings.isEmpty(currentUser.email)}"
+                                      th:text="${currentUser.email}">Nhân viên</span>
+                                <span th:if="${currentUser == null or #strings.isEmpty(currentUser.email)}">Nhân viên</span>
+                            </span>
+                        </span>
+                        <span class="user-role">
+                            <span th:if="${currentUser != null and currentUser.role != null}"
+                                  th:text="${currentUser.role}">Staff</span>
+                            <span th:if="${currentUser == null or currentUser.role == null}">Staff</span>
+                        </span>
+                    </span>
+                    <span class="chev">▾</span>
+                </button>
+
+                <div class="dropdown" data-dropdown-menu>
+                    <a class="dropdown-item" th:href="@{/staff/profile}">Hồ sơ</a>
+                    <div class="dropdown-sep"></div>
+                    <a class="dropdown-item dropdown-danger" th:href="@{/logout}">Đăng xuất</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

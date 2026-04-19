@@ -26,17 +26,34 @@
 
             <div class="userbox" data-dropdown>
                 <button class="userbox-btn" type="button" data-dropdown-btn>
-                    <span class="avatar"
-                          th:text="${#strings.isEmpty(adminName)} ? 'A' : ${adminName.substring(0,1).toUpperCase()}">A</span>
+                    <span class="avatar">
+                        <img th:if="${currentUserProfile != null and !#strings.isEmpty(currentUserProfile.avatar)}"
+                             th:src="${currentUserProfile.avatar}" alt="avatar">
+                        <span th:if="${currentUserProfile == null or #strings.isEmpty(currentUserProfile.avatar)}">
+                            <span th:if="${currentUserProfile != null and !#strings.isEmpty(currentUserProfile.fullName)}"
+                                  th:text="${currentUserProfile.fullName.substring(0,1).toUpperCase()}">A</span>
+                            <span th:if="${currentUserProfile == null or #strings.isEmpty(currentUserProfile.fullName)}">
+                                <span th:if="${currentUser != null and !#strings.isEmpty(currentUser.email)}"
+                                      th:text="${currentUser.email.substring(0,1).toUpperCase()}">A</span>
+                                <span th:if="${currentUser == null or #strings.isEmpty(currentUser.email)}">A</span>
+                            </span>
+                        </span>
+                    </span>
 
                     <span class="user-meta">
-                        <span class="user-name"
-                              th:text="${#strings.isEmpty(adminName)} ? 'Quản trị viên' : adminName">
-                            Quản trị viên
+                        <span class="user-name">
+                            <span th:if="${currentUserProfile != null and !#strings.isEmpty(currentUserProfile.fullName)}"
+                                  th:text="${currentUserProfile.fullName}">Quản trị viên</span>
+                            <span th:if="${currentUserProfile == null or #strings.isEmpty(currentUserProfile.fullName)}">
+                                <span th:if="${currentUser != null and !#strings.isEmpty(currentUser.email)}"
+                                      th:text="${currentUser.email}">Quản trị viên</span>
+                                <span th:if="${currentUser == null or #strings.isEmpty(currentUser.email)}">Quản trị viên</span>
+                            </span>
                         </span>
-                        <span class="user-role"
-                              th:text="${#strings.isEmpty(adminRole)} ? 'Admin' : adminRole">
-                            Admin
+                        <span class="user-role">
+                            <span th:if="${currentUser != null and currentUser.role != null}"
+                                  th:text="${currentUser.role}">Admin</span>
+                            <span th:if="${currentUser == null or currentUser.role == null}">Admin</span>
                         </span>
                     </span>
                     <span class="chev">▾</span>

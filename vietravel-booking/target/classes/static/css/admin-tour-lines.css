@@ -158,3 +158,42 @@
         font-size:13px;
     }
 }
+
+.tl-pager{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-top:12px;
+    flex-wrap:wrap;
+}
+
+.tl-pagerRight{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.tl-pageNums{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.tl-pageNums .tc-pageNum{
+    min-width:36px;
+    justify-content:center;
+}
+
+.tl-pageNum.active{
+    background:rgba(59,130,246,.10);
+    border-color:rgba(59,130,246,.35);
+    color:#1d4ed8;
+}
+
+.tl-pageSize{
+    padding:8px 10px;
+    border-radius:12px;
+    font-weight:800;
+}
