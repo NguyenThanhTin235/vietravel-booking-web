@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/staff :: layout(
+      pageTitle='Thống kê',
+      activeMenu='stats',
+      activeSubMenu='',
+      content=~{::content},
+      additionalJs=~{::additionalJs}
+)}">
+
+<th:block th:fragment="content">
+    <div class="grid-12">
+        <div class="col-12">
+            <div class="kpi-row">
+                <div class="card kpi reveal">
+                    <div class="kpi-label">Tổng booking tháng</div>
+                    <div class="kpi-value" data-counter data-to="120">120</div>
+                    <div class="kpi-note">Tháng hiện tại</div>
+                </div>
+                <div class="card kpi reveal">
+                    <div class="kpi-label">Tỷ lệ hủy</div>
+                    <div class="kpi-value" data-counter data-to="8" data-decimals="0">8</div>
+                    <div class="kpi-note">% theo tháng</div>
+                </div>
+                <div class="card kpi reveal">
+                    <div class="kpi-label">Đơn xử lý trong ngày</div>
+                    <div class="kpi-value" data-counter data-to="24">24</div>
+                    <div class="kpi-note">Hiệu suất nhân viên</div>
+                </div>
+                <div class="card kpi reveal">
+                    <div class="kpi-label">Điểm hài lòng</div>
+                    <div class="kpi-value" data-counter data-to="4.8" data-decimals="1">4.8</div>
+                    <div class="kpi-note">Trên thang 5</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-8">
+            <div class="card reveal" data-skeleton>
+                <div class="card-head">
+                    <div class="card-title">Xu hướng booking</div>
+                    <div class="card-actions">
+                        <button class="btn btn-ghost" type="button">Tuần</button>
+                        <button class="btn btn-ghost" type="button">Tháng</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="placeholder-chart">Biểu đồ sẽ được tích hợp sau</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-4">
+            <div class="card reveal" data-skeleton>
+                <div class="card-head">
+                    <div class="card-title">Top tour đặt nhiều</div>
+                </div>
+                <div class="card-body">
+                    <div class="list">
+                        <div class="list-item reveal">
+                            <div class="li-main">
+                                <div class="li-title">Phú Quốc 4N3Đ</div>
+                                <div class="li-sub">35 booking</div>
+                            </div>
+                            <span class="pill">Top 1</span>
+                        </div>
+                        <div class="list-item reveal">
+                            <div class="li-main">
+                                <div class="li-title">Đà Nẵng 3N2Đ</div>
+                                <div class="li-sub">28 booking</div>
+                            </div>
+                            <span class="pill pill-blue">Top 2</span>
+                        </div>
+                        <div class="list-item reveal">
+                            <div class="li-main">
+                                <div class="li-title">Đà Lạt 2N1Đ</div>
+                                <div class="li-sub">21 booking</div>
+                            </div>
+                            <span class="pill pill-gray">Top 3</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="additionalJs"></th:block>
+
+</html>

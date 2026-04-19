@@ -9,32 +9,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class HomeController {
 
     @GetMapping("/")
-    public String home(Model model){
-        model.addAttribute("pageTitle","Vietravel Booking");
-        model.addAttribute("activeNav","home");
+    public String home(Model model) {
+        model.addAttribute("pageTitle", "Vietravel Booking");
+        model.addAttribute("activeNav", "home");
         return "home/index";
     }
 
-
     @ResponseBody
     @GetMapping("/health")
-    public String health(){
+    public String health() {
         return "✅ Vietravel Booking is running!";
     }
 
     @GetMapping("/admin")
-    public String homeAdmin(Model model){
-        model.addAttribute("pageTitle","Quản trị - Vietravel Booking");
-        model.addAttribute("activeNav","admin");
-        model.addAttribute("content","admin/index :: content");
-        return "layout/base";
+    public String homeAdmin(Model model) {
+        model.addAttribute("pageTitle", "Bảng điều khiển");
+        model.addAttribute("activeMenu", "dashboard");
+        model.addAttribute("activeSubMenu", "");
+        return "admin/index";
     }
 
-    @GetMapping("/staff")
-    public String homeStaff(Model model){
-        model.addAttribute("pageTitle","Nhân viên - Vietravel Booking");
-        model.addAttribute("activeNav","staff");
-        model.addAttribute("content","staff/index :: content");
-        return "layout/base";
-    }
 }

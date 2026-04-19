@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quên mật khẩu - Vietravel Booking</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-left">
+            <div class="brand"><img th:src="@{/images/auth/logo.png}" alt="logo"></div>
+        </div>
+        <div class="auth-right">
+            <div class="plane"></div>
+            <h1 class="h1">Quên mật khẩu?</h1>
+            <div th:if="${error}" class="alert" th:text="${error}"></div>
+            <form class="form" th:action="@{/auth/forgot-form}" method="post">
+                <div class="field">
+                    <div class="label">Nhập email của bạn</div>
+                    <div class="input">
+                        <span class="icon"><i class="fas fa-envelope"></i></span>
+                        <input type="email" name="email" placeholder="Email đã đăng ký" required>
+                    </div>
+                </div>
+                <button class="btn" type="submit">GỬI MÃ XÁC THỰC</button>
+                <div class="footer-text">
+                    Nhớ mật khẩu? <a th:href="@{/auth/login}">Đăng nhập</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

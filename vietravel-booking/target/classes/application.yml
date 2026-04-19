@@ -54,6 +54,8 @@ spring:
     basename: messages
     encoding: UTF-8
 
+
+
 logging:
   level:
     org.hibernate.SQL: debug
@@ -71,6 +73,11 @@ app:
     access-token-minutes: 60
   verify:
     code-minutes: 10
+
+  cloudinary:
+    cloud-name: dmxxo6wgl
+    api-key: 315628768938735
+    api-secret: w9ziEUTs3giXY9hR8O1S75NBIF4
 
 
 

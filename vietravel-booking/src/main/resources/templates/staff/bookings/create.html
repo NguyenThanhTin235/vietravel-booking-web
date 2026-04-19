@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/staff :: layout(
+      pageTitle='Tạo booking',
+      activeMenu='bookings',
+      activeSubMenu='create',
+      content=~{::content},
+      additionalJs=~{::additionalJs}
+)}">
+
+<th:block th:fragment="content">
+    <div class="grid-12">
+        <div class="col-8">
+            <div class="card">
+                <div class="card-head">
+                    <div class="card-title">Thông tin đặt tour</div>
+                </div>
+                <div class="card-body">
+                    <form class="form-grid" onsubmit="return false;">
+                        <div class="grid-2">
+                            <div class="field">
+                                <label>Họ và tên</label>
+                                <input class="input" placeholder="VD: Nguyễn Văn A">
+                            </div>
+                            <div class="field">
+                                <label>Email</label>
+                                <input class="input" type="email" placeholder="vd@email.com">
+                            </div>
+                        </div>
+                        <div class="grid-2">
+                            <div class="field">
+                                <label>Số điện thoại</label>
+                                <input class="input" placeholder="VD: 0901 234 567">
+                            </div>
+                            <div class="field">
+                                <label>Tour</label>
+                                <select class="input">
+                                    <option>Đà Nẵng 3N2Đ</option>
+                                    <option>Phú Quốc 4N3Đ</option>
+                                    <option>Đà Lạt 2N1Đ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid-2">
+                            <div class="field">
+                                <label>Ngày khởi hành</label>
+                                <input class="input" type="date">
+                            </div>
+                            <div class="field">
+                                <label>Số lượng khách</label>
+                                <input class="input" type="number" min="1" value="1">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label>Ghi chú</label>
+                            <textarea class="input" rows="4" placeholder="Yêu cầu đặc biệt..."></textarea>
+                        </div>
+                        <div class="actions" style="display:flex;gap:10px;justify-content:flex-end">
+                            <button class="btn btn-ghost" type="reset">Làm mới</button>
+                            <button class="btn btn-primary" type="submit">Tạo booking</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card">
+                <div class="card-head">
+                    <div class="card-title">Tóm tắt</div>
+                </div>
+                <div class="card-body">
+                    <div class="list">
+                        <div class="list-item">
+                            <div class="li-main">
+                                <div class="li-title">Giá tham khảo</div>
+                                <div class="li-sub">Tùy theo tour</div>
+                            </div>
+                            <span class="pill">~ 5.990.000 ₫</span>
+                        </div>
+                        <div class="list-item">
+                            <div class="li-main">
+                                <div class="li-title">Thanh toán</div>
+                                <div class="li-sub">Chưa thu</div>
+                            </div>
+                            <span class="pill pill-gray">Chờ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="additionalJs"></th:block>
+
+</html>

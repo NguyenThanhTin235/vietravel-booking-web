@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="content">
+	<div class="grid-12">
+
+		<div class="col-12">
+			<div class="kpi-row">
+				<div class="card kpi reveal">
+					<div class="kpi-label">Đơn đặt tour hôm nay</div>
+					<div class="kpi-value" data-counter th:attr="data-to=${kpiToday!=null?kpiToday:0}"
+						 th:text="${kpiToday!=null?kpiToday:'0'}">0</div>
+					<div class="kpi-note">Cập nhật theo ngày</div>
+				</div>
+
+				<div class="card kpi reveal">
+					<div class="kpi-label">Đơn chờ xử lý</div>
+					<div class="kpi-value" data-counter th:attr="data-to=${kpiPending!=null?kpiPending:0}"
+						 th:text="${kpiPending!=null?kpiPending:'0'}">0</div>
+					<div class="kpi-note">Trạng thái PENDING</div>
+				</div>
+
+				<div class="card kpi reveal">
+					<div class="kpi-label">Yêu cầu hủy</div>
+					<div class="kpi-value" data-counter th:attr="data-to=${kpiCancel!=null?kpiCancel:0}"
+						 th:text="${kpiCancel!=null?kpiCancel:'0'}">0</div>
+					<div class="kpi-note">Cần phản hồi</div>
+				</div>
+
+				<div class="card kpi reveal">
+					<div class="kpi-label">Thắc mắc mới</div>
+					<div class="kpi-value" data-counter th:attr="data-to=${kpiQuestions!=null?kpiQuestions:0}"
+						 th:text="${kpiQuestions!=null?kpiQuestions:'0'}">0</div>
+					<div class="kpi-note">Trong 24 giờ</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-8">
+
+			<div class="card reveal" data-skeleton>
+				<div class="card-head">
+					<div class="card-title">Đặt tour nhanh</div>
+					<div class="card-actions">
+						<a class="btn btn-primary" th:href="@{/staff/bookings/create}">Tạo booking</a>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="placeholder-chart">Form tạo booking sẽ được tích hợp tại đây</div>
+				</div>
+			</div>
+
+			<div class="card mt-16 reveal" data-skeleton>
+				<div class="card-head">
+					<div class="card-title">Đơn đặt tour cần xử lý</div>
+					<div class="card-actions" style="display:flex;gap:10px;align-items:center">
+						<input class="search-input"
+							   style="max-width:240px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:#fff"
+							   data-table-search placeholder="Tìm trong bảng...">
+						<span style="color:var(--muted);font-weight:700;font-size:13px">
+							Hiển thị: <span data-table-count>3</span>
+						</span>
+						<a class="btn btn-ghost" th:href="@{/staff/bookings/process}">Xem tất cả</a>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="table-wrap">
+						<table class="table" data-table>
+							<thead>
+							<tr>
+								<th>Mã</th>
+								<th>Khách hàng</th>
+								<th>Tour</th>
+								<th>Ngày</th>
+								<th>Trạng thái</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr class="reveal">
+								<td>#STF001</td>
+								<td>Nguyễn Văn A</td>
+								<td>Đà Nẵng 3N2Đ</td>
+								<td>30/01/2026</td>
+								<td><span class="badge badge-pending">Chờ xử lý</span></td>
+							</tr>
+							<tr class="reveal">
+								<td>#STF002</td>
+								<td>Trần Thị B</td>
+								<td>Phú Quốc 4N3Đ</td>
+								<td>30/01/2026</td>
+								<td><span class="badge badge-confirmed">Đã xác nhận</span></td>
+							</tr>
+							<tr class="reveal">
+								<td>#STF003</td>
+								<td>Lê Văn C</td>
+								<td>Đà Lạt 2N1Đ</td>
+								<td>30/01/2026</td>
+								<td><span class="badge badge-canceled">Yêu cầu hủy</span></td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="col-4">
+			<div class="card reveal" data-skeleton>
+				<div class="card-head">
+					<div class="card-title">Thắc mắc mới</div>
+					<div class="card-actions">
+						<a class="btn btn-ghost" th:href="@{/staff/inquiries}">Xem tất cả</a>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="list">
+						<div class="list-item reveal">
+							<div class="thumb"></div>
+							<div class="li-main">
+								<div class="li-title">Hỏi về lịch khởi hành</div>
+								<div class="li-sub">Khách: Nguyễn M</div>
+							</div>
+							<span class="pill">Mới</span>
+						</div>
+
+						<div class="list-item reveal">
+							<div class="thumb"></div>
+							<div class="li-main">
+								<div class="li-title">Yêu cầu đổi ngày</div>
+								<div class="li-sub">Khách: Trần T</div>
+							</div>
+							<span class="pill pill-blue">Đang xử lý</span>
+						</div>
+
+						<div class="list-item reveal">
+							<div class="thumb"></div>
+							<div class="li-main">
+								<div class="li-title">Hỏi về hoàn tiền</div>
+								<div class="li-sub">Khách: Lê K</div>
+							</div>
+							<span class="pill pill-gray">Chưa phản hồi</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="card mt-16 reveal" data-skeleton>
+				<div class="card-head">
+					<div class="card-title">Ghi chú công việc</div>
+				</div>
+				<div class="card-body">
+					<div class="list">
+						<div class="list-item reveal">
+							<div class="li-main">
+								<div class="li-title">Gọi xác nhận #STF001</div>
+								<div class="li-sub">Trước 17:00 hôm nay</div>
+							</div>
+							<span class="pill">Ưu tiên</span>
+						</div>
+						<div class="list-item reveal">
+							<div class="li-main">
+								<div class="li-title">Gửi báo giá tour</div>
+								<div class="li-sub">Khách: Trần T</div>
+							</div>
+							<span class="pill pill-blue">Cần gửi</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+</body>
+</html>

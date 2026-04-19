@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/staff :: layout(
+      pageTitle='Yêu cầu hủy tour',
+      activeMenu='bookings',
+      activeSubMenu='cancel-requests',
+      content=~{::content},
+      additionalJs=~{::additionalJs}
+)}">
+
+<th:block th:fragment="content">
+    <div class="card">
+        <div class="card-head">
+            <div class="card-title">Danh sách yêu cầu hủy</div>
+            <div class="card-actions">
+                <a class="btn btn-ghost" th:href="@{/staff/bookings/process}">Quay lại đặt tour</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Mã</th>
+                        <th>Khách hàng</th>
+                        <th>Tour</th>
+                        <th>Lý do</th>
+                        <th>Thời gian</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="reveal">
+                        <td>#STF021</td>
+                        <td>Nguyễn Văn A</td>
+                        <td>Đà Nẵng 3N2Đ</td>
+                        <td>Bận lịch đột xuất</td>
+                        <td>30/01/2026</td>
+                        <td><span class="badge badge-pending">Chờ duyệt</span></td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="btn btn-ghost" type="button">Duyệt</button>
+                                <button class="btn btn-ghost" type="button">Từ chối</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="reveal">
+                        <td>#STF022</td>
+                        <td>Trần Thị B</td>
+                        <td>Phú Quốc 4N3Đ</td>
+                        <td>Vấn đề sức khỏe</td>
+                        <td>30/01/2026</td>
+                        <td><span class="badge badge-pending">Chờ duyệt</span></td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="btn btn-ghost" type="button">Duyệt</button>
+                                <button class="btn btn-ghost" type="button">Từ chối</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="reveal">
+                        <td>#STF023</td>
+                        <td>Lê Văn C</td>
+                        <td>Đà Lạt 2N1Đ</td>
+                        <td>Không sắp xếp được thời gian</td>
+                        <td>29/01/2026</td>
+                        <td><span class="badge badge-confirmed">Đã duyệt</span></td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="btn btn-ghost" type="button">Chi tiết</button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="additionalJs"></th:block>
+
+</html>
