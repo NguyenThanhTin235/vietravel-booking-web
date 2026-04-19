@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+
+    <style>
+        .au-wrap{padding:6px 0 18px}
+        .au-card{background:#fff;border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);padding:20px}
+        .au-head{display:flex;gap:20px;align-items:center;flex-wrap:wrap;border-bottom:1px dashed var(--border);padding-bottom:16px;margin-bottom:16px}
+        .au-avatar{width:108px;height:108px;border-radius:50%;border:2px solid #e5e7eb;overflow:hidden;background:#f3f4f6;display:flex;align-items:center;justify-content:center}
+        .au-avatar img{width:100%;height:100%;object-fit:cover;display:none}
+        .au-avatar-fallback{font-weight:900;color:#94a3b8;font-size:12px;text-transform:uppercase}
+        .au-meta{display:flex;flex-direction:column;gap:6px}
+        .au-meta h2{margin:0;font-size:20px;font-weight:900}
+        .au-email{color:var(--muted);font-weight:700;font-size:13px}
+        .au-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+        .au-btn{background:var(--primary);color:#fff;border:0;border-radius:999px;padding:8px 14px;font-weight:800;font-size:12px;cursor:pointer}
+        .au-btn:hover{background:var(--primary2)}
+        .au-btn:disabled{opacity:.6;cursor:not-allowed}
+        .au-btn-ghost{border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 14px;font-weight:800;font-size:12px;cursor:pointer}
+        .au-hint{font-size:12px;color:var(--muted)}
+
+        .au-form{display:flex;flex-direction:column;gap:14px}
+        .au-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+        .au-field{display:flex;flex-direction:column;gap:6px}
+        .au-field label{font-weight:800;font-size:12px}
+        .au-input{border:1px solid var(--border);border-radius:12px;padding:10px 12px;font-size:14px;outline:none}
+        .au-input:focus{border-color:var(--primary)}
+        select.au-input{background:#fff}
+        .au-actions-row{display:flex;justify-content:flex-end;margin-top:6px;gap:8px}
+
+        @media(max-width:760px){
+            .au-grid{grid-template-columns:1fr}
+            .au-head{flex-direction:column;align-items:flex-start}
+        }
+    </style>
+
+    <div class="tl-page">
+
+        <nav class="tl-breadcrumb">
+            <a href="/admin">Trang chủ</a>
+            <span class="sep">/</span>
+            <a href="/admin/users">Người dùng</a>
+            <span class="sep">/</span>
+            <span class="current" th:text="${mode=='createStaff'?'Thêm nhân viên':'Cập nhật'}">Cập nhật</span>
+        </nav>
+
+        <div class="card reveal tl-card">
+            <div class="tl-wrap" data-page="admin-users-form" th:attr="data-mode=${mode}">
+
+                <div class="tl-head">
+                    <div class="tl-title">
+                        <h2 id="title" th:text="${mode=='createStaff'?'Thêm nhân viên':'Cập nhật người dùng'}">Người dùng</h2>
+                    </div>
+                    <a class="tl-btn" href="/admin/users">Quay lại</a>
+                </div>
+
+                <div id="err" style="display:none;padding:10px 12px;border-radius:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);color:#b42318;font-weight:900"></div>
+
+                <div class="au-wrap">
+                    <div class="au-card">
+                        <div class="au-head" th:if="${mode!='createStaff'}">
+                            <div class="au-avatar">
+                                <img id="avatarImg" alt="avatar">
+                                <div class="au-avatar-fallback" id="avatarFallback">No Avatar</div>
+                            </div>
+
+                            <div class="au-meta">
+                                <h2>Avatar</h2>
+                                <div class="au-hint" id="avatarHint"></div>
+                                <div class="au-actions">
+                                    <label class="au-btn-ghost" for="avatarFile">Chọn ảnh</label>
+                                    <input id="avatarFile" type="file" accept="image/*" hidden>
+                                    <button class="au-btn-ghost" type="button" id="btnClearAvatar">Xóa</button>
+                                    <input id="avatar" type="hidden">
+                                </div>
+                            </div>
+                        </div>
+
+                        <form id="form" class="au-form">
+                    <input type="hidden" id="id" th:value="${userId!=null?userId:''}">
+
+                    <div class="au-grid">
+                        <div class="au-field">
+                            <label>Email</label>
+                            <input id="email" class="au-input" placeholder="email@domain.com" required>
+                        </div>
+
+                        <div class="au-field">
+                            <label th:text="${mode=='createStaff'?'Mật khẩu':'Role'}">Vai trò</label>
+
+                            <input id="password" class="au-input" type="password" placeholder="Mật khẩu..." th:if="${mode=='createStaff'}" required>
+
+                            <select id="role" class="au-input" th:if="${mode!='createStaff'}" disabled>
+                                <option value="CUSTOMER">Khách hàng</option>
+                                <option value="STAFF">Nhân viên</option>
+                                <option value="ADMIN">Quản trị viên</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="au-grid">
+                        <div class="au-field">
+                            <label>Họ tên</label>
+                            <input id="fullName" class="au-input" placeholder="Nguyễn Văn A" required>
+                        </div>
+
+                        <div class="au-field">
+                            <label>Số điện thoại</label>
+                            <input id="phone" class="au-input" placeholder="0xxxxxxxxx">
+                        </div>
+                    </div>
+
+                    <div class="au-grid" th:if="${mode!='createStaff'}">
+                        <div class="au-field">
+                            <label>Giới tính</label>
+                            <select id="gender" class="au-input">
+                                <option value="">--</option>
+                                <option value="MALE">Nam</option>
+                                <option value="FEMALE">Nữ</option>
+                                <option value="OTHER">Khác</option>
+                            </select>
+                        </div>
+
+                        <div class="au-field">
+                            <label>Ngày sinh</label>
+                            <input id="dob" class="au-input" type="date">
+                        </div>
+                    </div>
+
+                    <div class="au-field" th:if="${mode!='createStaff'}">
+                        <label>Địa chỉ</label>
+                        <input id="address" class="au-input" placeholder="Số nhà, đường, quận/huyện...">
+                    </div>
+
+                    <div class="au-grid" th:if="${mode!='createStaff'}">
+                        <div class="au-field">
+                            <label>Trạng thái</label>
+                            <select id="status" class="au-input">
+                                <option value="PENDING">Chưa xác thực</option>
+                                <option value="ACTIVE">Đang hoạt động</option>
+                                <option value="LOCKED">Bị khóa</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="au-actions-row">
+                        <button type="button" id="btnToggleLock" class="tl-btn danger" style="display:none">Khóa/Mở khóa</button>
+                        <button type="submit" class="au-btn">Lưu</button>
+                    </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div id="tlToastWrap" class="tl-toastWrap"></div>
+
+    <div id="tlModal" class="tl-modalBackdrop">
+        <div class="tl-modal">
+            <div class="tl-modalHead">
+                <h3 id="tlModalTitle">Xác nhận</h3>
+                <button id="tlModalClose" class="tl-btn sm">Đóng</button>
+            </div>
+            <div id="tlModalBody" class="tl-modalBody"></div>
+            <div class="tl-modalFoot">
+                <button id="tlModalCancel" class="tl-btn">Hủy</button>
+                <button id="tlModalOk" class="tl-btn primary">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

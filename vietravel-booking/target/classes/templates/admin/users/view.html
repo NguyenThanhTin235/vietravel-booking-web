@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<style>
+    /* Avatar trên cùng, căn giữa */
+    .tl-avatarTop {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0 30px;
+    }
+
+    /* Khung avatar hình tròn */
+    .tl-avatarPreview {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: #f3f4f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid #e5e7eb;
+    }
+
+    /* Ảnh avatar */
+    .tl-avatarPreview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: none;
+    }
+
+    /* Fallback khi không có avatar */
+    .tl-avatarFallback {
+        color: #9ca3af;
+        font-size: 14px;
+        text-align: center;
+    }
+</style>
+
+<body>
+<div th:fragment="content">
+
+    <div class="tl-page">
+
+        <nav class="tl-breadcrumb">
+            <a href="/admin">Trang chủ</a>
+            <span class="sep">/</span>
+            <a href="/admin/users">Người dùng</a>
+            <span class="sep">/</span>
+            <span class="current">Chi tiết</span>
+        </nav>
+
+        <div class="card reveal tl-card">
+            <div class="tl-wrap" data-page="admin-users-view">
+                <input type="hidden" id="id" th:value="${userId!=null?userId:''}">
+
+                <div class="tl-head">
+                    <div class="tl-title">
+                        <h2>Chi tiết người dùng</h2>
+                    </div>
+
+                    <span class="tl-btnRow">
+                        <a class="tl-btn" href="/admin/users">Quay lại</a>
+                        <a class="tl-btn primary" id="btnGoEdit" href="#">Sửa</a>
+                    </span>
+                </div>
+
+                <!-- AVATAR TRÊN CÙNG -->
+                <div class="tl-avatarTop">
+                    <div class="tl-avatarPreview" id="avatarPreview">
+                        <img id="avatarImg" alt="avatar">
+                        <div class="tl-avatarFallback" id="avatarFallback">No Avatar</div>
+                    </div>
+                </div>
+
+                <div id="err" style="display:none;padding:10px 12px;border-radius:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);color:#b42318;font-weight:900"></div>
+
+                <form class="tl-form" onsubmit="return false">
+
+                    <div class="tl-grid2">
+                        <div class="tl-field">
+                            <label>Email</label>
+                            <input id="email" class="input" readonly>
+                        </div>
+
+                        <div class="tl-field">
+                            <label>Role</label>
+                            <select id="role" class="input" disabled>
+                                <option value="CUSTOMER">Khách hàng</option>
+                                <option value="STAFF">Nhân viên</option>
+                                <option value="ADMIN">Quản trị viên</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="tl-grid2">
+                        <div class="tl-field">
+                            <label>Họ tên</label>
+                            <input id="fullName" class="input" readonly>
+                        </div>
+
+                        <div class="tl-field">
+                            <label>Số điện thoại</label>
+                            <input id="phone" class="input" readonly>
+                        </div>
+                    </div>
+
+                    <div class="tl-grid2">
+                        <div class="tl-field">
+                            <label>Giới tính</label>
+                            <select id="gender" class="input" disabled>
+                                <option value="">--</option>
+                                <option value="MALE">Nam</option>
+                                <option value="FEMALE">Nữ</option>
+                                <option value="OTHER">Khác</option>
+                            </select>
+                        </div>
+
+                        <div class="tl-field">
+                            <label>Ngày sinh</label>
+                            <input id="dob" class="input" type="date" readonly>
+                        </div>
+                    </div>
+
+                    <div class="tl-field">
+                        <label>Địa chỉ</label>
+                        <input id="address" class="input" readonly>
+                    </div>
+
+                    <div class="tl-field">
+                        <label>Trạng thái</label>
+                        <select id="status" class="input" disabled>
+                            <option value="PENDING">Chưa xác thực</option>
+                            <option value="ACTIVE">Đang hoạt động</option>
+                            <option value="LOCKED">Bị khóa</option>
+                        </select>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+</body>
+</html>

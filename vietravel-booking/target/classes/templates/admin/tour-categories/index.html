@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <div class="tc-page">
+        <nav class="tc-breadcrumb">
+            <a href="/admin">Quản lý Tour</a>
+            <span class="sep">/</span>
+            <span class="current">Danh mục tour</span>
+        </nav>
+
+        <div class="card reveal tc-card">
+            <div class="tc-wrap" data-page="tour-categories-list">
+                <div class="tc-head">
+                    <div class="tc-title">
+                        <h2>Quản lý danh mục tour</h2>
+                    </div>
+
+                    <div class="tc-actions">
+                        <label class="tc-chip">
+                            <input id="onlyActive" type="checkbox" checked>
+                            Chỉ hiển thị đang hoạt động
+                        </label>
+                        <a class="tc-btn primary" href="/admin/tour-categories/create">+ Thêm danh mục</a>
+                    </div>
+                </div>
+
+                <div class="tc-bar">
+                    <div class="tc-search">
+                        <input id="q" class="input" placeholder="Tìm theo tên hoặc slug...">
+                        <button id="btnReload" class="tc-btn">Tải lại</button>
+                    </div>
+                    <div id="msg" class="tc-hint"></div>
+                </div>
+
+                <div class="tc-tableWrap">
+                    <table class="tc-table">
+                        <thead>
+                        <tr>
+                            <th style="width:80px">ID</th>
+                            <th style="min-width:260px">Tên</th>
+                            <th style="min-width:220px">Danh mục cha</th>
+                            <th style="min-width:220px">Slug</th>
+                            <th style="width:140px">Trạng thái</th>
+                            <th style="width:100px">Sắp xếp</th>
+                            <th style="width:220px" class="tc-right">Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody id="rows">
+                        <tr class="tc-skeleton">
+                            <td colspan="7"><div class="tc-skel" style="height:14px;width:55%"></div></td>
+                        </tr>
+                        <tr class="tc-skeleton">
+                            <td colspan="7"><div class="tc-skel" style="height:14px;width:75%"></div></td>
+                        </tr>
+                        <tr class="tc-skeleton">
+                            <td colspan="7"><div class="tc-skel" style="height:14px;width:65%"></div></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tc-pager">
+                    <div class="tc-pagerLeft">
+                        <span class="tc-hint" id="pageInfo"></span>
+                    </div>
+
+                    <div class="tc-pagerRight">
+                        <button class="tc-btn sm" id="btnPrev">‹ Trước</button>
+                        <div class="tc-pageNums" id="pageNums"></div>
+                        <button class="tc-btn sm" id="btnNext">Sau ›</button>
+
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <div id="tcToastWrap" class="tc-toastWrap"></div>
+
+    <div id="tcModal" class="tc-modalBackdrop">
+        <div class="tc-modal">
+            <div class="tc-modalHead">
+                <h3 id="tcModalTitle">Xác nhận</h3>
+                <button id="tcModalClose" class="tc-btn sm">Đóng</button>
+            </div>
+            <div id="tcModalBody" class="tc-modalBody"></div>
+            <div class="tc-modalFoot">
+                <button id="tcModalCancel" class="tc-btn">Hủy</button>
+                <button id="tcModalOk" class="tc-btn danger">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

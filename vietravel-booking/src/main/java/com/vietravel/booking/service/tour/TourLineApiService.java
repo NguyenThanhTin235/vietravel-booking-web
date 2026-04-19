@@ -1,7 +1,7 @@
 package com.vietravel.booking.service.tour;
 
 import com.vietravel.booking.domain.entity.tour.TourLine;
-import com.vietravel.booking.repository.tour.TourLineRepository;
+import com.vietravel.booking.domain.repository.tour.TourLineRepository;
 import com.vietravel.booking.web.dto.tour.TourLineResponse;
 import com.vietravel.booking.web.dto.tour.TourLineUpsertRequest;
 import org.springframework.http.HttpStatus;

@@ -20,8 +20,36 @@
         <div class="topbar-right">
             <button class="chip" type="button" id="currencyBtn">USD</button>
             <a class="nav-link muted" href="#">Help</a>
-            <a class="nav-link" th:href="@{/auth/register}">Sign up</a>
-            <a class="btn-outline" th:href="@{/auth/login}">Log in</a>
+
+            <th:block th:unless="${currentUser}">
+                <a class="nav-link" th:href="@{/auth/register}">Sign up</a>
+                <a class="btn-outline" th:href="@{/auth/login}">Log in</a>
+            </th:block>
+
+            <div th:if="${currentUser}" class="user-profile-area">
+                <span class="user-name-display"
+                      th:text="${currentUserProfile != null && currentUserProfile.fullName != null ? currentUserProfile.fullName : 'User'}">
+                    User
+                </span>
+
+                <div class="user-avatar-circle">
+                    <img th:src="${currentUserProfile != null && currentUserProfile.avatar != null ? currentUserProfile.avatar : '/images/default-avatar.png'}"
+                         alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+
+                <div class="user-dropdown-menu">
+                    <a href="/profile"><i class="fa-solid fa-user"></i> Hồ sơ cá nhân</a>
+                    <a href="/my-bookings"><i class="fa-solid fa-ticket"></i> Vé đã đặt</a>
+                    <div class="dropdown-divider"></div>
+
+                    <form th:action="@{/logout}" method="post" style="margin: 0;">
+                        <button type="submit" class="logout-btn">
+                            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                        </button>
+                    </form>
+                </div>
+            </div>
+
             <button class="burger" type="button" id="burgerBtn" aria-label="Menu">
                 <i class="fa-solid fa-bars"></i>
             </button>
@@ -36,8 +64,16 @@
         <a href="#">Pages</a>
         <a href="#">Contact</a>
         <div class="mobile-actions">
-            <a th:href="@{/auth/register}">Sign up</a>
-            <a th:href="@{/auth/login}">Log in</a>
+            <th:block th:unless="${currentUser}">
+                <a th:href="@{/auth/register}">Sign up</a>
+                <a th:href="@{/auth/login}">Log in</a>
+            </th:block>
+            <th:block th:if="${currentUser}">
+                <a href="/profile">Hồ sơ cá nhân</a>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" style="background:none; border:none; color:inherit; font:inherit; cursor:pointer;">Đăng xuất</button>
+                </form>
+            </th:block>
         </div>
     </div>
 </header>
