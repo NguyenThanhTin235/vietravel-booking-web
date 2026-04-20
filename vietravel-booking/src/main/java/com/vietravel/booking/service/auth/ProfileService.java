@@ -25,14 +25,22 @@ public class ProfileService {
 
      public ProfileResponse getCurrentProfile() {
           UserAccount user = getCurrentUser();
-          UserProfile profile = userProfileRepository.findById(user.getId()).orElse(null);
+          Long userId = user.getId();
+          if (userId == null) {
+               throw new RuntimeException("Không tìm thấy người dùng");
+          }
+          UserProfile profile = userProfileRepository.findById(userId).orElse(null);
           return toResponse(user, profile);
      }
 
      @Transactional
      public ProfileResponse updateCurrentProfile(ProfileUpdateRequest req) {
           UserAccount user = getCurrentUser();
-          UserProfile profile = userProfileRepository.findById(user.getId()).orElse(null);
+          Long userId = user.getId();
+          if (userId == null) {
+               throw new RuntimeException("Không tìm thấy người dùng");
+          }
+          UserProfile profile = userProfileRepository.findById(userId).orElse(null);
           if (profile == null) {
                profile = new UserProfile();
                profile.setUser(user);

@@ -47,7 +47,8 @@ public class GlobalControllerAdvice {
           }
 
           if (user != null) {
-               UserProfile profile = userProfileRepository.findById(user.getId()).orElse(null);
+               Long userId = user.getId();
+               UserProfile profile = userId != null ? userProfileRepository.findById(userId).orElse(null) : null;
                model.addAttribute("currentUser", user);
                model.addAttribute("currentUserProfile", profile);
 

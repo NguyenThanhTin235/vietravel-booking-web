@@ -137,7 +137,7 @@ public class AuthService {
     }
 
     public void sendForgotPasswordOtp(String email) {
-        var user = userAccountRepository.findByEmail(email)
+        userAccountRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Email này chưa được đăng ký trong hệ thống"));
 
         var code = generate6Digits();

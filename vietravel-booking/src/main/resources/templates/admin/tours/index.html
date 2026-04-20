@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <div class="tour-page" data-page="tours-index">
+        <div class="tour-split">
+            <div class="tour-left">
+                <div class="card tour-list-card">
+                    <div class="tour-list-head">
+                        <div class="tour-search">
+                            <span class="tour-search-ic">⌕</span>
+                            <input id="filterQ" class="tour-search-input" placeholder="Tìm tour, địa điểm, ...">
+                        </div>
+                        <button class="tour-filter-btn" id="btnFilter" type="button">☰</button>
+                    </div>
+
+                    <div class="tour-filter-menu" id="tourFilterMenu">
+                        <div class="tour-filter-field">
+                            <label>Danh mục</label>
+                            <select id="filterCategory" class="input">
+                                <option value="">Tất cả danh mục</option>
+                            </select>
+                        </div>
+                        <div class="tour-filter-field">
+                            <label>Trạng thái</label>
+                            <select id="filterStatus" class="input">
+                                <option value="">Tất cả</option>
+                                <option value="true">Đang hiển thị</option>
+                                <option value="false">Đã ẩn</option>
+                            </select>
+                        </div>
+                        <div class="tour-filter-actions">
+                            <button class="btn" id="btnResetFilter" type="button">Đặt lại</button>
+                            <button class="btn btn-primary" id="btnApplyFilter" type="button">Áp dụng</button>
+                        </div>
+                    </div>
+
+                    <div class="tour-filter-hint" id="tourMsg"></div>
+
+                    <div class="tour-list" id="tourList"></div>
+
+                    <div class="tour-list-foot">
+                        <a class="tour-add-btn" th:href="@{/admin/tours/create}">+ Thêm Tour</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tour-center">
+                <div class="card tour-detail-card">
+                    <div class="card-head">
+                        <div class="card-title">Chi tiết tour</div>
+                    </div>
+                    <div class="card-body">
+                        <div id="tourDetailMain" class="tour-detail-empty">
+                            Chọn một tour để xem chi tiết
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tour-right">
+                <div class="card tour-schedule-card">
+                    <div class="card-head">
+                        <div class="card-title">Lịch trình</div>
+                    </div>
+                    <div class="card-body">
+                        <div id="tourDetailSchedule" class="tour-detail-empty">
+                            Chọn tour để xem lịch trình
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tourToastWrap" class="tour-toastWrap"></div>
+
+    </div>
+</div>
+</body>
+</html>
