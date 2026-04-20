@@ -154,6 +154,8 @@ CREATE TABLE tours(
 
   start_location_id BIGINT NULL, -- điểm khởi hành (VD: Hà Nội/TP.HCM) -> destination (CITY)
 
+  base_price DECIMAL(12,2) NULL,
+
   summary TEXT NULL,
   overview_html MEDIUMTEXT NULL,
   additional_info_html MEDIUMTEXT NULL,

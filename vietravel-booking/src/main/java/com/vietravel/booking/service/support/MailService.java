@@ -5,24 +5,29 @@ import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.lang.NonNull;
+
+import java.util.Objects;
 
 @Service
-public class MailService{
+public class MailService {
 
     private final JavaMailSender mailSender;
 
-    public MailService(JavaMailSender mailSender){
+    public MailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
 
-    public void sendVerifyCode(String toEmail, String otp){
+    public void sendVerifyCode(@NonNull String toEmail, @NonNull String otp) {
+        Objects.requireNonNull(toEmail, "toEmail");
+        Objects.requireNonNull(otp, "otp");
         String subject = "[Vietravel Booking] Mã OTP xác thực tài khoản";
 
         String content = """
                 <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
                     <h2 style="color: #0d6efd;">Xin chào,</h2>
 
-                    <p>Cảm ơn bạn đã đăng ký tài khoản tại 
+                    <p>Cảm ơn bạn đã đăng ký tài khoản tại
                         <strong>Vietravel Booking</strong>.
                     </p>
 
@@ -58,8 +63,15 @@ public class MailService{
         sendHtmlMail(toEmail, subject, content, "Vietravel Booking");
     }
 
-    private void sendHtmlMail(String to, String subject, String htmlContent, String fromName){
-        try{
+    private void sendHtmlMail(@NonNull String to,
+            @NonNull String subject,
+            @NonNull String htmlContent,
+            @NonNull String fromName) {
+        Objects.requireNonNull(to, "to");
+        Objects.requireNonNull(subject, "subject");
+        Objects.requireNonNull(htmlContent, "htmlContent");
+        Objects.requireNonNull(fromName, "fromName");
+        try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
@@ -69,7 +81,7 @@ public class MailService{
             helper.setFrom("no-reply@vietravel-booking.com", fromName);
 
             mailSender.send(message);
-        }catch (MessagingException | java.io.UnsupportedEncodingException e){
+        } catch (MessagingException | java.io.UnsupportedEncodingException e) {
             throw new RuntimeException("Không thể gửi email xác thực", e);
         }
     }

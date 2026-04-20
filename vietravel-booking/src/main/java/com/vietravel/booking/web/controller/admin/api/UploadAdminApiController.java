@@ -8,24 +8,38 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/admin/uploads")
-public class UploadAdminApiController{
+public class UploadAdminApiController {
 
     private final CloudinaryService cloudinaryService;
 
-    public UploadAdminApiController(CloudinaryService cloudinaryService){
-        this.cloudinaryService=cloudinaryService;
+    public UploadAdminApiController(CloudinaryService cloudinaryService) {
+        this.cloudinaryService = cloudinaryService;
     }
 
-    @PostMapping(value="/users/{userId}/avatar",consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/users/{userId}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CloudinaryUploadResponse uploadUserAvatar(
             @PathVariable Long userId,
-            @RequestPart("file") MultipartFile file
-    ){
-        if(file==null||file.isEmpty()) throw new RuntimeException("Vui lòng chọn file");
+            @RequestPart("file") MultipartFile file) {
+        if (file == null || file.isEmpty())
+            throw new RuntimeException("Vui lòng chọn file");
 
-        String url=cloudinaryService.uploadUserAvatar(userId,file);
+        String url = cloudinaryService.uploadUserAvatar(userId, file);
 
-        CloudinaryUploadResponse res=new CloudinaryUploadResponse();
+        CloudinaryUploadResponse res = new CloudinaryUploadResponse();
+        res.setUrl(url);
+        return res;
+    }
+
+    @PostMapping(value = "/tours/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public CloudinaryUploadResponse uploadTourImage(
+            @RequestPart("file") MultipartFile file,
+            @RequestParam(value = "name", required = false) String name) {
+        if (file == null || file.isEmpty())
+            throw new RuntimeException("Vui lòng chọn file");
+
+        String url = cloudinaryService.uploadTourImage(name, file);
+
+        CloudinaryUploadResponse res = new CloudinaryUploadResponse();
         res.setUrl(url);
         return res;
     }
