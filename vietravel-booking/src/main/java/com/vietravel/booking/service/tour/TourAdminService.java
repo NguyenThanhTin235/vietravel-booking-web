@@ -98,7 +98,7 @@ public class TourAdminService {
 
           String code = norm(req.getCode());
           if (code == null)
-               code = genCode(req.getTitle());
+               code = genCode(req);
           if (id == null) {
                if (tourRepository.existsByCode(code))
                     throw new ResponseStatusException(HttpStatus.CONFLICT, "Mã tour đã tồn tại");
@@ -122,7 +122,7 @@ public class TourAdminService {
      private void apply(Tour t, TourUpsertRequest req) {
           String code = norm(req.getCode());
           if (code == null)
-               code = genCode(req.getTitle());
+               code = genCode(req);
           String slug = norm(req.getSlug());
           if (slug == null)
                slug = slugify(req.getTitle());
@@ -328,12 +328,30 @@ public class TourAdminService {
           return ids.stream().filter(Objects::nonNull).toList();
      }
 
-     private String genCode(String title) {
-          String slug = slugify(title);
-          String prefix = buildPrefix(slug);
+     private String genCode(TourUpsertRequest req) {
+          String slug = slugify(req.getTitle());
+          String prefix = buildPrefixFromCategories(req.getCategoryIds());
+          if (prefix == null)
+               prefix = buildPrefix(slug);
           String loc = buildLocationCode(slug);
           int num = (int) (System.currentTimeMillis() % 9000) + 1000;
           return (prefix + loc + num).toUpperCase();
+     }
+
+     private String buildPrefixFromCategories(List<Long> categoryIds) {
+          List<Long> ids = sanitizeIds(categoryIds);
+          if (ids.isEmpty())
+               return null;
+          List<TourCategory> cats = tourCategoryRepository.findAllById(ids);
+          for (TourCategory c : cats) {
+               String slug = c.getSlug() == null ? "" : c.getSlug().toLowerCase();
+               String name = c.getName() == null ? "" : c.getName().toLowerCase();
+               if (slug.contains("noi-dia") || name.contains("trong nuoc"))
+                    return "ND";
+               if (slug.contains("nuoc-ngoai") || name.contains("ngoai nuoc"))
+                    return "NN";
+          }
+          return null;
      }
 
      private String buildPrefix(String slug) {

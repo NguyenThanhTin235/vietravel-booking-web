@@ -44,4 +44,11 @@ public class ProfileApiController {
           res.setSecureUrl(url);
           return res;
      }
+
+     @DeleteMapping("/avatar")
+     public void deleteAvatar() {
+          ProfileUpdateRequest req = new ProfileUpdateRequest();
+          req.setAvatar(null);
+          profileService.updateCurrentProfile(req);
+     }
 }
