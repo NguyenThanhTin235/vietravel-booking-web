@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <div class="departure-page" data-page="departures-index">
+        <div class="departure-head">
+            <div class="departure-filter">
+                <label for="depTourSelect">Chọn tour</label>
+                <select id="depTourSelect" class="input"></select>
+            </div>
+            <div class="departure-month">
+                <button class="btn btn-ghost" type="button" id="btnPrevMonth">‹</button>
+                <div class="departure-month-label" id="depMonthLabel">Tháng</div>
+                <button class="btn btn-ghost" type="button" id="btnNextMonth">›</button>
+            </div>
+            <button class="btn btn-primary" type="button" id="btnAddDeparture">+ Thêm ngày khởi hành</button>
+        </div>
+
+        <div class="departure-body">
+            <div class="card departure-calendar-card">
+                <div class="card-head">
+                    <div class="card-title">Lịch khởi hành theo tháng</div>
+                    <div class="departure-legend">
+                        <span class="legend-item"><span class="legend-dot"></span>Đang mở</span>
+                        <span class="legend-item"><span class="legend-dot legend-closed"></span>Đã đóng</span>
+                        <span class="legend-item"><span class="legend-dot legend-completed"></span>Đã hoàn thành</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="departure-calendar" id="depCalendar">
+                        <div class="departure-weekdays">
+                            <div>CN</div><div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div>
+                        </div>
+                        <div class="departure-grid" id="depCalendarGrid"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card departure-detail-card">
+                <div class="card-head">
+                    <div class="card-title">Chi tiết ngày khởi hành</div>
+                </div>
+                <div class="card-body">
+                    <div id="depDetailEmpty" class="departure-empty">
+                        <div class="departure-empty-media">
+                            <img id="depEmptyThumb" alt="Ảnh tour">
+                        </div>
+                        <div class="departure-empty-title" id="depEmptyTitle"></div>
+                        <div class="departure-empty-sub" id="depEmptySub"></div>
+                    </div>
+
+                    <div id="depDetail" class="departure-detail" hidden>
+                        <div class="departure-detail-thumb">
+                            <img id="depDetailThumb" alt="Ảnh tour">
+                        </div>
+                        <div class="departure-meta">
+                            <div class="departure-meta-title" id="depDetailTitle"></div>
+                            <div class="departure-meta-sub" id="depDetailSub"></div>
+                            <div class="departure-meta-badges" id="depDetailBadges"></div>
+                        </div>
+
+                        <form id="depForm" class="departure-form">
+                            <input type="hidden" id="depId">
+                            <div class="field">
+                                <label>Ngày khởi hành</label>
+                                <input class="input" type="date" id="depStartDate" required>
+                            </div>
+                            <div class="field">
+                                <label>Điểm khởi hành</label>
+                                <select class="input" id="depStartLocation" required></select>
+                            </div>
+                            <div class="grid-2">
+                                <div class="field">
+                                    <label>Giá cơ bản (người lớn)</label>
+                                    <input class="input" type="number" min="0" step="1000" id="depPriceAdult" required>
+                                </div>
+                                <div class="field">
+                                    <label>Giá trẻ em</label>
+                                    <input class="input" type="number" min="0" step="1000" id="depPriceChild" required>
+                                </div>
+                            </div>
+                            <div class="grid-2">
+                                <div class="field">
+                                    <label>Tổng số chỗ</label>
+                                    <input class="input" type="number" min="1" step="1" id="depCapacity" required>
+                                </div>
+                                <div class="field">
+                                    <label>Chỗ còn lại</label>
+                                    <input class="input" type="number" min="0" step="1" id="depAvailable" readonly>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label>Trạng thái</label>
+                                <select class="input" id="depStatus">
+                                    <option value="OPEN">Đang mở</option>
+                                    <option value="CLOSED">Đã đóng</option>
+                                </select>
+                            </div>
+                            <div class="departure-form-actions">
+                                <button class="btn" type="button" id="btnResetForm">Làm mới</button>
+                                <button class="btn" type="button" id="btnDeleteDeparture">Hủy ngày khởi hành</button>
+                                <button class="btn btn-primary" type="submit" id="btnSaveDeparture">Lưu</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
