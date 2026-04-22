@@ -9,21 +9,62 @@
         </a>
 
         <nav class="nav">
-            <a class="nav-link" th:classappend="${active}=='home'?' is-active':''" th:href="@{/}">Home</a>
-            <a class="nav-link" th:classappend="${active}=='tour'?' is-active':''" href="#">Tour</a>
-            <a class="nav-link" th:classappend="${active}=='destination'?' is-active':''" href="#">Destination</a>
-            <a class="nav-link" th:classappend="${active}=='activities'?' is-active':''" href="#">Activities</a>
-            <a class="nav-link" th:classappend="${active}=='pages'?' is-active':''" href="#">Pages</a>
-            <a class="nav-link" th:classappend="${active}=='contact'?' is-active':''" href="#">Contact</a>
+            <a class="nav-link"
+               th:classappend="${active}=='destination'?' is-active':''"
+               href="#"
+               data-destination-trigger
+               aria-haspopup="true"
+               aria-expanded="false">Điểm đến</a>
+            <a class="nav-link" th:classappend="${active}=='promotion'?' is-active':''" href="#">Khuyến mãi</a>
+            <a class="nav-link" th:classappend="${active}=='news'?' is-active':''" href="#">Tin tức</a>
+            <a class="nav-link" th:classappend="${active}=='contact'?' is-active':''" href="#">Liên hệ</a>
         </nav>
 
-        <div class="topbar-right">
-            <button class="chip" type="button" id="currencyBtn">USD</button>
-            <a class="nav-link muted" href="#">Help</a>
+        <div class="nav-mega"
+             id="destinationMenu"
+             data-category-endpoint="/api/admin/tour-categories"
+             data-destination-endpoint="/api/admin/destinations">
+            <style>
+                .nav-mega-layout{display:grid;grid-template-columns:160px 1fr;gap:16px;align-items:start;grid-column:1 / -1}
+                .nav-mega-sidebar{padding-right:6px;border-right:1px solid rgba(229,231,235,.9)}
+                .nav-mega-tabs{display:flex;flex-direction:column;gap:10px}
+                .nav-mega-tab{width:100%;text-align:left;background:transparent;border:0;font-weight:900;font-size:13px;color:#0b1220;cursor:pointer;padding:6px 2px}
+                .nav-mega-tab.is-active{color:var(--primary);text-decoration:underline;text-underline-offset:6px}
+                .nav-mega-content .nav-mega-groups{display:block}
+                .nav-mega-group{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;grid-auto-rows:max-content;align-content:start}
+                .nav-mega-col{display:flex;flex-direction:column;gap:8px;min-width:0;align-self:start}
+                .nav-mega-list{display:flex;flex-direction:column;gap:8px}
+                .nav-mega-list a{display:block;line-height:1.45;white-space:normal;color:#475569}
+                .nav-mega-list a:hover{color:var(--primary)}
+                @media (max-width:980px){.nav-mega-layout{grid-template-columns:1fr}.nav-mega-sidebar{border-right:0}}
+                .nav-mega-title-sm{color:#0f172a}
+            </style>
+            <div class="nav-mega-head">
+                <div class="nav-mega-title">Điểm đến</div>
+                <button class="nav-mega-close" type="button" data-mega-close aria-label="Đóng">×</button>
+            </div>
+            <div class="nav-mega-body">
+                <div class="nav-mega-layout">
+                    <div class="nav-mega-sidebar">
+                        <div class="nav-mega-tabs">
+                            <button class="nav-mega-tab is-active" type="button" data-mega-tab="nuoc-ngoai">NƯỚC NGOÀI</button>
+                            <button class="nav-mega-tab" type="button" data-mega-tab="trong-nuoc">TRONG NƯỚC</button>
+                        </div>
+                    </div>
+                    <div class="nav-mega-content">
+                        <div class="nav-mega-groups">
+                            <div class="nav-mega-group" data-mega-group="nuoc-ngoai"></div>
+                            <div class="nav-mega-group" data-mega-group="trong-nuoc" style="display:none"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="topbar-right">
             <th:block th:unless="${currentUser}">
-                <a class="nav-link" th:href="@{/auth/register}">Sign up</a>
-                <a class="btn-outline" th:href="@{/auth/login}">Log in</a>
+                <a class="nav-link" th:href="@{/auth/register}">Đăng ký</a>
+                <a class="btn-outline" th:href="@{/auth/login}">Đăng nhập</a>
             </th:block>
 
             <div th:if="${currentUser}" class="user-profile-area">
@@ -57,16 +98,14 @@
     </div>
 
     <div class="mobile-nav" id="mobileNav">
-        <a th:href="@{/}">Home</a>
-        <a href="#">Tour</a>
-        <a href="#">Destination</a>
-        <a href="#">Activities</a>
-        <a href="#">Pages</a>
-        <a href="#">Contact</a>
+        <a href="#">Điểm đến</a>
+        <a href="#">Khuyến mãi</a>
+        <a href="#">Tin tức</a>
+        <a href="#">Liên hệ</a>
         <div class="mobile-actions">
             <th:block th:unless="${currentUser}">
-                <a th:href="@{/auth/register}">Sign up</a>
-                <a th:href="@{/auth/login}">Log in</a>
+                <a th:href="@{/auth/register}">Đăng ký</a>
+                <a th:href="@{/auth/login}">Đăng nhập</a>
             </th:block>
             <th:block th:if="${currentUser}">
                 <a href="/profile">Hồ sơ cá nhân</a>

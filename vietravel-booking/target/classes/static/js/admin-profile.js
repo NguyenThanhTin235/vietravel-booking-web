@@ -34,7 +34,6 @@ function setAvatar(url) {
 
 async function api(url, opts) {
      const res = await fetch(url, opts)
-     if (res.status === 204) return null
      if (!res.ok) {
           const ct = res.headers.get("content-type") || ""
           let msg = "Có lỗi xảy ra"
@@ -145,12 +144,7 @@ function bindAvatarUploader() {
      })
 
      if (btnClear) {
-          btnClear.addEventListener("click", async () => {
-               try {
-                    await api("/api/profile/avatar", { method: "DELETE" })
-               } catch (_) {
-                    // ...existing code...
-               }
+          btnClear.addEventListener("click", () => {
                selectedFile = null
                if (fileInp) fileInp.value = ""
                setAvatar("")

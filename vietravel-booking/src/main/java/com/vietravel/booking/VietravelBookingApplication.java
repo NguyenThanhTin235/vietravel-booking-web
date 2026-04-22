@@ -12,12 +12,17 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
@@ -66,6 +71,14 @@ public class VietravelBookingApplication {
             ensureDestination(destinationRepository, category, "Hà Nội", "ha-noi", 1);
             ensureDestination(destinationRepository, category, "Đà Nẵng", "da-nang", 2);
             ensureDestination(destinationRepository, category, "Hồ Chí Minh", "ho-chi-minh", 3);
+        };
+    }
+
+    @Bean
+    CommandLineRunner seedTourCategoryParents(TourCategoryRepository tourCategoryRepository) {
+        return args -> {
+            ensureTourCategory(tourCategoryRepository, "Trong nước", "trong-nuoc", 0);
+            ensureTourCategory(tourCategoryRepository, "Nước ngoài", "nuoc-ngoai", 1);
         };
     }
 
@@ -145,5 +158,47 @@ public class VietravelBookingApplication {
         d.setIsActive(true);
         destinationRepository.save(d);
         log.info("✅ Seeded start location: {}", name);
+    }
+
+    private void ensureTourCategory(
+            TourCategoryRepository repo,
+            String name,
+            String slug,
+            int sortOrder) {
+        if (repo.findBySlug(slug).isPresent()) {
+            return;
+        }
+        TourCategory c = new TourCategory();
+        c.setName(name);
+        c.setSlug(slug);
+        c.setSortOrder(sortOrder);
+        c.setIsActive(true);
+        repo.save(c);
+        log.info("✅ Seeded tour category: {}", name);
+    }
+
+    @Bean
+    @Order(0)
+    SecurityFilterChain publicApiSecurity(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher(
+                        "/api/tour-categories/**",
+                        "/api/tour-lines/**",
+                        "/api/admin/tour-categories/**",
+                        "/api/admin/destinations/**")
+                .csrf(csrf -> csrf.ignoringRequestMatchers(
+                        "/api/tour-categories", "/api/tour-categories/**",
+                        "/api/tour-lines", "/api/tour-lines/**",
+                        "/api/admin/tour-categories", "/api/admin/tour-categories/**",
+                        "/api/admin/destinations", "/api/admin/destinations/**"))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/admin/tour-categories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/tour-categories", "/api/tour-categories/**",
+                                "/api/tour-lines", "/api/tour-lines/**",
+                                "/api/admin/destinations", "/api/admin/destinations/**")
+                        .permitAll()
+                        .anyRequest().authenticated());
+        return http.build();
     }
 }

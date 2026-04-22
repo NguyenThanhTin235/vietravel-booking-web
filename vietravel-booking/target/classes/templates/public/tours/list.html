@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{layout/base :: layout(
+			pageTitle=${pageTitle},
+			activeNav=${activeNav},
+			content=~{::content},
+			additionalJs=~{::additionalJs}
+	  )}">
+
+<th:block th:fragment="content">
+	<section class="tour-search-hero">
+		<div class="container">
+			<div class="tour-breadcrumb">Điểm đến / <span>Du lịch Vietravel</span></div>
+			<h1 class="tour-search-title">DU LỊCH VIETRAVEL</h1>
+		</div>
+	</section>
+
+	<section class="tour-search-wrap">
+		<div class="container">
+			<div class="tour-search-grid">
+				<aside class="tour-filter-card">
+					<div class="filter-title">BỘ LỌC TÌM KIẾM</div>
+					<form id="tourFilterForm" class="tour-filter" th:action="@{/tour/tim-kiem}" method="get">
+						<input type="hidden" name="page" value="1">
+						<input type="hidden" name="q" th:value="${q}">
+						<input type="hidden" name="sort" id="sortInput" th:value="${sort}">
+
+						<div class="filter-block">
+							<div class="filter-label">Ngân sách</div>
+							<input type="hidden" name="minPrice" id="minPrice" th:value="${minPrice}">
+							<input type="hidden" name="maxPrice" id="maxPrice" th:value="${maxPrice}">
+							<div class="filter-btn-grid">
+								<button type="button"
+									th:each="opt : ${budgetOptions}"
+									class="filter-btn"
+									th:classappend="${activeBudget == opt.key} ? ' is-active' : ''"
+									th:attr="data-budget=${opt.key},data-min=${opt.minPrice},data-max=${opt.maxPrice}"
+									th:text="${opt.label}">
+									Dưới 5 triệu
+								</button>
+							</div>
+						</div>
+
+						<div class="filter-block">
+							<div class="filter-label">Danh mục tour</div>
+							<select class="filter-select" name="categoryId">
+								<option value="">Tất cả</option>
+								<option th:each="c : ${tourCategories}"
+										th:value="${c.id}"
+										th:selected="${categoryId != null and categoryId == c.id}"
+										th:text="${c.name}">
+									Danh mục
+								</option>
+							</select>
+						</div>
+
+						<div class="filter-block">
+							<div class="filter-label">Điểm khởi hành</div>
+							<select class="filter-select" name="startLocationId">
+								<option value="">Tất cả</option>
+								<option th:each="d : ${destinations}"
+									th:value="${d.id}"
+									th:selected="${startLocationId != null and startLocationId == d.id}"
+									th:text="${d.name}">
+									Hà Nội
+								</option>
+							</select>
+						</div>
+
+						<div class="filter-block">
+							<div class="filter-label">Điểm đến</div>
+							<select class="filter-select" name="destinationId">
+								<option value="">Tất cả</option>
+								<option th:each="d : ${destinations}"
+									th:value="${d.id}"
+									th:selected="${destinationId != null and destinationId == d.id}"
+									th:text="${d.name}">
+									Đà Nẵng
+								</option>
+							</select>
+						</div>
+
+						<div class="filter-block">
+							<div class="filter-label">Ngày đi</div>
+							<input class="filter-input" type="date" name="date" th:value="${date}">
+						</div>
+
+						<div class="filter-block">
+							<div class="filter-label">Dòng tour</div>
+							<input type="hidden" name="tourLineId" id="tourLineId" th:value="${tourLineId}">
+							<div class="filter-btn-grid">
+								<button type="button"
+									th:each="line : ${tourLines}"
+									class="filter-btn"
+									th:classappend="${tourLineId != null and tourLineId == line.id} ? ' is-active' : ''"
+									th:attr="data-tour-line=${line.id}"
+									th:text="${line.name}">
+									Tiêu chuẩn
+								</button>
+							</div>
+						</div>
+
+						<div class="filter-block">
+							<div class="filter-label">Phương tiện</div>
+							<input type="hidden" name="transportModeId" id="transportModeId" th:value="${transportModeId}">
+							<div class="filter-btn-grid">
+								<button type="button"
+									th:each="m : ${transportModes}"
+									class="filter-btn"
+									th:classappend="${transportModeId != null and transportModeId == m.id} ? ' is-active' : ''"
+									th:attr="data-transport=${m.id}"
+									th:text="${m.name}">
+									Xe
+								</button>
+							</div>
+						</div>
+
+						<div class="filter-actions">
+							<button class="filter-apply" type="submit">Áp dụng</button>
+							<a class="filter-reset" th:href="@{/tour/tim-kiem}">Đặt lại</a>
+						</div>
+					</form>
+				</aside>
+
+				<div class="tour-search-main">
+					<div class="tour-search-head">
+						<div class="tour-count">
+							Chúng tôi tìm thấy <span th:text="${totalElements}">0</span> chương trình tour cho quý khách
+						</div>
+						<div class="tour-sort">
+							<label for="sortSelect">Sắp xếp theo:</label>
+							<select id="sortSelect" name="sort">
+								<option value="nearest" th:selected="${sort == 'nearest'}">Ngày khởi hành gần nhất</option>
+								<option value="newest" th:selected="${sort == 'newest'}">Mới cập nhật</option>
+								<option value="price-asc" th:selected="${sort == 'price-asc'}">Giá tăng dần</option>
+								<option value="price-desc" th:selected="${sort == 'price-desc'}">Giá giảm dần</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="tour-result-list">
+						<div class="tour-empty" th:if="${#lists.isEmpty(tours)}">Chưa có tour phù hợp</div>
+
+						<article class="tour-item" th:each="t : ${tours}">
+							<div class="tour-thumb">
+								<img th:src="${t.thumbnailUrl != null ? t.thumbnailUrl : '/images/login-bg.jpg'}"
+									 alt="Tour">
+									<span class="tour-badge"
+										th:attr="data-line=${#strings.toLowerCase(t.tourLineName != null ? t.tourLineName : 'Tiêu chuẩn')}"
+										th:text="${t.tourLineName != null ? t.tourLineName : 'Tiêu chuẩn'}">Tiêu chuẩn</span>
+							</div>
+							<div class="tour-body">
+								<h3 class="tour-title" th:text="${t.title}">Tour title</h3>
+								<div class="tour-meta">
+									<span><i class="fa-solid fa-ticket"></i> Mã tour: <b th:text="${t.code}">NDH01</b></span>
+									<span><i class="fa-solid fa-location-dot"></i> Khởi hành: <b th:text="${t.startLocationName != null ? t.startLocationName : 'Đang cập nhật'}">Hà Nội</b></span>
+									<span><i class="fa-regular fa-clock"></i> Thời gian: <b th:text="${t.durationDays + 'N' + t.durationNights + 'D'}">2N1D</b></span>
+									<span><i class="fa-solid fa-bus"></i> Phương tiện: <b th:text="${t.transportModeName != null ? t.transportModeName : 'Đang cập nhật'}">Xe</b></span>
+								</div>
+								<div class="tour-dates" th:if="${t.departureDates != null and !t.departureDates.isEmpty()}">
+									<span class="tour-date-label"><i class="fa-regular fa-calendar"></i> Ngày khởi hành:</span>
+									<div class="tour-date-list">
+										<button class="tour-date-nav tour-date-prev" type="button" aria-label="Trước">←</button>
+										<span class="tour-date" th:each="d,iter : ${t.departureDates}"
+											  th:classappend="${iter.index >= 5} ? ' is-hidden' : ''"
+											  th:text="${#temporals.format(d, 'dd/MM')}">05/02</span>
+										<button class="tour-date-nav tour-date-next" type="button">→</button>
+									</div>
+								</div>
+								<div class="tour-bottom">
+									<div class="tour-price">
+										Giá từ:
+										<b th:text="${t.basePrice != null ? (#numbers.formatDecimal(t.basePrice, 0, 'COMMA', 0, 'POINT') + ' đ') : '0 đ'}">3.990.000 đ</b>
+									</div>
+									<a class="tour-btn" th:href="@{'/tour/' + ${t.slug}}">Xem chi tiết</a>
+								</div>
+							</div>
+						</article>
+					</div>
+
+					<nav class="tour-pagination" th:if="${totalPages} > 1">
+						<a class="page-btn"
+						   th:classappend="${currentPage == 1} ? ' is-disabled' : ''"
+						   th:href="@{/tour/tim-kiem(q=${q},categoryId=${categoryId},tourLineId=${tourLineId},startLocationId=${startLocationId},destinationId=${destinationId},transportModeId=${transportModeId},minPrice=${minPrice},maxPrice=${maxPrice},date=${date},sort=${sort},page=${currentPage-1})}">←</a>
+
+						<a class="page-btn"
+						   th:each="p : ${pageNumbers}"
+						   th:classappend="${p == currentPage} ? ' is-active' : ''"
+						   th:href="@{/tour/tim-kiem(q=${q},categoryId=${categoryId},tourLineId=${tourLineId},startLocationId=${startLocationId},destinationId=${destinationId},transportModeId=${transportModeId},minPrice=${minPrice},maxPrice=${maxPrice},date=${date},sort=${sort},page=${p})}"
+						   th:text="${p}">1</a>
+
+						<a class="page-btn"
+						   th:classappend="${currentPage == totalPages} ? ' is-disabled' : ''"
+						   th:href="@{/tour/tim-kiem(q=${q},categoryId=${categoryId},tourLineId=${tourLineId},startLocationId=${startLocationId},destinationId=${destinationId},transportModeId=${transportModeId},minPrice=${minPrice},maxPrice=${maxPrice},date=${date},sort=${sort},page=${currentPage+1})}">→</a>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</section>
+</th:block>
+
+<th:block th:fragment="additionalJs">
+	<script th:src="@{/js/public-tours.js}"></script>
+</th:block>
+
+</html>
