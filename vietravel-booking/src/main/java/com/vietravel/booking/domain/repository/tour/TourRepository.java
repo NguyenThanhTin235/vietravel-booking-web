@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -57,6 +58,17 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
             "tourLine",
             "transportMode",
             "startLocation",
+            "categories",
+            "destinations",
+            "images"
+    })
+    @Query("select t from Tour t where t.slug = :slug")
+    Optional<Tour> findDetailBySlug(@Param("slug") String slug);
+
+    @EntityGraph(attributePaths = {
+            "tourLine",
+            "transportMode",
+            "startLocation",
             "destinations",
             "images"
     })
@@ -91,4 +103,119 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
             @Param("minPrice") BigDecimal minPrice,
             @Param("maxPrice") BigDecimal maxPrice,
             @Param("tourIds") List<Long> tourIds);
+
+    @EntityGraph(attributePaths = {
+            "tourLine",
+            "transportMode",
+            "startLocation",
+            "destinations",
+            "images"
+    })
+    @Query("""
+                    select distinct t
+                    from Tour t
+                    left join t.categories c
+                    left join t.destinations d
+                    where t.isActive = true
+                            and t.id <> :id
+                            and (
+                                            :destinationId is null
+                                            or d.id = :destinationId
+                            )
+                            and (
+                                            :categoryId is null
+                                            or c.id = :categoryId
+                                            or c.parent.id = :categoryId
+                            )
+                    order by t.updatedAt desc, t.id desc
+            """)
+    List<Tour> findRelatedPublic(
+            @Param("id") Long id,
+            @Param("categoryId") Long categoryId,
+            @Param("destinationId") Long destinationId,
+            Pageable pageable);
+
+    @EntityGraph(attributePaths = {
+            "tourLine",
+            "transportMode",
+            "startLocation",
+            "destinations",
+            "images"
+    })
+    @Query("""
+                select distinct t
+                from Tour t
+                left join t.destinations d
+                where t.isActive = true
+                    and t.id <> :id
+                    and (:destinationId is null or d.id = :destinationId)
+                order by t.updatedAt desc, t.id desc
+            """)
+    List<Tour> findRelatedByDestination(
+            @Param("id") Long id,
+            @Param("destinationId") Long destinationId,
+            Pageable pageable);
+
+    @EntityGraph(attributePaths = {
+            "tourLine",
+            "transportMode",
+            "startLocation",
+            "destinations",
+            "images"
+    })
+    @Query("""
+                select distinct t
+                from Tour t
+                left join t.categories c
+                where t.isActive = true
+                    and t.id <> :id
+                    and (
+                        :categoryId is null
+                        or c.id = :categoryId
+                        or c.parent.id = :categoryId
+                    )
+                order by t.updatedAt desc, t.id desc
+            """)
+    List<Tour> findRelatedByCategory(
+            @Param("id") Long id,
+            @Param("categoryId") Long categoryId,
+            Pageable pageable);
+
+    @EntityGraph(attributePaths = {
+            "tourLine",
+            "transportMode",
+            "startLocation",
+            "destinations",
+            "images"
+    })
+    @Query("""
+                select t
+                from Tour t
+                where t.isActive = true
+                    and t.id <> :id
+                    and (:tourLineId is null or t.tourLine.id = :tourLineId)
+                order by t.updatedAt desc, t.id desc
+            """)
+    List<Tour> findRelatedByTourLine(
+            @Param("id") Long id,
+            @Param("tourLineId") Long tourLineId,
+            Pageable pageable);
+
+    @EntityGraph(attributePaths = {
+            "tourLine",
+            "transportMode",
+            "startLocation",
+            "destinations",
+            "images"
+    })
+    @Query("""
+                select t
+                from Tour t
+                where t.isActive = true
+                    and t.id <> :id
+                order by t.updatedAt desc, t.id desc
+            """)
+    List<Tour> findRelatedAll(
+            @Param("id") Long id,
+            Pageable pageable);
 }

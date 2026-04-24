@@ -8,12 +8,15 @@ import com.vietravel.booking.domain.repository.tour.TourCategoryRepository;
 import com.vietravel.booking.domain.repository.tour.TourLineRepository;
 import com.vietravel.booking.domain.repository.tour.TransportModeRepository;
 import com.vietravel.booking.service.tour.TourPublicService;
+import com.vietravel.booking.web.dto.tour.TourCalendarMonth;
+import com.vietravel.booking.web.dto.tour.TourPublicDetailView;
 import com.vietravel.booking.web.dto.tour.TourPublicListItem;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -147,5 +150,41 @@ public class TourController {
      }
 
      private record BudgetOption(String key, String label, BigDecimal minPrice, BigDecimal maxPrice) {
+     }
+
+     @GetMapping("/{slug}")
+     public String detail(@PathVariable("slug") String slug, Model model) {
+          TourPublicDetailView detail = tourPublicService.getDetailBySlug(slug);
+          List<TourCalendarMonth> months = tourPublicService.buildCalendar(detail.getId(), 6);
+          List<TourPublicListItem> related = tourPublicService.relatedToursBySlug(slug, 3);
+
+          model.addAttribute("pageTitle", detail.getTitle());
+          model.addAttribute("activeNav", "destination");
+          model.addAttribute("detail", detail);
+          model.addAttribute("calendarMonths", months);
+          model.addAttribute("relatedTours", related);
+
+          return "public/tours/detail";
+     }
+
+     @GetMapping("/{slug}/dat")
+     public String booking(
+               @PathVariable("slug") String slug,
+               @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+               @RequestParam(value = "adultPrice", required = false) BigDecimal adultPrice,
+               @RequestParam(value = "childPrice", required = false) BigDecimal childPrice,
+               Model model) {
+          TourPublicDetailView detail = tourPublicService.getDetailBySlug(slug);
+          BigDecimal resolvedAdult = adultPrice != null ? adultPrice : detail.getBasePrice();
+          BigDecimal resolvedChild = childPrice != null ? childPrice : null;
+
+          model.addAttribute("pageTitle", "Đặt tour");
+          model.addAttribute("activeNav", "destination");
+          model.addAttribute("detail", detail);
+          model.addAttribute("selectedDate", date);
+          model.addAttribute("adultPrice", resolvedAdult);
+          model.addAttribute("childPrice", resolvedChild);
+
+          return "public/bookings/checkout";
      }
 }

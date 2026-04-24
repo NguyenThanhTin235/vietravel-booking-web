@@ -33,6 +33,8 @@ public interface DepartureRepository extends JpaRepository<Departure, Long> {
   @Query("select distinct d.tour.id from Departure d where d.startDate = :date")
   List<Long> findTourIdsByStartDate(@Param("date") LocalDate date);
 
+  Optional<Departure> findFirstByTourIdAndStartDate(Long tourId, LocalDate startDate);
+
   @EntityGraph(attributePaths = { "tour" })
   @Query("""
       select d
