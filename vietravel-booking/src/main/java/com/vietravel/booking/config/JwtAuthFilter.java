@@ -92,6 +92,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         return path.equals("/")
                 || path.equals("/favicon.ico")
+                || path.startsWith("/payment")
                 || path.startsWith("/auth")
                 || path.startsWith("/css")
                 || path.startsWith("/js")

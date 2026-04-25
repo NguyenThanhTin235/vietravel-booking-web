@@ -74,6 +74,19 @@ app:
   verify:
     code-minutes: 10
 
+  vnpay:
+    tmn-code: "4YUP19I4"
+    hash-secret: "MDUIFDCRAKLNBPOFIAFNEKFRNMFBYEPX"
+    pay-url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+    return-url: "http://localhost:8080/payment/vnpay/return"
+    version: "2.1.0"
+    command: "pay"
+    currency: "VND"
+    locale: "vn"
+    order-type: "other"
+    time-zone: "Asia/Ho_Chi_Minh"
+    expire-minutes: 15
+
   cloudinary:
     cloud-name: dmxxo6wgl
     api-key: 315628768938735

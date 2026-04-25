@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(
+            pageTitle=${pageTitle},
+            activeNav=${activeNav},
+            content=~{::content}
+      )}">
+
+<th:block th:fragment="content">
+    <section class="booking-hero">
+        <div class="container">
+            <a class="booking-back" th:href="@{/profile}">← Quay lại</a>
+            <h1 class="booking-title">TOUR ĐÃ ĐẶT</h1>
+        </div>
+    </section>
+
+    <section class="booking-main">
+        <div class="container">
+            <div th:if="${#lists.isEmpty(bookings)}" class="booking-card">
+                <h2>Chưa có booking</h2>
+                <p style="color: var(--muted); margin: 0;">Bạn chưa đặt tour nào. Hãy khám phá các tour mới nhất.</p>
+                <div style="margin-top: 12px;">
+                    <a class="btn-pay" th:href="@{/tour/tim-kiem}">Tìm tour</a>
+                </div>
+            </div>
+
+            <div th:if="${!#lists.isEmpty(bookings)}" class="booking-grid" style="grid-template-columns:1fr;">
+                <div th:each="b : ${bookings}" class="booking-card">
+                    <div class="summary-head" style="align-items:center;">
+                        <img th:src="${b.departure != null && b.departure.tour != null && !#lists.isEmpty(b.departure.tour.imageUrls) ? b.departure.tour.imageUrls[0] : '/images/login-bg.jpg'}" alt="Tour">
+                        <div>
+                            <b th:text="${b.departure != null && b.departure.tour != null ? b.departure.tour.title : 'Tour'}">Tour</b>
+                            <div class="summary-code">Mã booking: <span th:text="${b.bookingCode}">BK</span></div>
+                            <div class="summary-date" th:if="${b.departure != null && b.departure.startDate != null}">
+                                Ngày khởi hành: <span th:text="${#temporals.format(b.departure.startDate, 'dd/MM/yyyy')}">--/--/----</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-row">
+                        <span>Trạng thái</span>
+                        <b th:text="${b.status}">PENDING</b>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tổng tiền</span>
+                        <b th:text="${#numbers.formatDecimal(b.totalAmount, 0, 'COMMA', 0, 'POINT') + ' đ'}">0 đ</b>
+                    </div>
+                    <div class="summary-row" th:if="${b.departure != null && b.departure.tour != null}">
+                        <span>Tour</span>
+                        <a class="nav-link" th:href="@{'/tour/' + ${b.departure.tour.slug}}">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</th:block>
+
+</html>

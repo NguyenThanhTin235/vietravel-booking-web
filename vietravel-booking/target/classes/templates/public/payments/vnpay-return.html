@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{layout/base :: layout(
+			pageTitle=${pageTitle},
+			activeNav=${activeNav},
+			content=~{::content}
+	  )}">
+
+<th:block th:fragment="content">
+	<section class="container" style="padding: 48px 0;">
+		<div class="card" style="max-width: 680px; margin: 0 auto; padding: 32px;">
+			<h1 style="margin: 0 0 12px;">Kết quả thanh toán</h1>
+			<p th:text="${message}" style="font-size: 18px; margin-bottom: 24px;"></p>
+			<a class="btn btn-primary" th:href="@{/}">Về trang chủ</a>
+		</div>
+	</section>
+</th:block>
+
+</html>
