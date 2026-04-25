@@ -104,6 +104,15 @@ public class BookingService {
           return bookingRepository.save(booking);
      }
 
+     @Transactional(readOnly = true)
+     public List<Booking> getMyBookings() {
+          UserAccount user = getCurrentUser();
+          if (user == null || user.getId() == null) {
+               return List.of();
+          }
+          return bookingRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
+     }
+
      private String generateBookingCode(LocalDate date) {
           String datePart = date != null ? date.format(DateTimeFormatter.BASIC_ISO_DATE) : "";
           String rand = UUID.randomUUID().toString().replace("-", "").substring(0, 6).toUpperCase();

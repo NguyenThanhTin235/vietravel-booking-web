@@ -13,17 +13,17 @@
 			<a class="booking-back" href="javascript:history.back()">← Quay lại</a>
 			<h1 class="booking-title">ĐẶT TOUR</h1>
 			<div class="booking-steps">
-				<div class="booking-step is-active">
+				<div class="booking-step is-active" data-step="info">
 					<div class="step-circle"><i class="fa-solid fa-clipboard-list"></i></div>
 					<div class="step-text">Nhập thông tin</div>
 				</div>
 				<div class="step-arrow">→</div>
-				<div class="booking-step">
+				<div class="booking-step" data-step="payment">
 					<div class="step-circle"><i class="fa-solid fa-credit-card"></i></div>
 					<div class="step-text">Thanh toán</div>
 				</div>
 				<div class="step-arrow">→</div>
-				<div class="booking-step">
+				<div class="booking-step" data-step="done">
 					<div class="step-circle"><i class="fa-solid fa-check"></i></div>
 					<div class="step-text">Hoàn tất</div>
 				</div>
@@ -34,11 +34,33 @@
 	<section class="booking-main" id="bookingRoot"
 			 th:attr="data-adult-price=${adultPrice},data-child-price=${childPrice},data-slug=${detail.slug},data-date=${selectedDate != null ? #temporals.format(selectedDate, 'yyyy-MM-dd') : ''}">
 		<div class="container">
-			<div class="booking-grid">
+			<div class="booking-grid" id="bookingGrid">
 				<div class="booking-left">
-					<div class="booking-card">
-						<h2>Thông tin liên lạc</h2>
-						<div class="booking-form-grid">
+					<div class="booking-result booking-result--success" id="bookingResultSuccess" hidden>
+						<div class="result-icon">✓</div>
+						<div class="result-content">
+							<b>Thanh toán thành công</b>
+							<p id="bookingResultSuccessDesc">Giao dịch đã hoàn tất. Chúng tôi sẽ liên hệ sớm.</p>
+						</div>
+						<div class="result-actions">
+							<a class="btn-outline" th:href="@{/customer/bookings}">Xem tour đã đặt</a>
+						</div>
+					</div>
+
+					<div class="booking-result booking-result--failed" id="bookingResultFailed" hidden>
+						<div class="result-icon">!</div>
+						<div class="result-content">
+							<b>Thanh toán chưa thành công</b>
+							<p>Vui lòng thử lại hoặc chọn phương thức khác.</p>
+						</div>
+						<div class="result-actions">
+							<button class="btn-pay retry-pay" id="retryPayBtn" type="button">Thanh toán lại</button>
+						</div>
+					</div>
+					<div class="booking-content" id="bookingContentLeft">
+						<div class="booking-card">
+							<h2>Thông tin liên lạc</h2>
+							<div class="booking-form-grid">
 							<div class="booking-field">
 								<label>Họ tên <span>*</span></label>
 								<input id="contactName" class="input" placeholder="Liên hệ"
@@ -59,10 +81,10 @@
 								<input id="contactAddress" class="input" placeholder="Nhập địa chỉ"
 									   th:value="${currentUserProfile != null ? currentUserProfile.address : ''}">
 							</div>
+							</div>
 						</div>
-					</div>
 
-					<div class="booking-card">
+						<div class="booking-card">
 						<h2>Hành khách</h2>
 						<div class="booking-pax-grid">
 							<div class="pax-card">
@@ -145,15 +167,16 @@
 								</div>
 							</div>
 						</template>
-					</div>
+						</div>
 
-					<div class="booking-card">
-						<h2>Ghi chú</h2>
-						<textarea id="contactNote" class="booking-textarea" rows="4" placeholder="Quý khách có ghi chú lưu ý gì, hãy nói với chúng tôi"></textarea>
+						<div class="booking-card">
+							<h2>Ghi chú</h2>
+							<textarea id="contactNote" class="booking-textarea" rows="4" placeholder="Quý khách có ghi chú lưu ý gì, hãy nói với chúng tôi"></textarea>
+						</div>
 					</div>
 				</div>
 
-				<aside class="booking-right">
+				<aside class="booking-right" id="bookingContentRight">
 					<div class="booking-card summary-card">
 						<h3>Tóm tắt chuyến đi</h3>
 						<div class="summary-head">

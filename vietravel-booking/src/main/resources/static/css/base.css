@@ -17,6 +17,10 @@
     box-sizing: border-box
 }
 
+[hidden] {
+    display: none !important
+}
+
 html,
 body {
     height: 100%
@@ -1393,6 +1397,15 @@ img {
     color: var(--primary)
 }
 
+.booking-step.is-done {
+    color: #0f766e
+}
+
+.booking-step.is-done .step-circle {
+    background: rgba(16, 185, 129, .16);
+    color: #059669
+}
+
 .step-arrow {
     color: #94a3b8;
     font-weight: 900
@@ -1409,6 +1422,10 @@ img {
     align-items: start
 }
 
+.booking-grid.is-result {
+    grid-template-columns: 1fr
+}
+
 .booking-card {
     background: #fff;
     border: 1px solid var(--border);
@@ -1423,6 +1440,75 @@ img {
     margin: 0 0 12px;
     font-size: 16px;
     font-weight: 950
+}
+
+.booking-result {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 14px;
+    align-items: center;
+    border-radius: 16px;
+    padding: 14px 16px;
+    border: 1px solid rgba(148, 163, 184, .4);
+    background: #f8fafc;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px
+}
+
+.booking-result .result-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 18px;
+    background: rgba(37, 99, 235, .12);
+    color: var(--primary)
+}
+
+.booking-result .result-content b {
+    display: block;
+    font-size: 14px;
+    font-weight: 900;
+    margin-bottom: 4px
+}
+
+.booking-result .result-content p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px
+}
+
+.booking-result .result-actions {
+    display: flex;
+    justify-content: flex-end
+}
+
+.booking-result--success {
+    border-color: rgba(16, 185, 129, .45);
+    background: rgba(16, 185, 129, .08)
+}
+
+.booking-result--success .result-icon {
+    background: rgba(16, 185, 129, .15);
+    color: #059669
+}
+
+.booking-result--failed {
+    border-color: rgba(239, 68, 68, .45);
+    background: rgba(239, 68, 68, .08)
+}
+
+.booking-result--failed .result-icon {
+    background: rgba(239, 68, 68, .15);
+    color: #dc2626
+}
+
+.retry-pay {
+    width: auto;
+    padding: 10px 14px
 }
 
 .booking-login-tip {
