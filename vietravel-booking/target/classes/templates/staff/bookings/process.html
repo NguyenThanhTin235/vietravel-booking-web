@@ -17,7 +17,7 @@
                        style="max-width:240px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:#fff"
                        data-table-search placeholder="Tìm booking...">
                 <span style="color:var(--muted);font-weight:700;font-size:13px">
-                    Hiển thị: <span data-table-count>4</span>
+                    Hiển thị: <span data-table-count th:text="${#lists.size(bookings)}">0</span>
                 </span>
                 <a class="btn btn-primary" th:href="@{/staff/bookings/create}">Tạo booking</a>
             </div>
@@ -37,60 +37,31 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr class="reveal">
-                        <td>#STF010</td>
-                        <td>Nguyễn Văn A</td>
-                        <td>Đà Nẵng 3N2Đ</td>
-                        <td>01/02/2026</td>
-                        <td>5.990.000 ₫</td>
-                        <td><span class="badge badge-pending">Chờ xử lý</span></td>
-                        <td>
-                            <div class="table-actions">
-                                <button class="btn btn-ghost" type="button">Xác nhận</button>
-                                <button class="btn btn-ghost" type="button">Chi tiết</button>
-                            </div>
-                        </td>
+                    <tr th:if="${#lists.isEmpty(bookings)}">
+                        <td colspan="7" class="muted">Chưa có đơn đặt tour.</td>
                     </tr>
-                    <tr class="reveal">
-                        <td>#STF011</td>
-                        <td>Trần Thị B</td>
-                        <td>Phú Quốc 4N3Đ</td>
-                        <td>02/02/2026</td>
-                        <td>8.490.000 ₫</td>
-                        <td><span class="badge badge-confirmed">Đã xác nhận</span></td>
+                    <tr th:each="b : ${bookings}" class="reveal">
+                        <td th:text="${b.bookingCode}">BK</td>
+                        <td th:text="${b.contactName}">--</td>
+                        <td th:text="${b.departure != null && b.departure.tour != null ? b.departure.tour.title : 'Tour'}">Tour</td>
+                        <td th:text="${b.departure != null && b.departure.startDate != null ? #temporals.format(b.departure.startDate, 'dd/MM/yyyy') : #temporals.format(b.createdAt, 'dd/MM/yyyy')}">--/--/----</td>
+                        <td th:text="${#numbers.formatDecimal(b.totalAmount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</td>
                         <td>
-                            <div class="table-actions">
-                                <button class="btn btn-ghost" type="button">Cập nhật</button>
-                                <button class="btn btn-ghost" type="button">Chi tiết</button>
-                            </div>
+                            <span class="badge"
+                                  th:classappend="${b.status != null && b.status.name() == 'PENDING'} ? ' badge-pending' : (b.status != null && (b.status.name() == 'CANCEL_REQUESTED' || b.status.name() == 'CANCELED') ? ' badge-canceled' : ' badge-confirmed')">
+                                <span th:switch="${b.status != null ? b.status.name() : ''}">
+                                    <span th:case="'PENDING'">Chờ xử lý</span>
+                                    <span th:case="'PAID'">Đã thanh toán</span>
+                                    <span th:case="'CONFIRMED'">Đã xác nhận</span>
+                                    <span th:case="'CANCEL_REQUESTED'">Yêu cầu hủy</span>
+                                    <span th:case="'CANCELED'">Đã hủy</span>
+                                    <span th:case="'COMPLETED'">Hoàn tất</span>
+                                    <span th:case="*">Đang xử lý</span>
+                                </span>
+                            </span>
                         </td>
-                    </tr>
-                    <tr class="reveal">
-                        <td>#STF012</td>
-                        <td>Lê Văn C</td>
-                        <td>Đà Lạt 2N1Đ</td>
-                        <td>03/02/2026</td>
-                        <td>2.990.000 ₫</td>
-                        <td><span class="badge badge-canceled">Yêu cầu hủy</span></td>
                         <td>
-                            <div class="table-actions">
-                                <button class="btn btn-ghost" type="button">Duyệt hủy</button>
-                                <button class="btn btn-ghost" type="button">Chi tiết</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="reveal">
-                        <td>#STF013</td>
-                        <td>Phạm Thị D</td>
-                        <td>Nha Trang 3N2Đ</td>
-                        <td>05/02/2026</td>
-                        <td>6.490.000 ₫</td>
-                        <td><span class="badge badge-pending">Chờ xử lý</span></td>
-                        <td>
-                            <div class="table-actions">
-                                <button class="btn btn-ghost" type="button">Xác nhận</button>
-                                <button class="btn btn-ghost" type="button">Chi tiết</button>
-                            </div>
+                            <span class="muted">—</span>
                         </td>
                     </tr>
                     </tbody>

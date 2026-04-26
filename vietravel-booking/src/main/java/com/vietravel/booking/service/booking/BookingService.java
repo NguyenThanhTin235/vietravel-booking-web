@@ -5,14 +5,18 @@ import com.vietravel.booking.domain.entity.booking.Booking;
 import com.vietravel.booking.domain.entity.booking.BookingPassenger;
 import com.vietravel.booking.domain.entity.booking.BookingStatus;
 import com.vietravel.booking.domain.entity.booking.PassengerType;
+import com.vietravel.booking.domain.entity.booking.PaymentStatus;
 import com.vietravel.booking.domain.entity.tour.Departure;
 import com.vietravel.booking.domain.entity.tour.Tour;
+import com.vietravel.booking.domain.entity.tour.TourImage;
 import com.vietravel.booking.domain.repository.auth.UserAccountRepository;
 import com.vietravel.booking.domain.repository.booking.BookingRepository;
+import com.vietravel.booking.domain.repository.booking.PaymentRepository;
 import com.vietravel.booking.domain.repository.tour.DepartureRepository;
 import com.vietravel.booking.domain.repository.tour.TourRepository;
 import com.vietravel.booking.web.dto.booking.BookingCreateRequest;
 import com.vietravel.booking.web.dto.booking.BookingCreateRequest.PassengerRequest;
+import com.vietravel.booking.web.dto.booking.BookingHistoryView;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,15 +38,18 @@ public class BookingService {
      private final TourRepository tourRepository;
      private final DepartureRepository departureRepository;
      private final UserAccountRepository userAccountRepository;
+     private final PaymentRepository paymentRepository;
 
      public BookingService(BookingRepository bookingRepository,
                TourRepository tourRepository,
                DepartureRepository departureRepository,
-               UserAccountRepository userAccountRepository) {
+               UserAccountRepository userAccountRepository,
+               PaymentRepository paymentRepository) {
           this.bookingRepository = bookingRepository;
           this.tourRepository = tourRepository;
           this.departureRepository = departureRepository;
           this.userAccountRepository = userAccountRepository;
+          this.paymentRepository = paymentRepository;
      }
 
      @Transactional
@@ -105,12 +113,91 @@ public class BookingService {
      }
 
      @Transactional(readOnly = true)
-     public List<Booking> getMyBookings() {
+     public List<BookingHistoryView> getMyBookings(BookingStatus bookingStatus, PaymentStatus paymentStatus) {
           UserAccount user = getCurrentUser();
           if (user == null || user.getId() == null) {
                return List.of();
           }
-          return bookingRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
+          List<Booking> bookings = bookingRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
+          List<BookingHistoryView> results = new ArrayList<>();
+          for (Booking booking : bookings) {
+               if (bookingStatus != null && booking.getStatus() != bookingStatus) {
+                    continue;
+               }
+               PaymentStatus resolvedPayment = resolvePaymentStatus(booking);
+               if (paymentStatus != null && resolvedPayment != paymentStatus) {
+                    continue;
+               }
+               String thumbnail = resolveThumbnail(booking);
+               results.add(new BookingHistoryView(booking, resolvedPayment, canCancel(booking), thumbnail));
+          }
+          return results;
+     }
+
+     @Transactional(readOnly = true)
+     public BookingHistoryView getMyBookingDetail(Long id) {
+          UserAccount user = getCurrentUser();
+          if (user == null || user.getId() == null || id == null) {
+               return null;
+          }
+          Booking booking = bookingRepository.findWithDetailsById(id).orElse(null);
+          if (booking == null || booking.getUser() == null || !user.getId().equals(booking.getUser().getId())) {
+               return null;
+          }
+          return new BookingHistoryView(booking, resolvePaymentStatus(booking), canCancel(booking),
+                    resolveThumbnail(booking));
+     }
+
+     @Transactional
+     public boolean cancelMyBooking(Long id) {
+          UserAccount user = getCurrentUser();
+          if (user == null || user.getId() == null || id == null) {
+               return false;
+          }
+          Booking booking = bookingRepository.findWithDetailsById(id).orElse(null);
+          if (booking == null || booking.getUser() == null || !user.getId().equals(booking.getUser().getId())) {
+               return false;
+          }
+          if (!canCancel(booking)) {
+               return false;
+          }
+          booking.setStatus(BookingStatus.CANCELED);
+          bookingRepository.save(booking);
+          return true;
+     }
+
+     private PaymentStatus resolvePaymentStatus(Booking booking) {
+          if (booking == null || booking.getId() == null) {
+               return PaymentStatus.INIT;
+          }
+          return paymentRepository.findTopByBookingIdOrderByCreatedAtDesc(booking.getId())
+                    .map(p -> p.getStatus() == null ? PaymentStatus.INIT : p.getStatus())
+                    .orElse(PaymentStatus.INIT);
+     }
+
+     private boolean canCancel(Booking booking) {
+          if (booking == null || booking.getDeparture() == null || booking.getDeparture().getStartDate() == null) {
+               return false;
+          }
+          if (booking.getStatus() == BookingStatus.CANCELED
+                    || booking.getStatus() == BookingStatus.CANCEL_REQUESTED
+                    || booking.getStatus() == BookingStatus.COMPLETED) {
+               return false;
+          }
+          long days = ChronoUnit.DAYS.between(LocalDate.now(), booking.getDeparture().getStartDate());
+          return days >= 7;
+     }
+
+     private String resolveThumbnail(Booking booking) {
+          if (booking == null || booking.getDeparture() == null || booking.getDeparture().getTour() == null) {
+               return "/images/login-bg.jpg";
+          }
+          Tour tour = booking.getDeparture().getTour();
+          if (tour.getImages() == null || tour.getImages().isEmpty()) {
+               return "/images/login-bg.jpg";
+          }
+          TourImage first = tour.getImages().get(0);
+          return first != null && first.getImageUrl() != null ? first.getImageUrl() : "/images/login-bg.jpg";
      }
 
      private String generateBookingCode(LocalDate date) {
