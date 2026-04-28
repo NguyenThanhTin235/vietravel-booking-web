@@ -11,50 +11,114 @@
 <th:block th:fragment="content">
     <div class="grid-12">
         <div class="col-8">
-            <div class="card">
+            <div class="card booking-create-card">
                 <div class="card-head">
-                    <div class="card-title">Thông tin đặt tour</div>
+                    <div>
+                        <div class="card-title">Bước 1: Chọn tour & ngày khởi hành</div>
+                        <div class="detail-subtitle">Chọn tour, xem thông tin và lịch khởi hành.</div>
+                    </div>
                 </div>
                 <div class="card-body">
-                    <form class="form-grid" onsubmit="return false;">
+                    <div class="field">
+                        <label>Chọn tour</label>
+                        <select class="input" id="tourSelect">
+                            <option value="">-- Chọn tour --</option>
+                        </select>
+                    </div>
+
+                    <div id="tourInfo" class="tour-info-panel" style="display:none">
+                        <div class="tour-summary">
+                            <div class="tour-media">
+                                <img class="tour-thumb" id="tourThumb" alt="Tour">
+                            </div>
+                            <div class="tour-info">
+                                <div class="li-title" id="tourTitle">Tour</div>
+                                <div class="li-sub" id="tourCode">Mã tour: --</div>
+                                <div class="tour-meta">
+                                    <div class="meta-row">
+                                        <span class="meta-label">Tuyến tour</span>
+                                        <span class="meta-value" id="tourLine">--</span>
+                                    </div>
+                                    <div class="meta-row">
+                                        <span class="meta-label">Phương tiện</span>
+                                        <span class="meta-value" id="tourTransport">--</span>
+                                    </div>
+                                    <div class="meta-row">
+                                        <span class="meta-label">Thời lượng</span>
+                                        <span class="meta-value" id="tourDuration">--</span>
+                                    </div>
+                                    <div class="meta-row">
+                                        <span class="meta-label">Điểm khởi hành</span>
+                                        <span class="meta-value" id="tourStart">--</span>
+                                    </div>
+                                    <div class="meta-row">
+                                        <span class="meta-label">Giá gốc</span>
+                                        <span class="meta-value" id="tourBasePrice">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="calendarSection" class="calendar-section" style="display:none">
+                        <div class="calendar-head">
+                            <div class="calendar-title">Lịch khởi hành</div>
+                            <div class="calendar-nav" id="calendarNav"></div>
+                        </div>
+                        <div class="calendar-grid" id="calendarGrid"></div>
+                        <div class="calendar-note">Chọn một ngày khởi hành còn chỗ để tiếp tục.</div>
+                    </div>
+
+                    <div class="actions" style="display:flex;gap:10px;justify-content:flex-end">
+                        <button class="btn btn-ghost" type="button" id="btnContinue" disabled>Tiếp tục</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card booking-create-card" id="bookingStep2" style="display:none">
+                <div class="card-head">
+                    <div>
+                        <div class="card-title">Bước 2: Thông tin booking & hành khách</div>
+                        <div class="detail-subtitle">Nhập thông tin liên hệ và danh sách hành khách.</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form class="form-grid" id="bookingCreateForm">
+                        <input type="hidden" id="selectedTourSlug" name="slug">
+                        <input type="hidden" id="selectedDepartureDate" name="date">
+                        <input type="hidden" id="selectedDepartureId" name="departureId">
+
                         <div class="grid-2">
                             <div class="field">
                                 <label>Họ và tên</label>
-                                <input class="input" placeholder="VD: Nguyễn Văn A">
+                                <input class="input" name="contactName" placeholder="VD: Nguyễn Văn A">
                             </div>
                             <div class="field">
                                 <label>Email</label>
-                                <input class="input" type="email" placeholder="vd@email.com">
+                                <input class="input" type="email" name="contactEmail" placeholder="vd@email.com">
                             </div>
                         </div>
                         <div class="grid-2">
                             <div class="field">
                                 <label>Số điện thoại</label>
-                                <input class="input" placeholder="VD: 0901 234 567">
+                                <input class="input" name="contactPhone" placeholder="VD: 0901 234 567">
                             </div>
                             <div class="field">
-                                <label>Tour</label>
-                                <select class="input">
-                                    <option>Đà Nẵng 3N2Đ</option>
-                                    <option>Phú Quốc 4N3Đ</option>
-                                    <option>Đà Lạt 2N1Đ</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="grid-2">
-                            <div class="field">
-                                <label>Ngày khởi hành</label>
-                                <input class="input" type="date">
-                            </div>
-                            <div class="field">
-                                <label>Số lượng khách</label>
-                                <input class="input" type="number" min="1" value="1">
+                                <label>Ngày khởi hành đã chọn</label>
+                                <input class="input" id="selectedDatePreview" disabled>
                             </div>
                         </div>
                         <div class="field">
                             <label>Ghi chú</label>
-                            <textarea class="input" rows="4" placeholder="Yêu cầu đặc biệt..."></textarea>
+                            <textarea class="input" rows="4" name="note" placeholder="Yêu cầu đặc biệt..."></textarea>
                         </div>
+
+                        <div class="passenger-section">
+                            <div class="section-title">Danh sách hành khách</div>
+                            <div id="passengerList" class="passenger-list"></div>
+                            <button class="btn btn-ghost" type="button" id="btnAddPassenger">Thêm hành khách</button>
+                        </div>
+
                         <div class="actions" style="display:flex;gap:10px;justify-content:flex-end">
                             <button class="btn btn-ghost" type="reset">Làm mới</button>
                             <button class="btn btn-primary" type="submit">Tạo booking</button>
@@ -72,17 +136,31 @@
                     <div class="list">
                         <div class="list-item">
                             <div class="li-main">
-                                <div class="li-title">Giá tham khảo</div>
-                                <div class="li-sub">Tùy theo tour</div>
+                                <div class="li-title">Tour đã chọn</div>
+                                <div class="li-sub" id="summaryTour">Chưa chọn</div>
                             </div>
-                            <span class="pill">~ 5.990.000 ₫</span>
+                            <span class="pill" id="summaryPrice">--</span>
+                        </div>
+                        <div class="list-item">
+                            <div class="li-main">
+                                <div class="li-title">Ngày khởi hành</div>
+                                <div class="li-sub" id="summaryDate">Chưa chọn</div>
+                            </div>
+                            <span class="pill pill-gray" id="summarySeats">Còn: --</span>
+                        </div>
+                        <div class="list-item">
+                            <div class="li-main">
+                                <div class="li-title">Tổng tiền</div>
+                                <div class="li-sub">Tính theo hành khách</div>
+                            </div>
+                            <span class="pill" id="summaryTotal">--</span>
                         </div>
                         <div class="list-item">
                             <div class="li-main">
                                 <div class="li-title">Thanh toán</div>
-                                <div class="li-sub">Chưa thu</div>
+                                <div class="li-sub" id="summaryPaymentMethod">Tại quầy</div>
                             </div>
-                            <span class="pill pill-gray">Chờ</span>
+                            <span class="pill pill-gray" id="summaryPaymentStatus">Thành công</span>
                         </div>
                     </div>
                 </div>
@@ -91,6 +169,8 @@
     </div>
 </th:block>
 
-<th:block th:fragment="additionalJs"></th:block>
+<th:block th:fragment="additionalJs">
+    <script th:src="@{/js/staff-booking-create.js}"></script>
+</th:block>
 
 </html>

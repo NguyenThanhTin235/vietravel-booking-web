@@ -13,7 +13,7 @@
         <div class="col-8">
             <div class="card">
                 <div class="card-head">
-                    <div class="card-title">Danh sách thắc mắc</div>
+                    <div class="card-title">Danh sách ghi chú từ khách</div>
                     <div class="card-actions">
                         <input class="search-input"
                                style="max-width:240px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:#fff"
@@ -22,29 +22,17 @@
                 </div>
                 <div class="card-body">
                     <div class="list">
-                        <div class="list-item reveal">
+                        <div th:if="${#lists.isEmpty(inquiries)}" class="muted">Chưa có ghi chú từ khách.</div>
+                        <div th:each="b : ${inquiries}" class="list-item reveal">
                             <div class="thumb"></div>
                             <div class="li-main">
-                                <div class="li-title">Hỏi về lịch khởi hành</div>
-                                <div class="li-sub">Khách: Nguyễn M • 30/01/2026</div>
+                                <div class="li-title" th:text="${#strings.abbreviate(b.note, 52)}">Ghi chú</div>
+                                <div class="li-sub">
+                                    Khách: <span th:text="${b.contactName}">--</span>
+                                    • <span th:text="${#temporals.format(b.createdAt, 'dd/MM/yyyy')}">--/--/----</span>
+                                </div>
                             </div>
-                            <span class="pill">Mới</span>
-                        </div>
-                        <div class="list-item reveal">
-                            <div class="thumb"></div>
-                            <div class="li-main">
-                                <div class="li-title">Yêu cầu đổi ngày</div>
-                                <div class="li-sub">Khách: Trần T • 30/01/2026</div>
-                            </div>
-                            <span class="pill pill-blue">Đang xử lý</span>
-                        </div>
-                        <div class="list-item reveal">
-                            <div class="thumb"></div>
-                            <div class="li-main">
-                                <div class="li-title">Câu hỏi về hoàn tiền</div>
-                                <div class="li-sub">Khách: Lê K • 29/01/2026</div>
-                            </div>
-                            <span class="pill pill-gray">Chưa phản hồi</span>
+                            <span class="pill">Ghi chú</span>
                         </div>
                     </div>
                 </div>
@@ -53,13 +41,27 @@
         <div class="col-4">
             <div class="card">
                 <div class="card-head">
-                    <div class="card-title">Chi tiết thắc mắc</div>
+                    <div class="card-title">Chi tiết ghi chú</div>
                 </div>
                 <div class="card-body">
-                    <div class="placeholder-chart">Chọn thắc mắc để xem chi tiết</div>
-                    <div style="margin-top:16px;display:flex;gap:10px">
-                        <button class="btn btn-ghost" type="button">Đánh dấu đã xử lý</button>
-                        <button class="btn btn-primary" type="button">Phản hồi</button>
+                    <div th:if="${selectedInquiry == null}" class="placeholder-chart">Chưa có ghi chú để hiển thị</div>
+                    <div th:if="${selectedInquiry != null}">
+                        <div class="li-title" th:text="${#strings.abbreviate(selectedInquiry.note, 80)}">Ghi chú</div>
+                        <div class="li-sub" style="margin-top:8px">
+                            Khách: <span th:text="${selectedInquiry.contactName}">--</span>
+                            • <span th:text="${selectedInquiry.contactPhone}">--</span>
+                        </div>
+                        <div class="li-sub" style="margin-top:6px">
+                            Tour: <span th:text="${selectedInquiry.departure != null && selectedInquiry.departure.tour != null ? selectedInquiry.departure.tour.title : 'Tour'}">Tour</span>
+                        </div>
+                        <div class="li-sub" style="margin-top:6px">
+                            Mã đặt: <span th:text="${selectedInquiry.bookingCode}">BK</span>
+                            • <span th:text="${#temporals.format(selectedInquiry.createdAt, 'dd/MM/yyyy')}">--/--/----</span>
+                        </div>
+                        <div style="margin-top:16px;display:flex;gap:10px">
+                            <button class="btn btn-ghost" type="button" disabled>Đã xem</button>
+                            <button class="btn btn-primary" type="button" disabled>Phản hồi</button>
+                        </div>
                     </div>
                 </div>
             </div>

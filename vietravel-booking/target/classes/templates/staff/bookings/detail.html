@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/staff :: layout(
+      pageTitle=${pageTitle},
+      activeMenu=${activeMenu},
+      activeSubMenu=${activeSubMenu},
+      content=~{::content},
+      additionalJs=~{::additionalJs}
+)}">
+
+<th:block th:fragment="content">
+    <div class="grid-12">
+        <div class="col-8">
+            <div class="card booking-detail-card">
+                <div class="card-head">
+                    <div>
+                        <div class="card-title">Thông tin tour</div>
+                        <div class="detail-subtitle">Tổng quan tour và lịch khởi hành.</div>
+                    </div>
+                    <div class="card-actions">
+                        <a class="btn btn-ghost" th:href="@{/staff/bookings/process}">Quay lại</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div th:if="${bookingView == null}" class="muted">Không tìm thấy booking.</div>
+                    <div th:if="${bookingView != null}"
+                         th:with="tour=${bookingView.booking.departure != null ? bookingView.booking.departure.tour : null},
+                                  thumb=${tour != null && tour.images != null && !#lists.isEmpty(tour.images.?[isThumbnail]) ? tour.images.?[isThumbnail][0] : (tour != null && tour.images != null && !#lists.isEmpty(tour.images) ? tour.images[0] : null)}">
+                        <div class="tour-summary">
+                            <div class="tour-media">
+                                <img class="tour-thumb"
+                                     th:src="${thumb != null ? thumb.imageUrl : '/images/logo.png'}"
+                                     th:alt="${tour != null ? tour.title : 'Tour'}">
+                            </div>
+                            <div class="tour-info">
+                                <div class="li-title" th:text="${tour != null ? tour.title : 'Tour'}">Tour</div>
+                                <div class="li-sub" style="margin-top:6px">
+                                    Ngày khởi hành:
+                                    <span th:text="${bookingView.booking.departure != null && bookingView.booking.departure.startDate != null ? #temporals.format(bookingView.booking.departure.startDate, 'dd/MM/yyyy') : #temporals.format(bookingView.booking.createdAt, 'dd/MM/yyyy')}">--/--/----</span>
+                                </div>
+                                <div class="tour-meta">
+                                    <div class="meta-row">
+                                        <span class="meta-label">Mã tour</span>
+                                        <span class="meta-value" th:text="${tour != null ? tour.code : '--'}">--</span>
+                                    </div>
+                                    <div class="meta-row">
+                                        <span class="meta-label">Tuyến tour</span>
+                                        <span class="meta-value" th:text="${tour != null && tour.tourLine != null ? tour.tourLine.name : '--'}">--</span>
+                                    </div>
+                                    <div class="meta-row">
+                                        <span class="meta-label">Phương tiện</span>
+                                        <span class="meta-value" th:text="${tour != null && tour.transportMode != null ? tour.transportMode.name : '--'}">--</span>
+                                    </div>
+                                    <div class="meta-row">
+                                        <span class="meta-label">Thời lượng</span>
+                                        <span class="meta-value" th:text="${tour != null ? tour.durationDays + 'N' + tour.durationNights + 'Đ' : '--'}">--</span>
+                                    </div>
+                                    <div class="meta-row">
+                                        <span class="meta-label">Điểm khởi hành</span>
+                                        <span class="meta-value" th:text="${tour != null && tour.startLocation != null ? tour.startLocation.name : '--'}">--</span>
+                                    </div>
+                                    <div class="meta-row">
+                                        <span class="meta-label">Giá gốc</span>
+                                        <span class="meta-value" th:text="${tour != null && tour.basePrice != null ? #numbers.formatDecimal(tour.basePrice, 0, 'COMMA', 0, 'POINT') + ' ₫' : '--'}">--</span>
+                                    </div>
+                                </div>
+                                <div class="tour-summary-text" th:if="${tour != null && tour.summary != null && !#strings.isEmpty(tour.summary)}" th:text="${tour.summary}">
+                                    Tóm tắt tour
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card booking-detail-card">
+                <div class="card-head">
+                    <div class="card-title">Thông tin booking</div>
+                </div>
+                <div class="card-body">
+                    <div th:if="${bookingView == null}" class="muted">Không tìm thấy booking.</div>
+                    <div th:if="${bookingView != null}">
+                        <div class="list detail-hero">
+                            <div class="list-item">
+                                <div class="li-main">
+                                    <div class="li-title">Mã booking: <span th:text="${bookingView.booking.bookingCode}">BK</span></div>
+                                    <div class="li-sub">Ngày tạo: <span th:text="${#temporals.format(bookingView.booking.createdAt, 'dd/MM/yyyy')}">--/--/----</span></div>
+                                </div>
+                                <span th:switch="${bookingView.booking.status != null ? bookingView.booking.status.name() : ''}">
+                                    <span th:case="'PENDING'" class="badge badge-pending">Chờ xác nhận</span>
+                                    <span th:case="'PAID'" class="badge badge-pending">Chờ xác nhận</span>
+                                    <span th:case="'CONFIRMED'" class="badge badge-confirmed">Đã xác nhận</span>
+                                    <span th:case="'CANCEL_REQUESTED'" class="badge badge-canceled">Yêu cầu hủy</span>
+                                    <span th:case="'CANCELED'" class="badge badge-canceled">Đã hủy</span>
+                                    <span th:case="'COMPLETED'" class="badge badge-confirmed">Hoàn tất</span>
+                                    <span th:case="*" class="badge badge-confirmed">Đang xử lý</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="booking-info-section">
+                            <div class="section-title">Liên hệ</div>
+                            <div class="li-sub">Họ tên: <b th:text="${bookingView.booking.contactName}">--</b></div>
+                            <div class="li-sub" style="margin-top:6px">Điện thoại: <b th:text="${bookingView.booking.contactPhone}">--</b></div>
+                            <div class="li-sub" style="margin-top:6px">Email: <b th:text="${bookingView.booking.contactEmail}">--</b></div>
+                        </div>
+                        <div class="booking-info-section">
+                            <div class="section-title">Thanh toán</div>
+                            <div class="li-sub">
+                                Tổng tiền: <b th:text="${#numbers.formatDecimal(bookingView.booking.totalAmount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</b>
+                            </div>
+                            <div class="li-sub" style="margin-top:6px">
+                                Trạng thái:
+                                <span th:switch="${bookingView.paymentStatus != null ? bookingView.paymentStatus.name() : ''}">
+                                    <span th:case="'INIT'" class="badge badge-pending">Chưa thanh toán</span>
+                                    <span th:case="'SUCCESS'" class="badge badge-confirmed">Thành công</span>
+                                    <span th:case="'FAILED'" class="badge badge-canceled">Thất bại</span>
+                                    <span th:case="'REFUNDED'" class="badge badge-canceled">Đã hoàn tiền</span>
+                                    <span th:case="*" class="badge badge-confirmed">—</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="booking-info-section">
+                            <div class="section-title">Danh sách hành khách</div>
+                            <div th:if="${#lists.isEmpty(bookingView.booking.passengers)}" class="muted">Chưa có thông tin hành khách.</div>
+                            <div th:each="p : ${bookingView.booking.passengers}" class="list-item passenger-item">
+                                <div class="li-main">
+                                    <div class="li-title" th:text="${p.fullName}">Họ tên</div>
+                                    <div class="li-sub">Ngày sinh: <span th:text="${p.dob != null ? #temporals.format(p.dob, 'dd/MM/yyyy') : '--/--/----'}">--/--/----</span></div>
+                                </div>
+                                <span th:switch="${p.passengerType != null ? p.passengerType.name() : ''}">
+                                    <span th:case="'ADULT'" class="pill">Người lớn</span>
+                                    <span th:case="'CHILD'" class="pill pill-blue">Trẻ em</span>
+                                    <span th:case="*" class="pill">Hành khách</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="booking-info-section" th:if="${bookingView.booking.note != null && !#strings.isEmpty(bookingView.booking.note)}">
+                            <div class="section-title">Ghi chú</div>
+                            <div class="li-sub detail-note" th:text="${bookingView.booking.note}">Ghi chú</div>
+                        </div>
+                        <div class="booking-info-section booking-info-actions">
+                            <div class="section-title">Thao tác</div>
+                            <div class="detail-actions">
+                                <form th:if="${bookingView.booking.status != null && (bookingView.booking.status.name() == 'PENDING' || bookingView.booking.status.name() == 'PAID')}"
+                                      th:action="@{'/staff/bookings/' + ${bookingView.booking.id} + '/confirm'}" method="post"
+                                      class="js-confirm-form" data-confirm-message="Xác nhận booking này?">
+                                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <button class="btn btn-ghost" type="submit">Xác nhận</button>
+                                </form>
+                                <form th:if="${bookingView.booking.status != null && (bookingView.booking.status.name() == 'PENDING' || bookingView.booking.status.name() == 'PAID' || bookingView.booking.status.name() == 'CONFIRMED' || bookingView.booking.status.name() == 'CANCEL_REQUESTED')}"
+                                      th:action="@{'/staff/bookings/' + ${bookingView.booking.id} + '/cancel'}" method="post">
+                                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <input type="hidden" name="cancelReason">
+                                    <input type="hidden" name="cancelReasonOther">
+                                    <button class="btn btn-ghost js-cancel-btn" type="button"
+                                            th:attr="data-booking-code=${bookingView.booking.bookingCode}">Hủy tour</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cancelModal" class="staff-modal-backdrop" aria-hidden="true">
+        <div class="staff-modal" role="dialog" aria-modal="true" aria-labelledby="cancelModalTitle">
+            <div class="staff-modal-head">
+                <h3 id="cancelModalTitle">Hủy tour</h3>
+                <button class="staff-modal-close" type="button" data-cancel-modal-close>×</button>
+            </div>
+            <div class="staff-modal-body">
+                <div class="modal-field">
+                    <label class="modal-label" for="cancelReasonSelect">Chọn lý do hủy</label>
+                    <select id="cancelReasonSelect" class="modal-select">
+                        <option value="">-- Chọn lý do --</option>
+                        <option value="CUSTOMER_REQUEST">Khách yêu cầu hủy</option>
+                        <option value="PAYMENT_FAILED">Thanh toán thất bại</option>
+                        <option value="NO_SHOW">Khách không xác nhận</option>
+                        <option value="SOLD_OUT">Hết chỗ</option>
+                        <option value="SCHEDULE_CHANGED">Thay đổi lịch khởi hành</option>
+                        <option value="OTHER">Lý do khác</option>
+                    </select>
+                </div>
+                <div class="modal-field" id="cancelReasonOtherWrap" style="display:none">
+                    <label class="modal-label" for="cancelReasonOther">Lý do khác</label>
+                    <input id="cancelReasonOther" class="modal-input" type="text" placeholder="Nhập lý do khác">
+                </div>
+                <div id="cancelReasonError" class="modal-error"></div>
+            </div>
+            <div class="staff-modal-foot">
+                <button class="btn btn-ghost" type="button" data-cancel-modal-close>Hủy</button>
+                <button id="cancelReasonSubmit" class="btn btn-ghost" type="button">Xác nhận hủy</button>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="additionalJs">
+    <script th:src="@{/js/staff-bookings.js}"></script>
+</th:block>
+
+</html>

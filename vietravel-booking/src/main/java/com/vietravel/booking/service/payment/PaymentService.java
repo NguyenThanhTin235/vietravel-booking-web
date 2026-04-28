@@ -39,6 +39,22 @@ public class PaymentService {
      }
 
      @Transactional
+     public Payment createCounterPaymentSuccess(Booking booking) {
+          Payment payment = new Payment();
+          payment.setBooking(booking);
+          payment.setPaymentType(PaymentType.PAY);
+          payment.setMethod(PaymentMethod.CASH);
+          payment.setStatus(PaymentStatus.SUCCESS);
+          payment.setAmount(booking.getTotalAmount() == null ? BigDecimal.ZERO : booking.getTotalAmount());
+          payment.setTxnRef(generateTxnRef(booking));
+          if (booking != null) {
+               booking.setStatus(BookingStatus.PAID);
+               bookingRepository.save(booking);
+          }
+          return paymentRepository.save(payment);
+     }
+
+     @Transactional
      public Booking handleVnpayReturn(String txnRef, boolean success) {
           if (txnRef == null || txnRef.isBlank()) {
                return null;

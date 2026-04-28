@@ -15,10 +15,10 @@
 				</div>
 
 				<div class="card kpi reveal">
-					<div class="kpi-label">Đơn chờ xử lý</div>
+					<div class="kpi-label">Đơn chờ xác nhận</div>
 					<div class="kpi-value" data-counter th:attr="data-to=${kpiPending!=null?kpiPending:0}"
 						 th:text="${kpiPending!=null?kpiPending:'0'}">0</div>
-					<div class="kpi-note">Trạng thái chờ xử lý</div>
+					<div class="kpi-note">PENDING / PAID</div>
 				</div>
 
 				<div class="card kpi reveal">
@@ -61,17 +61,14 @@
 									• Ngày: <span th:text="${#temporals.format(b.createdAt, 'dd/MM/yyyy')}">--/--/----</span>
 								</div>
 							</div>
-							<span class="badge"
-								  th:classappend="${b.status != null && b.status.name() == 'PENDING'} ? ' badge-pending' : (b.status != null && (b.status.name() == 'CANCEL_REQUESTED' || b.status.name() == 'CANCELED') ? ' badge-canceled' : ' badge-confirmed')">
-								<span th:switch="${b.status != null ? b.status.name() : ''}">
-									<span th:case="'PENDING'">Chờ xử lý</span>
-									<span th:case="'PAID'">Đã thanh toán</span>
-									<span th:case="'CONFIRMED'">Đã xác nhận</span>
-									<span th:case="'CANCEL_REQUESTED'">Yêu cầu hủy</span>
-									<span th:case="'CANCELED'">Đã hủy</span>
-									<span th:case="'COMPLETED'">Hoàn tất</span>
-									<span th:case="*">Đang xử lý</span>
-								</span>
+							<span th:switch="${b.status != null ? b.status.name() : ''}">
+								<span th:case="'PENDING'" class="badge badge-pending">Chờ xác nhận</span>
+								<span th:case="'PAID'" class="badge badge-pending">Chờ xác nhận</span>
+								<span th:case="'CONFIRMED'" class="badge badge-confirmed">Đã xác nhận</span>
+								<span th:case="'CANCEL_REQUESTED'" class="badge badge-canceled">Yêu cầu hủy</span>
+								<span th:case="'CANCELED'" class="badge badge-canceled">Đã hủy</span>
+								<span th:case="'COMPLETED'" class="badge badge-confirmed">Hoàn tất</span>
+								<span th:case="*" class="badge badge-confirmed">Đang xử lý</span>
 							</span>
 						</div>
 					</div>
@@ -80,13 +77,13 @@
 
 			<div class="card mt-16 reveal" data-skeleton>
 				<div class="card-head">
-					<div class="card-title">Đơn đặt tour cần xử lý</div>
+					<div class="card-title">Đơn đặt tour chờ xác nhận</div>
 					<div class="card-actions" style="display:flex;gap:10px;align-items:center">
 						<input class="search-input"
 							   style="max-width:240px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:#fff"
 							   data-table-search placeholder="Tìm trong bảng...">
 						<span style="color:var(--muted);font-weight:700;font-size:13px">
-							Hiển thị: <span data-table-count>3</span>
+							Hiển thị: <span data-table-count th:text="${#lists.size(pendingBookings)}">0</span>
 						</span>
 						<a class="btn btn-ghost" th:href="@{/staff/bookings/process}">Xem tất cả</a>
 					</div>
@@ -113,14 +110,11 @@
 								<td th:text="${b.departure != null && b.departure.tour != null ? b.departure.tour.title : 'Tour'}">Tour</td>
 								<td th:text="${b.departure != null && b.departure.startDate != null ? #temporals.format(b.departure.startDate, 'dd/MM/yyyy') : #temporals.format(b.createdAt, 'dd/MM/yyyy')}">--/--/----</td>
 								<td>
-									<span class="badge"
-										  th:classappend="${b.status != null && b.status.name() == 'PENDING'} ? ' badge-pending' : ' badge-canceled'">
-										<span th:switch="${b.status != null ? b.status.name() : ''}">
-											<span th:case="'PENDING'">Chờ xử lý</span>
-											<span th:case="'CANCEL_REQUESTED'">Yêu cầu hủy</span>
-											<span th:case="'CANCELED'">Đã hủy</span>
-											<span th:case="*">Đang xử lý</span>
-										</span>
+									<span th:switch="${b.status != null ? b.status.name() : ''}">
+										<span th:case="'PENDING'" class="badge badge-pending">Chờ xác nhận</span>
+										<span th:case="'CANCEL_REQUESTED'" class="badge badge-canceled">Yêu cầu hủy</span>
+										<span th:case="'CANCELED'" class="badge badge-canceled">Đã hủy</span>
+										<span th:case="*" class="badge badge-confirmed">Đang xử lý</span>
 									</span>
 								</td>
 							</tr>
