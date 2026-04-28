@@ -103,7 +103,68 @@ public class BookingService {
                     bp.setBooking(booking);
                     bp.setFullName(p.getFullName().trim());
                     bp.setDob(p.getDob());
-                    bp.setPassengerType(p.getType() == PassengerType.CHILD ? PassengerType.CHILD : PassengerType.ADULT);
+                    bp.setPassengerType(resolvePassengerType(p.getType()));
+                    passengers.add(bp);
+               }
+          }
+          booking.setPassengers(passengers);
+
+          return bookingRepository.save(booking);
+     }
+
+     @Transactional
+     public Booking createBookingByStaff(BookingCreateRequest req) {
+          if (req == null) {
+               throw new IllegalArgumentException("Dữ liệu không hợp lệ");
+          }
+          if (req.getSlug() == null || req.getSlug().isBlank() || req.getDate() == null) {
+               throw new IllegalArgumentException("Thiếu thông tin tour hoặc ngày khởi hành");
+          }
+          if (req.getContactName() == null || req.getContactName().isBlank()
+                    || req.getContactPhone() == null || req.getContactPhone().isBlank()
+                    || req.getContactEmail() == null || req.getContactEmail().isBlank()) {
+               throw new IllegalArgumentException("Thiếu thông tin liên lạc");
+          }
+
+          Tour tour = tourRepository.findDetailBySlug(req.getSlug())
+                    .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy tour"));
+
+          Departure departure = departureRepository.findFirstByTourIdAndStartDate(tour.getId(), req.getDate())
+                    .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lịch khởi hành"));
+
+          int totalAdult = Math.max(0, req.getTotalAdult());
+          int totalChild = Math.max(0, req.getTotalChild());
+          BigDecimal adultPrice = departure.getPriceAdult() != null ? departure.getPriceAdult() : BigDecimal.ZERO;
+          BigDecimal childPrice = departure.getPriceChild() != null ? departure.getPriceChild() : BigDecimal.ZERO;
+          BigDecimal totalAmount = adultPrice.multiply(BigDecimal.valueOf(totalAdult))
+                    .add(childPrice.multiply(BigDecimal.valueOf(totalChild)));
+
+          Booking booking = new Booking();
+          booking.setBookingCode(generateBookingCode(req.getDate()));
+          booking.setUser(null);
+          booking.setCreatedByStaff(getCurrentUser());
+          booking.setDeparture(departure);
+          booking.setContactName(req.getContactName().trim());
+          booking.setContactPhone(req.getContactPhone().trim());
+          booking.setContactEmail(req.getContactEmail().trim());
+          booking.setNote(req.getNote() == null ? null : req.getNote().trim());
+          booking.setTotalAdult(totalAdult);
+          booking.setTotalChild(totalChild);
+          booking.setTotalAmount(totalAmount);
+          booking.setStatus(BookingStatus.PENDING);
+
+          List<BookingPassenger> passengers = new ArrayList<>();
+          if (req.getPassengers() != null) {
+               for (PassengerRequest p : req.getPassengers()) {
+                    if (p == null || p.getFullName() == null || p.getFullName().isBlank()
+                              || p.getType() == null) {
+                         continue;
+                    }
+                    BookingPassenger bp = new BookingPassenger();
+                    bp.setBooking(booking);
+                    bp.setFullName(p.getFullName().trim());
+                    bp.setDob(p.getDob());
+                    bp.setPassengerType(resolvePassengerType(p.getType()));
                     passengers.add(bp);
                }
           }
@@ -148,6 +209,38 @@ public class BookingService {
                     resolveThumbnail(booking));
      }
 
+     @Transactional(readOnly = true)
+     public BookingHistoryView getBookingViewById(Long id, boolean includeThumbnail) {
+          if (id == null) {
+               return null;
+          }
+          Booking booking = bookingRepository.findWithDetailsById(id).orElse(null);
+          if (booking == null) {
+               return null;
+          }
+          String thumbnail = includeThumbnail ? resolveThumbnail(booking) : null;
+          return new BookingHistoryView(booking, resolvePaymentStatus(booking), canCancel(booking), thumbnail);
+     }
+
+     @Transactional(readOnly = true)
+     public List<BookingHistoryView> buildBookingViews(List<Booking> bookings) {
+          return buildBookingViews(bookings, true);
+     }
+
+     @Transactional(readOnly = true)
+     public List<BookingHistoryView> buildBookingViews(List<Booking> bookings, boolean includeThumbnail) {
+          if (bookings == null || bookings.isEmpty()) {
+               return List.of();
+          }
+          List<BookingHistoryView> results = new ArrayList<>();
+          for (Booking booking : bookings) {
+               String thumbnail = includeThumbnail ? resolveThumbnail(booking) : null;
+               results.add(
+                         new BookingHistoryView(booking, resolvePaymentStatus(booking), canCancel(booking), thumbnail));
+          }
+          return results;
+     }
+
      @Transactional
      public boolean cancelMyBooking(Long id) {
           UserAccount user = getCurrentUser();
@@ -162,6 +255,51 @@ public class BookingService {
                return false;
           }
           booking.setStatus(BookingStatus.CANCELED);
+          bookingRepository.save(booking);
+          return true;
+     }
+
+     @Transactional
+     public boolean confirmBookingByStaff(Long id) {
+          if (id == null) {
+               return false;
+          }
+          Booking booking = bookingRepository.findById(id).orElse(null);
+          if (booking == null || booking.getStatus() == null) {
+               return false;
+          }
+          if (booking.getStatus() == BookingStatus.PENDING || booking.getStatus() == BookingStatus.PAID) {
+               booking.setStatus(BookingStatus.CONFIRMED);
+               bookingRepository.save(booking);
+               return true;
+          }
+          return false;
+     }
+
+     @Transactional
+     public boolean cancelBookingByStaff(Long id, String reason) {
+          if (id == null) {
+               return false;
+          }
+          Booking booking = bookingRepository.findById(id).orElse(null);
+          if (booking == null || booking.getStatus() == null) {
+               return false;
+          }
+          if (booking.getStatus() == BookingStatus.CANCELED || booking.getStatus() == BookingStatus.COMPLETED) {
+               return false;
+          }
+          booking.setStatus(BookingStatus.CANCELED);
+          if (reason != null && !reason.isBlank()) {
+               String staffReason = "Lý do hủy (NV): " + reason.trim();
+               String existing = booking.getNote();
+               String merged = existing == null || existing.isBlank()
+                         ? staffReason
+                         : existing + "\n" + staffReason;
+               if (merged.length() > 500) {
+                    merged = merged.substring(0, 500);
+               }
+               booking.setNote(merged);
+          }
           bookingRepository.save(booking);
           return true;
      }
@@ -204,6 +342,16 @@ public class BookingService {
           String datePart = date != null ? date.format(DateTimeFormatter.BASIC_ISO_DATE) : "";
           String rand = UUID.randomUUID().toString().replace("-", "").substring(0, 6).toUpperCase();
           return "BK" + datePart + rand;
+     }
+
+     private PassengerType resolvePassengerType(PassengerType type) {
+          if (type == null) {
+               return PassengerType.ADULT;
+          }
+          if (type == PassengerType.CHILD) {
+               return PassengerType.CHILD;
+          }
+          return PassengerType.ADULT;
      }
 
      private UserAccount getCurrentUser() {

@@ -29,7 +29,8 @@ public class StaffStatsController {
           LocalDateTime endOfMonth = startOfMonth.plusMonths(1);
 
           long totalMonth = bookingRepository.countByCreatedAtBetween(startOfMonth, endOfMonth);
-          long canceledMonth = bookingRepository.countByStatusAndCreatedAtBetween(BookingStatus.CANCELED, startOfMonth, endOfMonth);
+          long canceledMonth = bookingRepository.countByStatusAndCreatedAtBetween(BookingStatus.CANCELED, startOfMonth,
+                    endOfMonth);
           double cancelRate = totalMonth > 0 ? (canceledMonth * 100.0 / totalMonth) : 0.0;
 
           model.addAttribute("kpiMonth", totalMonth);

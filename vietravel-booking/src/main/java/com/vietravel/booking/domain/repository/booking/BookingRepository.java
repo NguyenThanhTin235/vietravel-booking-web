@@ -23,7 +23,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      @EntityGraph(attributePaths = { "departure", "departure.tour", "departure.tour.images" })
      List<Booking> findByUserIdOrderByCreatedAtDesc(Long userId);
 
-     @EntityGraph(attributePaths = { "departure", "departure.tour", "departure.tour.images", "passengers" })
+     @EntityGraph(attributePaths = {
+               "departure",
+               "departure.tour",
+               "departure.tour.images",
+               "departure.tour.tourLine",
+               "departure.tour.transportMode",
+               "departure.tour.startLocation",
+               "passengers"
+     })
      Optional<Booking> findWithDetailsById(Long id);
 
      long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
@@ -42,6 +50,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
      @EntityGraph(attributePaths = { "departure", "departure.tour" })
      List<Booking> findTop50ByOrderByCreatedAtDesc();
+
+     @EntityGraph(attributePaths = { "departure", "departure.tour" })
+     List<Booking> findByCreatedAtBetweenOrderByCreatedAtDesc(LocalDateTime start, LocalDateTime end);
 
      @EntityGraph(attributePaths = { "departure", "departure.tour" })
      List<Booking> findTop50ByStatusOrderByCreatedAtDesc(BookingStatus status);
