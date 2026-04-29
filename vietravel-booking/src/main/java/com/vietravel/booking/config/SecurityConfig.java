@@ -2,6 +2,7 @@ package com.vietravel.booking.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -16,6 +17,29 @@ public class SecurityConfig {
         }
 
         @Bean
+        @Order(1)
+        SecurityFilterChain bookingHistorySecurity(HttpSecurity http) throws Exception {
+                http
+                                .securityMatcher("/customer/bookings/**", "/customer/bookings")
+                                .csrf(csrf -> csrf.disable())
+                                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+                return http.build();
+        }
+
+        @Bean
+        @Order(2)
+        SecurityFilterChain paymentSecurity(HttpSecurity http) throws Exception {
+                http
+                                .securityMatcher("/payment/**")
+                                .csrf(csrf -> csrf.disable())
+                                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+                return http.build();
+        }
+
+        @Bean
+        @Order(3)
         SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
                                 .csrf(csrf -> csrf.disable())
@@ -24,6 +48,11 @@ public class SecurityConfig {
                                                 .requestMatchers(
                                                                 "/",
                                                                 "/health",
+                                                                "/tour/**",
+                                                                "/payment/**",
+                                                                "/my-bookings",
+                                                                "/customer/bookings",
+                                                                "/customer/bookings/**",
                                                                 "/auth/**",
                                                                 "/logout",
                                                                 "/login/**",

@@ -105,6 +105,26 @@ CREATE TABLE user_profile(
 ) ENGINE=InnoDB;
 
 -- =========================
+-- 1B) NOTIFICATIONS
+-- =========================
+CREATE TABLE notifications(
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL,
+  title VARCHAR(200) NOT NULL,
+  message VARCHAR(800) NOT NULL,
+  type ENUM('INFO','SUCCESS','WARNING','ERROR') NOT NULL DEFAULT 'INFO',
+  link VARCHAR(500) NULL,
+  is_read TINYINT(1) NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  read_at DATETIME NULL,
+  CONSTRAINT fk_notifications_user FOREIGN KEY(user_id) REFERENCES users(id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  INDEX idx_notifications_user(user_id),
+  INDEX idx_notifications_read(user_id, is_read),
+  INDEX idx_notifications_created(created_at)
+) ENGINE=InnoDB;
+
+-- =========================
 -- 2) CATEGORIES (multi-level)
 -- =========================
 CREATE TABLE tour_category(
@@ -332,7 +352,7 @@ CREATE TABLE payments(
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   booking_id BIGINT NOT NULL,
   payment_type ENUM('PAY','REFUND') NOT NULL,
-  method ENUM('VNPAY_MOCK') NOT NULL DEFAULT 'VNPAY_MOCK',
+  method ENUM('VNPAY_MOCK','CASH') NOT NULL DEFAULT 'VNPAY_MOCK',
   status ENUM('INIT','SUCCESS','FAILED','REFUNDED') NOT NULL,
   amount DECIMAL(12,2) NOT NULL,
   txn_ref VARCHAR(60) NOT NULL,

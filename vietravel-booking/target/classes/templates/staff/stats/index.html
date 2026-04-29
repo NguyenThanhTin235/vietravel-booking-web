@@ -14,23 +14,30 @@
             <div class="kpi-row">
                 <div class="card kpi reveal">
                     <div class="kpi-label">Tổng booking tháng</div>
-                    <div class="kpi-value" data-counter data-to="120">120</div>
+                    <div class="kpi-value" data-counter
+                         th:attr="data-to=${kpiMonth!=null?kpiMonth:0}"
+                         th:text="${kpiMonth!=null?kpiMonth:'0'}">0</div>
                     <div class="kpi-note">Tháng hiện tại</div>
                 </div>
                 <div class="card kpi reveal">
                     <div class="kpi-label">Tỷ lệ hủy</div>
-                    <div class="kpi-value" data-counter data-to="8" data-decimals="0">8</div>
+                    <div class="kpi-value" data-counter data-decimals="1"
+                         th:attr="data-to=${kpiCancelRate!=null?kpiCancelRate:0}"
+                         th:text="${kpiCancelRate!=null?#numbers.formatDecimal(kpiCancelRate, 1, 'POINT', 1, 'POINT'):'0.0'}">0.0</div>
                     <div class="kpi-note">% theo tháng</div>
                 </div>
                 <div class="card kpi reveal">
                     <div class="kpi-label">Đơn xử lý trong ngày</div>
-                    <div class="kpi-value" data-counter data-to="24">24</div>
-                    <div class="kpi-note">Hiệu suất nhân viên</div>
+                    <div class="kpi-value" data-counter
+                         th:attr="data-to=${kpiProcessedToday!=null?kpiProcessedToday:0}"
+                         th:text="${kpiProcessedToday!=null?kpiProcessedToday:'0'}">0</div>
+                    <div class="kpi-note">Hiệu suất trong ngày</div>
                 </div>
                 <div class="card kpi reveal">
-                    <div class="kpi-label">Điểm hài lòng</div>
-                    <div class="kpi-value" data-counter data-to="4.8" data-decimals="1">4.8</div>
-                    <div class="kpi-note">Trên thang 5</div>
+                    <div class="kpi-label">Doanh thu tháng</div>
+                    <div class="kpi-value"
+                         th:text="${kpiRevenueMonth!=null?#numbers.formatDecimal(kpiRevenueMonth, 0, 'COMMA', 0, 'POINT'):'0'}">0</div>
+                    <div class="kpi-note">VNĐ</div>
                 </div>
             </div>
         </div>
@@ -40,12 +47,29 @@
                 <div class="card-head">
                     <div class="card-title">Xu hướng booking</div>
                     <div class="card-actions">
-                        <button class="btn btn-ghost" type="button">Tuần</button>
-                        <button class="btn btn-ghost" type="button">Tháng</button>
+                        <span class="pill">Theo ngày trong tháng</span>
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="placeholder-chart">Biểu đồ sẽ được tích hợp sau</div>
+                    <div class="table-wrap">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Ngày</th>
+                                <th>Số booking</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${#lists.isEmpty(dailyCounts)}">
+                                <td colspan="2" class="muted">Chưa có dữ liệu trong tháng.</td>
+                            </tr>
+                            <tr th:each="d : ${dailyCounts}">
+                                <td th:text="${#temporals.format(d.day, 'dd/MM/yyyy')}">--/--/----</td>
+                                <td th:text="${d.total}">0</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -57,26 +81,13 @@
                 </div>
                 <div class="card-body">
                     <div class="list">
-                        <div class="list-item reveal">
+                        <div th:if="${#lists.isEmpty(topTours)}" class="muted">Chưa có dữ liệu tour.</div>
+                        <div th:each="t,iter : ${topTours}" class="list-item reveal">
                             <div class="li-main">
-                                <div class="li-title">Phú Quốc 4N3Đ</div>
-                                <div class="li-sub">35 booking</div>
+                                <div class="li-title" th:text="${t.title}">Tour</div>
+                                <div class="li-sub"><span th:text="${t.total}">0</span> booking</div>
                             </div>
-                            <span class="pill">Top 1</span>
-                        </div>
-                        <div class="list-item reveal">
-                            <div class="li-main">
-                                <div class="li-title">Đà Nẵng 3N2Đ</div>
-                                <div class="li-sub">28 booking</div>
-                            </div>
-                            <span class="pill pill-blue">Top 2</span>
-                        </div>
-                        <div class="list-item reveal">
-                            <div class="li-main">
-                                <div class="li-title">Đà Lạt 2N1Đ</div>
-                                <div class="li-sub">21 booking</div>
-                            </div>
-                            <span class="pill pill-gray">Top 3</span>
+                            <span class="pill" th:text="'Top ' + ${iter.index + 1}">Top 1</span>
                         </div>
                     </div>
                 </div>

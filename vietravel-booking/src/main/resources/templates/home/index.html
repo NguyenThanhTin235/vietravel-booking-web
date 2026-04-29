@@ -30,21 +30,17 @@
                     <div class="sb-label">Thời gian</div>
                     <div class="sb-input">
                         <i class="fa-regular fa-calendar"></i>
-                        <input type="text" name="date" placeholder="VD: 05/02 - 14/03"
-                               th:value="${param.date}">
+                        <input type="date" name="date" placeholder="Chọn ngày"
+                               th:value="${param.date}" autocomplete="off">
                     </div>
                 </div>
 
                 <div class="sb-item">
-                    <div class="sb-label">Loại tour</div>
+                    <div class="sb-label">Dòng tour</div>
                     <div class="sb-input">
                         <i class="fa-solid fa-layer-group"></i>
-                        <select name="type">
-                            <option value="" th:selected="${param.type==null || param.type[0]==''}">Tất cả tour</option>
-                            <option value="city" th:selected="${param.type!=null && param.type[0]=='city'}">Tour thành phố</option>
-                            <option value="beach" th:selected="${param.type!=null && param.type[0]=='beach'}">Tour biển</option>
-                            <option value="cruise" th:selected="${param.type!=null && param.type[0]=='cruise'}">Du thuyền</option>
-                            <option value="hiking" th:selected="${param.type!=null && param.type[0]=='hiking'}">Trekking</option>
+                        <select name="tourLineId" id="tourLineSelect">
+                            <option value="">Tất cả dòng tour</option>
                         </select>
                     </div>
                 </div>
@@ -102,7 +98,7 @@
                         <div class="meta">
                             <span><i class="fa-solid fa-star"></i> 4.8 (243)</span><span>•</span><span>4 ngày</span>
                         </div>
-                        <div class="price">Từ <b>189.25$</b></div>
+                        <div class="price">Từ <b>4.890.000 ₫</b></div>
                     </div>
                 </article>
 
@@ -116,7 +112,7 @@
                         <div class="meta">
                             <span><i class="fa-solid fa-star"></i> 4.8 (243)</span><span>•</span><span>4 ngày</span>
                         </div>
-                        <div class="price">Từ <b>225$</b></div>
+                        <div class="price">Từ <b>5.950.000 ₫</b></div>
                     </div>
                 </article>
 
@@ -130,7 +126,7 @@
                         <div class="meta">
                             <span><i class="fa-solid fa-star"></i> 4.8 (243)</span><span>•</span><span>4 ngày</span>
                         </div>
-                        <div class="price">Từ <b>943$</b></div>
+                        <div class="price">Từ <b>24.900.000 ₫</b></div>
                     </div>
                 </article>
 
@@ -144,7 +140,7 @@
                         <div class="meta">
                             <span><i class="fa-solid fa-star"></i> 4.8 (243)</span><span>•</span><span>4 ngày</span>
                         </div>
-                        <div class="price">Từ <b>771$</b></div>
+                        <div class="price">Từ <b>19.990.000 ₫</b></div>
                     </div>
                 </article>
             </div>

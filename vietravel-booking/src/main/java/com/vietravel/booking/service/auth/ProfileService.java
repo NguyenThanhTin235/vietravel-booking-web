@@ -4,6 +4,8 @@ import com.vietravel.booking.domain.entity.auth.UserAccount;
 import com.vietravel.booking.domain.entity.auth.UserProfile;
 import com.vietravel.booking.domain.repository.auth.UserAccountRepository;
 import com.vietravel.booking.domain.repository.auth.UserProfileRepository;
+import com.vietravel.booking.domain.entity.support.NotificationType;
+import com.vietravel.booking.service.support.NotificationService;
 import com.vietravel.booking.web.dto.profile.ProfileResponse;
 import com.vietravel.booking.web.dto.profile.ProfileUpdateRequest;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -17,10 +19,14 @@ public class ProfileService {
 
      private final UserAccountRepository userAccountRepository;
      private final UserProfileRepository userProfileRepository;
+     private final NotificationService notificationService;
 
-     public ProfileService(UserAccountRepository userAccountRepository, UserProfileRepository userProfileRepository) {
+     public ProfileService(UserAccountRepository userAccountRepository,
+               UserProfileRepository userProfileRepository,
+               NotificationService notificationService) {
           this.userAccountRepository = userAccountRepository;
           this.userProfileRepository = userProfileRepository;
+          this.notificationService = notificationService;
      }
 
      public ProfileResponse getCurrentProfile() {
@@ -60,6 +66,13 @@ public class ProfileService {
           profile.setAvatar(req.getAvatar() == null ? null : req.getAvatar().trim());
 
           userAccountRepository.save(user);
+
+          notificationService.createForUser(
+                    user,
+                    "Cập nhật thông tin cá nhân",
+                    "Thông tin hồ sơ của bạn đã được cập nhật thành công.",
+                    NotificationType.SUCCESS,
+                    "/profile");
           return toResponse(user, profile);
      }
 

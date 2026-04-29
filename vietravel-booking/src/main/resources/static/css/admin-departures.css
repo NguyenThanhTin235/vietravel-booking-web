@@ -7,6 +7,7 @@
      display: flex;
      flex-direction: column;
      gap: 16px;
+     padding: 0 22px;
 }
 
 .departure-head {
@@ -318,5 +319,9 @@
 @media (max-width: 1100px) {
      .departure-body {
           grid-template-columns: 1fr;
+     }
+
+     .departure-page {
+          padding: 0 14px;
      }
 }

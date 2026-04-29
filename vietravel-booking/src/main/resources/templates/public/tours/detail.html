@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{layout/base :: layout(
+			pageTitle=${pageTitle},
+			activeNav=${activeNav},
+			content=~{::content},
+			additionalJs=~{::additionalJs}
+	  )}">
+
+<th:block th:fragment="content">
+	<div id="authState" class="sr-only" th:attr="data-auth=${currentUser != null}"></div>
+	<div id="loginModal" class="auth-modal" aria-hidden="true">
+		<div class="auth-modal-backdrop" data-close-modal></div>
+		<div class="auth-modal-card" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle">
+			<button class="auth-modal-close" type="button" aria-label="Đóng" data-close-modal>×</button>
+			<div class="auth-modal-icon">
+				<i class="fa-solid fa-lock"></i>
+			</div>
+			<h3 id="loginModalTitle">Vui lòng đăng nhập</h3>
+			<p>Bạn cần đăng nhập để tiếp tục đặt tour.</p>
+			<div class="auth-modal-actions">
+				<a class="auth-modal-btn primary" th:href="@{/auth/login}">Đăng nhập</a>
+				<button class="auth-modal-btn ghost" type="button" data-close-modal>Để sau</button>
+			</div>
+		</div>
+	</div>
+	<section class="tour-detail-page">
+		<div class="container">
+			<div class="tour-detail-layout">
+				<div class="tour-detail-col">
+					<div class="tour-detail-hero">
+						<h1 class="tour-detail-title" th:text="${detail.title}">Tên tour</h1>
+						<div class="tour-detail-gallery">
+							<img id="tourMainImage" class="tour-detail-main"
+									 th:src="${#lists.isEmpty(detail.imageUrls) ? '/images/login-bg.jpg' : detail.imageUrls[0]}"
+									 alt="Tour">
+							<div class="tour-detail-thumbs" th:if="${detail.imageUrls != null}">
+								<button class="tour-detail-thumb" type="button"
+										th:each="img : ${detail.imageUrls}"
+										th:attr="data-src=${img}">
+									<img th:src="${img}" alt="Tour">
+								</button>
+							</div>
+						</div>
+
+						<div class="tour-detail-info">
+							<div class="tour-info-item"><span>Mã tour:</span> <b th:text="${detail.code}">CODE</b></div>
+							<div class="tour-info-item"><span>Thời gian:</span>
+								<b th:text="${detail.durationDays + 'N' + detail.durationNights + 'D'}">2N1D</b></div>
+							<div class="tour-info-item"><span>Dòng tour:</span> <b th:text="${detail.tourLineName}">Tiêu chuẩn</b></div>
+							<div class="tour-info-item"><span>Phương tiện:</span> <b th:text="${detail.transportModeName}">Xe</b></div>
+							<div class="tour-info-item"><span>Khởi hành:</span> <b th:text="${detail.startLocationName}">Hà Nội</b></div>
+							<div class="tour-info-item" th:if="${detail.destinationNames != null}">
+								<span>Điểm đến:</span>
+								<b th:text="${#strings.listJoin(detail.destinationNames, ' - ')}">Đà Nẵng</b>
+							</div>
+						</div>
+					</div>
+
+					<section class="tour-calendar">
+						<div class="section-head">
+							<h2>LỊCH KHỞI HÀNH</h2>
+						</div>
+						<div class="tour-calendar-wrap" th:if="${calendarMonths != null}">
+							<aside class="calendar-sidebar">
+								<div class="calendar-sidebar-title">Chọn tháng</div>
+								<div class="calendar-month-list">
+									<button class="calendar-month-item" type="button"
+											th:each="m, stat : ${calendarMonths}"
+											th:classappend="${stat.index == 0 ? ' is-active' : ''}"
+											th:attr="data-month=${m.year + '-' + m.month}"
+											th:text="${m.month + '/' + m.year}">2/2026</button>
+								</div>
+							</aside>
+
+							<div class="calendar-main">
+								<div id="calendarInfo" class="calendar-info" aria-hidden="true"
+										th:attr="data-start=${detail.startLocationName},data-end=${#strings.listJoin(detail.destinationNames, ' - ')},data-duration=${detail.durationDays + 'N' + detail.durationNights + 'D'}">
+									<div class="calendar-info-date">
+										<span>Ngày khởi hành</span>
+										<strong id="calendarInfoDate">--/--/----</strong>
+									</div>
+									<div class="calendar-info-grid">
+										<div><span>Điểm khởi hành</span><b id="calendarInfoStart">--</b></div>
+										<div><span>Điểm kết thúc</span><b id="calendarInfoEnd">--</b></div>
+										<div><span>Thời gian</span><b id="calendarInfoDuration">--</b></div>
+										<div><span>Giá người lớn</span><b id="calendarInfoPriceAdult">--</b></div>
+										<div><span>Giá trẻ em</span><b id="calendarInfoPriceChild">--</b></div>
+									</div>
+								</div>
+								<div class="calendar-panel"
+										th:each="m, stat : ${calendarMonths}"
+										th:classappend="${stat.index == 0 ? ' is-active' : ''}"
+										th:attr="data-month=${m.year + '-' + m.month}">
+									<div class="calendar-panel-head">
+										<button class="calendar-nav prev" type="button" aria-label="Previous month">←</button>
+										<div class="calendar-panel-title" th:text="${#strings.toUpperCase(m.label)}">THÁNG 2/2026</div>
+										<button class="calendar-nav next" type="button" aria-label="Next month">→</button>
+									</div>
+									<div class="calendar-weekdays">
+										<div>T2</div>
+										<div>T3</div>
+										<div>T4</div>
+										<div>T5</div>
+										<div>T6</div>
+										<div>T7</div>
+										<div>CN</div>
+									</div>
+									<div class="calendar-grid">
+										<div class="calendar-day"
+												th:each="d : ${m.days}"
+												th:classappend="${!d.inMonth ? ' is-outside' : (d.available ? ' is-available' : '')}">
+											<button class="calendar-day-btn" type="button"
+													th:if="${d.available}"
+													th:attr="data-date=${#temporals.format(d.date, 'yyyy-MM-dd')}, data-price-adult=${d.priceAdult}, data-price-adult-label=${d.priceLabel}, data-price-child=${d.priceChild}, data-price-child-label=${d.priceChildLabel != null ? d.priceChildLabel : ''}">
+													<span class="day-num" th:text="${d.day}">5</span>
+													<span class="day-price" th:text="${d.priceLabel}">4,290K</span>
+											</button>
+											<div class="calendar-day-cell" th:if="${!d.available}">
+												<span class="day-num" th:text="${d.day}">1</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<section class="tour-detail-content">
+						<details class="tour-detail-block">
+							<summary class="tour-detail-summary">Thông tin chi tiết</summary>
+							<div class="tour-detail-rich" th:utext="${detail.overviewHtml}"></div>
+						</details>
+						<details class="tour-detail-block">
+							<summary class="tour-detail-summary">Mô tả</summary>
+							<div class="tour-detail-rich" th:utext="${detail.additionalInfoHtml}"></div>
+						</details>
+						<details class="tour-detail-block">
+							<summary class="tour-detail-summary">Lưu ý</summary>
+							<div class="tour-detail-rich" th:utext="${detail.notesHtml}"></div>
+						</details>
+						<details class="tour-detail-block">
+							<summary class="tour-detail-summary">Lịch trình</summary>
+							<div class="tour-itinerary" th:if="${detail.itineraryDays != null}">
+								<details class="tour-itinerary-item" th:each="day : ${detail.itineraryDays}">
+									<summary class="itinerary-summary">
+										<span class="itinerary-day" th:text="'Ngày ' + ${day.dayNo} + ': ' + ${day.titleRoute}">Ngày 1</span>
+										<span class="itinerary-meals" th:text="${day.meals != null ? 'Bữa ăn: ' + day.meals : ''}">Bữa ăn: Ăn sáng</span>
+									</summary>
+									<div class="tour-detail-rich" th:utext="${day.contentHtml}"></div>
+								</details>
+							</div>
+						</details>
+					</section>
+
+					<section class="tour-related">
+						<div class="section-head">
+							<h2>Chương trình khác</h2>
+						</div>
+						<div class="related-grid">
+							<article class="related-card" th:each="t : ${relatedTours}">
+								<div class="related-thumb">
+									<img th:src="${t.thumbnailUrl != null ? t.thumbnailUrl : '/images/login-bg.jpg'}" alt="Tour">
+									<span class="tour-badge"
+										  th:attr="data-line=${#strings.toLowerCase(t.tourLineName != null ? t.tourLineName : 'Tiêu chuẩn')}"
+										  th:text="${t.tourLineName != null ? t.tourLineName : 'Tiêu chuẩn'}">Tiêu chuẩn</span>
+								</div>
+								<div class="related-body">
+									<h4 th:text="${t.title}">Tour</h4>
+									<div class="related-price"
+										 th:text="${t.basePrice != null ? (#numbers.formatDecimal(t.basePrice, 0, 'COMMA', 0, 'POINT') + ' đ') : '0 đ'}">0 đ</div>
+									<a class="tour-btn" th:href="@{'/tour/' + ${t.slug}}">Xem chi tiết</a>
+								</div>
+							</article>
+						</div>
+					</section>
+				</div>
+
+				<aside class="tour-detail-aside">
+					<div class="tour-price-card" id="priceCard">
+						<div class="price-title">Giá từ</div>
+						<div class="price-value"
+							 th:text="${detail.basePrice != null ? (#numbers.formatDecimal(detail.basePrice, 0, 'COMMA', 0, 'POINT') + ' đ') : '0 đ'}">0 đ</div>
+						<div class="price-note">Giá có thể thay đổi theo ngày khởi hành</div>
+						<button class="price-btn js-book-now" id="bookNowBtn" type="button"
+								th:attr="data-book-url=@{'/tour/' + ${detail.slug} + '/dat'}">Chọn ngày khởi hành</button>
+					</div>
+
+					<div class="tour-book-card" id="bookCard" style="display:none"
+							 th:attr="data-price=${detail.basePrice}">
+						<div class="book-title">Đặt tour</div>
+						<div class="book-row">Ngày khởi hành: <b id="bookDate">--/--</b></div>
+						<div class="book-row">Giá từ: <b id="bookPrice" th:text="${detail.basePrice != null ? (#numbers.formatDecimal(detail.basePrice, 0, 'COMMA', 0, 'POINT') + ' đ') : '0 đ'}">0 đ</b></div>
+						<div class="book-actions">
+							<button class="price-btn js-book-now" type="button"
+									th:attr="data-book-url=@{'/tour/' + ${detail.slug} + '/dat'}">Tiếp tục đặt</button>
+						</div>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</section>
+</th:block>
+
+<th:block th:fragment="additionalJs">
+	<script th:src="@{/js/public-tour-detail.js}"></script>
+</th:block>
+
+</html>

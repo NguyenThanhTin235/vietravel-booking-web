@@ -6,13 +6,16 @@ import com.vietravel.booking.domain.entity.auth.UserRole;
 import com.vietravel.booking.domain.entity.auth.UserStatus;
 import com.vietravel.booking.domain.repository.auth.EmailVerificationCodeRepository;
 import com.vietravel.booking.domain.repository.auth.UserAccountRepository;
+import com.vietravel.booking.domain.entity.support.NotificationType;
 import com.vietravel.booking.service.support.MailService;
+import com.vietravel.booking.service.support.NotificationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 public class AuthService {
@@ -22,6 +25,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
     private final JwtService jwtService;
+    private final NotificationService notificationService;
 
     @Value("${app.verify.code-minutes:10}")
     private long codeMinutes;
@@ -33,12 +37,14 @@ public class AuthService {
             EmailVerificationCodeRepository codeRepository,
             PasswordEncoder passwordEncoder,
             MailService mailService,
-            JwtService jwtService) {
+            JwtService jwtService,
+            NotificationService notificationService) {
         this.userAccountRepository = userAccountRepository;
         this.codeRepository = codeRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
         this.jwtService = jwtService;
+        this.notificationService = notificationService;
     }
 
     public void register(String email, String password, String fullName) {
@@ -61,7 +67,7 @@ public class AuthService {
         evc.setAttemptCount(0);
         codeRepository.save(evc);
 
-        mailService.sendVerifyCode(email, code);
+        mailService.sendVerifyCode(Objects.requireNonNull(email, "email"), Objects.requireNonNull(code, "code"));
     }
 
     public void resendCode(String email) {
@@ -79,7 +85,7 @@ public class AuthService {
         evc.setAttemptCount(0);
         codeRepository.save(evc);
 
-        mailService.sendVerifyCode(email, code);
+        mailService.sendVerifyCode(Objects.requireNonNull(email, "email"), Objects.requireNonNull(code, "code"));
     }
 
     public void verifyEmail(String email, String code) {
@@ -110,6 +116,13 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("Email không tồn tại"));
         user.setStatus(UserStatus.ACTIVE);
         userAccountRepository.save(user);
+
+        notificationService.createForUser(
+                user,
+                "Tạo tài khoản thành công",
+                "Tài khoản của bạn đã được xác thực và sẵn sàng sử dụng.",
+                NotificationType.SUCCESS,
+                "/profile");
     }
 
     public String login(String email, String password) {
@@ -148,7 +161,7 @@ public class AuthService {
         evc.setAttemptCount(0);
         codeRepository.save(evc);
 
-        mailService.sendVerifyCode(email, code);
+        mailService.sendVerifyCode(Objects.requireNonNull(email, "email"), Objects.requireNonNull(code, "code"));
     }
 
     public void resetPassword(String email, String code, String newPassword) {
@@ -171,5 +184,12 @@ public class AuthService {
 
         latest.setUsedAt(LocalDateTime.now());
         codeRepository.save(latest);
+
+        notificationService.createForUser(
+                user,
+                "Đổi mật khẩu thành công",
+                "Mật khẩu của bạn đã được cập nhật. Nếu không phải bạn thực hiện, hãy liên hệ hỗ trợ ngay.",
+                NotificationType.INFO,
+                "/profile");
     }
 }

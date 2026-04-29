@@ -51,6 +51,23 @@
 	</main>
 </div>
 
+<div class="noti-modal" data-noti-modal>
+	<div class="noti-modal-card" data-noti-modal-card>
+		<div class="noti-modal-head">
+			<div class="noti-modal-title" data-noti-modal-title>Thông báo</div>
+			<button class="noti-modal-close" type="button" data-noti-modal-close>×</button>
+		</div>
+		<div class="noti-modal-body">
+			<div class="noti-modal-time" data-noti-modal-time></div>
+			<div class="noti-modal-message" data-noti-modal-message></div>
+		</div>
+		<div class="noti-modal-foot">
+			<button class="btn btn-danger" type="button" data-noti-modal-delete>Xóa thông báo</button>
+			<button class="btn" type="button" data-noti-modal-close>Đóng</button>
+		</div>
+	</div>
+</div>
+
 <script th:src="@{/js/admin.js}"></script>
 <th:block th:replace="${additionalJs}"></th:block>
 

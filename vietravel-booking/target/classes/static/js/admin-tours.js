@@ -230,6 +230,7 @@ function renderTourDetail(detail, listItem) {
      const durationLabel = `${detail.durationDays || 0} ngày / ${detail.durationNights || 0} đêm`
      return `
         <div class="tour-detail-hero"><img src="${thumb}" alt="thumb"></div>
+        <div id="tourDetailNotice" class="tour-detail-notice" hidden></div>
         <div class="tour-detail-head">
              <div>
                   <h3 class="tour-detail-title">${detail.title || ""}</h3>
@@ -296,6 +297,19 @@ function renderTourDetail(detail, listItem) {
             <span class="badge ${statusClass}">${status}</span>
         </div>
     `
+}
+
+function showDetailNotice(type, message) {
+     const el = qs("tourDetailNotice")
+     if (!el) return
+     el.className = "tour-detail-notice " + (type === "err" ? "err" : "ok")
+     el.textContent = message || ""
+     el.hidden = !message
+     if (!message) return
+     clearTimeout(showDetailNotice._t)
+     showDetailNotice._t = setTimeout(() => {
+          el.hidden = true
+     }, 3200)
 }
 
 function renderTourSchedule(detail) {
@@ -863,9 +877,11 @@ async function initTourList() {
                const id = btn.getAttribute("data-detail-toggle")
                try {
                     await api(`/api/admin/tours/${id}/toggle`, { method: "PATCH" })
+                    showDetailNotice("ok", "Đã cập nhật trạng thái tour")
                     toast("ok", "Thành công", "Đã cập nhật trạng thái tour")
                     await loadTourList()
                } catch (err) {
+                    showDetailNotice("err", err.message || "Không thể cập nhật")
                     toast("err", "Lỗi", err.message || "Không thể cập nhật")
                }
           })
