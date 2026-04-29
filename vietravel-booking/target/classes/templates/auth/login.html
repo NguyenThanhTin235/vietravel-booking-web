@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Đăng nhập - Vietravel Booking</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+<body>
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-left">
+            <div class="brand">
+                <img th:src="@{/images/auth/logo.png}" alt="logo">
+            </div>
+
+            <div class="brand-sub">
+                " Du lịch là khoản đầu tư duy nhất giúp bạn giàu có hơn về trải nghiệm, không chỉ vật chất "
+            </div>
+
+            <div class="hero">Khám phá tour • Đặt nhanh • Thanh toán tiện lợi</div>
+        </div>
+
+        <div class="auth-right">
+            <div class="plane"></div>
+
+            <h1 class="h1">Chào mừng</h1>
+
+            <div th:if="${error}" class="alert" th:text="${error}"></div>
+            <div th:if="${success}" class="success" th:text="${success}"></div>
+
+            <form class="form" th:action="@{/auth/login-form}" method="post">
+
+            <div class="field">
+                    <div class="label">Email</div>
+                    <div class="input">
+                        <span class="icon"><i class="fas fa-envelope-square"></i></span>
+                        <input type="email" name="email" placeholder="Nhập email" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="label">Mật khẩu</div>
+                    <div class="input">
+                        <span class="icon"><i class='fas fa-lock'></i></span>
+                        <input type="password" name="password" placeholder="Nhập mật khẩu" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div></div>
+                    <a class="small-link" th:href="@{/auth/forgot}">Quên mật khẩu?</a>
+                </div>
+
+                <button class="btn" type="submit">ĐĂNG NHẬP</button>
+
+                <div class="footer-text">
+                    Bạn chưa có tài khoản?
+                    <a th:href="@{/auth/register}">Đăng ký ngay</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

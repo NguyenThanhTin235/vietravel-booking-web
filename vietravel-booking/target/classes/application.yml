@@ -1,0 +1,98 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  error:
+    include-message: always
+    include-binding-errors: always
+
+spring:
+  application:
+    name: vietravel-booking
+
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/vietravel_booking?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci&useSSL=false&serverTimezone=Asia/Ho_Chi_Minh
+    username: root
+    password: "23092005"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none   # DB bạn đã tạo bằng SQL => none / validate
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: never     # bạn đã chạy schema.sql/seed.sql thủ công => never
+      encoding: UTF-8
+
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: tinthanhn81@gmail.com
+    password: onrcrcgevjclevax
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  messages:
+    basename: messages
+    encoding: UTF-8
+
+
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.orm.jdbc.bind: trace
+    org.springframework.security: info
+    org.springframework.web: info
+
+app:
+  pagination:
+    default-page-size: 10
+  upload:
+    dir: uploads
+  jwt:
+    secret: "CHANGE_ME_TO_A_LONG_RANDOM_SECRET_MIN_64_CHARS_................................"
+    access-token-minutes: 60
+  verify:
+    code-minutes: 10
+
+  vnpay:
+    tmn-code: "4YUP19I4"
+    hash-secret: "MDUIFDCRAKLNBPOFIAFNEKFRNMFBYEPX"
+    pay-url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+    return-url: "http://localhost:8080/payment/vnpay/return"
+    version: "2.1.0"
+    command: "pay"
+    currency: "VND"
+    locale: "vn"
+    order-type: "other"
+    time-zone: "Asia/Ho_Chi_Minh"
+    expire-minutes: 15
+
+  cloudinary:
+    cloud-name: dmxxo6wgl
+    api-key: 315628768938735
+    api-secret: w9ziEUTs3giXY9hR8O1S75NBIF4
+
+
+
+
+

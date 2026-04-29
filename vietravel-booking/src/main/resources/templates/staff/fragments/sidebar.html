@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="staffSidebar(activeMenu,activeSubMenu)">
+    <div class="sidebar-head">
+        <a class="brand" th:href="@{/staff}">
+            <span class="brand-mark">V</span>
+            <span class="brand-text">Vietravel</span>
+        </a>
+        <button class="sidebar-toggle" type="button" data-sidebar-toggle>
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        </button>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a class="nav-item"
+           th:classappend="${activeMenu=='dashboard'} ? ' active' : ''"
+           th:href="@{/staff}">
+            <span class="nav-ic">⌂</span>
+            <span class="nav-tx">Bảng điều khiển</span>
+        </a>
+
+        <div class="nav-section">ĐẶT TOUR</div>
+
+        <div class="nav-group"
+             th:classappend="${activeMenu=='bookings'} ? ' open' : ''">
+            <button class="nav-item nav-item-parent" type="button" data-nav-toggle="bookings"
+                    th:classappend="${activeMenu=='bookings'} ? ' active' : ''">
+                <span class="nav-ic">🧾</span>
+                <span class="nav-tx">Đặt tour</span>
+                <span class="nav-caret">▾</span>
+            </button>
+
+            <div class="nav-sub">
+                <a class="nav-sub-item"
+                   th:classappend="${activeSubMenu=='create'} ? ' active' : ''"
+                   th:href="@{/staff/bookings/create}">
+                    Tạo booking
+                </a>
+                <a class="nav-sub-item"
+                   th:classappend="${activeSubMenu=='process'} ? ' active' : ''"
+                   th:href="@{/staff/bookings/process}">
+                    Xử lý đặt tour
+                </a>
+            </div>
+        </div>
+
+        <div class="nav-section">HỖ TRỢ</div>
+
+        <a class="nav-item"
+           th:classappend="${activeMenu=='inquiries'} ? ' active' : ''"
+           th:href="@{/staff/inquiries}">
+            <span class="nav-ic">💬</span>
+            <span class="nav-tx">Xử lý thắc mắc</span>
+        </a>
+
+        <a class="nav-item"
+           th:classappend="${activeMenu=='stats'} ? ' active' : ''"
+           th:href="@{/staff/stats}">
+            <span class="nav-ic">📊</span>
+            <span class="nav-tx">Thống kê</span>
+        </a>
+    </nav>
+
+
+
+    <script th:inline="javascript">
+        (function(){
+            document.addEventListener("click",function(e){
+                var btn=e.target.closest("[data-nav-toggle]");
+                if(!btn)return;
+
+                var group=btn.closest(".nav-group");
+                if(!group)return;
+
+                group.classList.toggle("open");
+            });
+        })();
+    </script>
+</div>
+
+</body>
+</html>

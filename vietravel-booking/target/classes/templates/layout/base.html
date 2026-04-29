@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:fragment="layout(pageTitle, activeNav, content, additionalJs)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title th:text="${pageTitle}?:'Vietravel Booking'">Vietravel Booking</title>
+
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: siteHeader(${activeNav})}"></div>
+
+<main>
+    <div th:replace="${content}"></div>
+</main>
+
+<div class="noti-modal" data-noti-modal>
+    <div class="noti-modal-card" data-noti-modal-card>
+        <div class="noti-modal-head">
+            <div class="noti-modal-title" data-noti-modal-title>Thông báo</div>
+            <button class="noti-modal-close" type="button" data-noti-modal-close>×</button>
+        </div>
+        <div class="noti-modal-body">
+            <div class="noti-modal-time" data-noti-modal-time></div>
+            <div class="noti-modal-message" data-noti-modal-message></div>
+        </div>
+        <div class="noti-modal-foot">
+            <button class="btn-outline" type="button" data-noti-modal-delete>Xóa thông báo</button>
+            <button class="btn-outline" type="button" data-noti-modal-close>Đóng</button>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: siteFooter}"></div>
+
+<script th:src="@{/js/base.js}"></script>
+
+<th:block th:replace="${additionalJs}"></th:block>
+
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <div class="tour-page" data-page="tours-form">
+        <nav class="tour-breadcrumb">
+            <a href="/admin">Bảng điều khiển</a>
+            <span class="sep">/</span>
+            <a href="/admin/tours">Thông tin tour</a>
+            <span class="sep">/</span>
+            <span class="current" th:text="${tourId!=null?'Cập nhật':'Thêm mới'}">Thêm mới</span>
+        </nav>
+
+        <div class="card tour-card">
+            <div class="tour-head" th:classappend="${tourId!=null} ? ' only-actions' : ''">
+            </div>
+
+            <div id="tourErr" class="tour-alert"></div>
+
+            <input type="hidden" id="tourId" th:value="${tourId!=null?tourId:''}">
+
+            <div class="grid-12 tour-form">
+                <div class="col-8">
+                    <div class="tour-section">
+                        <h3>Thông tin cơ bản</h3>
+                        <div class="tour-grid-2">
+                            <div class="tour-field">
+                                <label>Mã tour</label>
+                                <input id="code" class="input" placeholder="Tự động sinh" readonly>
+                                <div class="hint">Mã tour được tạo tự động</div>
+                            </div>
+                            <div class="tour-field">
+                                <label>Tiêu đề tour</label>
+                                <input id="title" class="input" placeholder="VD: Đà Nẵng 3N2Đ" required>
+                            </div>
+                        </div>
+                        <input id="slug" type="hidden">
+                        <div class="tour-field">
+                            <label>Giá tour (VNĐ)</label>
+                            <input id="basePrice" class="input" type="number" min="0" step="1000" placeholder="5990000">
+                        </div>
+                        <div class="tour-grid-2">
+                            <div class="tour-field">
+                                <label>Thời gian (ngày)</label>
+                                <input id="durationDays" class="input" type="number" min="1" value="1">
+                            </div>
+                            <div class="tour-field">
+                                <label>Thời gian (đêm)</label>
+                                <input id="durationNights" class="input" type="number" min="0" value="0">
+                            </div>
+                        </div>
+                        <div class="tour-grid-2">
+                            <div class="tour-field">
+                                <label>Danh mục tour</label>
+                                <select id="categoryIds" class="input" multiple></select>
+                                <div class="hint">Giữ Ctrl để chọn nhiều</div>
+                            </div>
+                            <div class="tour-field">
+                                <label>Điểm đến</label>
+                                <select id="destinationIds" class="input" multiple></select>
+                                <div class="hint">Có thể chọn nhiều điểm đến</div>
+                            </div>
+                        </div>
+                        <div class="tour-grid-2">
+                            <div class="tour-field">
+                                <label>Điểm khởi hành</label>
+                                <select id="startLocationId" class="input"></select>
+                            </div>
+                            <div class="tour-field">
+                                <label>Dòng tour</label>
+                                <input id="tourLineName" class="input" placeholder="Tự động theo giá" readonly>
+                                <input id="tourLineId" type="hidden">
+                                <div class="hint">Dòng tour tự động theo giá tour</div>
+                            </div>
+                        </div>
+                        <div class="tour-grid-2">
+                            <div class="tour-field">
+                                <label>Phương tiện</label>
+                                <select id="transportModeId" class="input"></select>
+                            </div>
+                            <div class="tour-field">
+                                <label>Trạng thái</label>
+                                <label class="tour-switch">
+                                    <input id="isActive" type="checkbox" checked>
+                                    <span>Hiển thị tour</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tour-section">
+                        <h3>Thông tin chi tiết</h3>
+                        <div class="tour-editor">
+                            <div class="editor-head">
+                                <span>Tổng quan</span>
+                                <div class="editor-tools" data-editor-tools="overview"></div>
+                            </div>
+                            <div id="overviewHtml" class="editor-body" contenteditable="true"></div>
+                        </div>
+                        <div class="tour-editor">
+                            <div class="editor-head">
+                                <span>Mô tả</span>
+                                <div class="editor-tools" data-editor-tools="additional"></div>
+                            </div>
+                            <div id="additionalInfoHtml" class="editor-body" contenteditable="true"></div>
+                        </div>
+                        <div class="tour-editor">
+                            <div class="editor-head">
+                                <span>Lưu ý</span>
+                                <div class="editor-tools" data-editor-tools="notes"></div>
+                            </div>
+                            <div id="notesHtml" class="editor-body" contenteditable="true"></div>
+                        </div>
+                    </div>
+
+                    <div class="tour-section">
+                        <div class="tour-section-head">
+                            <h3>Lịch trình theo ngày</h3>
+                            <button class="btn" type="button" id="btnAddDay">+ Thêm ngày</button>
+                        </div>
+                        <div id="itineraryList" class="itinerary-list"></div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="tour-form-actions">
+                        <a class="btn" href="/admin/tours">Quay lại</a>
+                        <button class="btn btn-primary" id="btnSave" type="button">Lưu tour</button>
+                    </div>
+                    <div class="tour-section">
+                        <h3>Ảnh đại diện</h3>
+                        <div class="tour-image-box" id="thumbBox">
+                            <img id="thumbPreview" alt="Thumbnail">
+                            <div class="tour-image-empty">Chưa có ảnh</div>
+                        </div>
+                        <input id="thumbnailUrl" type="hidden">
+                        <div class="tour-upload-actions">
+                            <input id="thumbFile" type="file" accept="image/*" hidden>
+                            <button class="btn btn-primary" type="button" id="btnChooseThumb">Chọn ảnh</button>
+                            <button class="btn" type="button" id="btnRemoveThumb">Xóa</button>
+                        </div>
+                    </div>
+
+                    <div class="tour-section">
+                        <h3>Ảnh mô tả</h3>
+                        <div class="tour-gallery" id="gallery"></div>
+                        <input id="galleryUrls" type="hidden">
+                        <div class="tour-upload-actions">
+                            <input id="galleryFiles" type="file" accept="image/*" multiple hidden>
+                            <button class="btn" type="button" id="btnChooseGallery">Tải ảnh</button>
+                        </div>
+                    </div>
+
+                    <div class="tour-section">
+                        <h3>Ghi chú nhanh</h3>
+                        <div class="tour-note">Hình ảnh sẽ được upload tự động lên Cloudinary.</div>
+                        <div class="tour-note">Giữ Ctrl để chọn nhiều danh mục hoặc điểm đến.</div>
+                        <div class="tour-note">Nên cập nhật lịch trình chi tiết cho từng ngày.</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

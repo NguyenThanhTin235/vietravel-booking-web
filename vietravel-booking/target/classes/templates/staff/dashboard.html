@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="content">
+	<div class="grid-12">
+
+		<div class="col-12">
+			<div class="kpi-row">
+				<div class="card kpi reveal">
+					<div class="kpi-label">Đơn đặt tour hôm nay</div>
+					<div class="kpi-value" data-counter th:attr="data-to=${kpiToday!=null?kpiToday:0}"
+						 th:text="${kpiToday!=null?kpiToday:'0'}">0</div>
+					<div class="kpi-note">Cập nhật theo ngày</div>
+				</div>
+
+				<div class="card kpi reveal">
+					<div class="kpi-label">Đơn chờ xác nhận</div>
+					<div class="kpi-value" data-counter th:attr="data-to=${kpiPending!=null?kpiPending:0}"
+						 th:text="${kpiPending!=null?kpiPending:'0'}">0</div>
+					<div class="kpi-note">PENDING</div>
+				</div>
+
+				<div class="card kpi reveal">
+					<div class="kpi-label">Yêu cầu hủy</div>
+					<div class="kpi-value" data-counter th:attr="data-to=${kpiCancel!=null?kpiCancel:0}"
+						 th:text="${kpiCancel!=null?kpiCancel:'0'}">0</div>
+					<div class="kpi-note">Cần phản hồi</div>
+				</div>
+
+				<div class="card kpi reveal">
+					<div class="kpi-label">Ghi chú mới</div>
+					<div class="kpi-value" data-counter th:attr="data-to=${kpiQuestions!=null?kpiQuestions:0}"
+						 th:text="${kpiQuestions!=null?kpiQuestions:'0'}">0</div>
+					<div class="kpi-note">Trong 24 giờ</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-8">
+
+			<div class="card reveal" data-skeleton>
+				<div class="card-head">
+					<div class="card-title">Đặt tour nhanh</div>
+					<div class="card-actions">
+						<a class="btn btn-primary" th:href="@{/staff/bookings/create}">Tạo booking</a>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="list">
+						<div th:if="${#lists.isEmpty(recentBookings)}" class="muted">
+							Chưa có đơn đặt tour gần đây.
+						</div>
+						<div th:each="b : ${recentBookings}" class="list-item reveal">
+							<div class="li-main">
+								<div class="li-title"
+									 th:text="${b.departure != null && b.departure.tour != null ? b.departure.tour.title : 'Tour'}">Tour</div>
+								<div class="li-sub">
+									Mã: <span th:text="${b.bookingCode}">BK</span>
+									• Khách: <span th:text="${b.contactName}">--</span>
+									• Ngày: <span th:text="${#temporals.format(b.createdAt, 'dd/MM/yyyy')}">--/--/----</span>
+								</div>
+							</div>
+							<span th:switch="${b.status != null ? b.status.name() : ''}">
+								<span th:case="'PENDING'" class="badge badge-pending">Chờ xác nhận</span>
+								<span th:case="'CONFIRMED'" class="badge badge-confirmed">Đã xác nhận</span>
+								<span th:case="'CANCEL_REQUESTED'" class="badge badge-canceled">Yêu cầu hủy</span>
+								<span th:case="'CANCELED'" class="badge badge-canceled">Đã hủy</span>
+								<span th:case="'COMPLETED'" class="badge badge-confirmed">Hoàn tất</span>
+								<span th:case="*" class="badge badge-confirmed">Đang xử lý</span>
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="card mt-16 reveal" data-skeleton>
+				<div class="card-head">
+					<div class="card-title">Đơn đặt tour chờ xác nhận</div>
+					<div class="card-actions" style="display:flex;gap:10px;align-items:center">
+						<input class="search-input"
+							   style="max-width:240px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:#fff"
+							   data-table-search placeholder="Tìm trong bảng...">
+						<span style="color:var(--muted);font-weight:700;font-size:13px">
+							Hiển thị: <span data-table-count th:text="${#lists.size(pendingBookings)}">0</span>
+						</span>
+						<a class="btn btn-ghost" th:href="@{/staff/bookings/process}">Xem tất cả</a>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="table-wrap">
+						<table class="table" data-table>
+							<thead>
+							<tr>
+								<th>Mã</th>
+								<th>Khách hàng</th>
+								<th>Tour</th>
+								<th>Ngày</th>
+								<th>Trạng thái</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr th:if="${#lists.isEmpty(pendingBookings)}">
+								<td colspan="5" class="muted">Chưa có đơn cần xử lý.</td>
+							</tr>
+							<tr th:each="b : ${pendingBookings}" class="reveal">
+								<td th:text="${b.bookingCode}">BK</td>
+								<td th:text="${b.contactName}">--</td>
+								<td th:text="${b.departure != null && b.departure.tour != null ? b.departure.tour.title : 'Tour'}">Tour</td>
+								<td th:text="${b.departure != null && b.departure.startDate != null ? #temporals.format(b.departure.startDate, 'dd/MM/yyyy') : #temporals.format(b.createdAt, 'dd/MM/yyyy')}">--/--/----</td>
+								<td>
+									<span th:switch="${b.status != null ? b.status.name() : ''}">
+										<span th:case="'PENDING'" class="badge badge-pending">Chờ xác nhận</span>
+										<span th:case="'CANCEL_REQUESTED'" class="badge badge-canceled">Yêu cầu hủy</span>
+										<span th:case="'CANCELED'" class="badge badge-canceled">Đã hủy</span>
+										<span th:case="*" class="badge badge-confirmed">Đang xử lý</span>
+									</span>
+								</td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="col-4">
+			<div class="card reveal" data-skeleton>
+				<div class="card-head">
+					<div class="card-title">Ghi chú mới</div>
+					<div class="card-actions">
+						<a class="btn btn-ghost" th:href="@{/staff/inquiries}">Xem tất cả</a>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="list">
+						<div th:if="${#lists.isEmpty(recentNotes)}" class="muted">Chưa có ghi chú từ khách.</div>
+						<div th:each="b : ${recentNotes}" class="list-item reveal">
+							<div class="thumb"></div>
+							<div class="li-main">
+								<div class="li-title" th:text="${#strings.abbreviate(b.note, 48)}">Ghi chú</div>
+								<div class="li-sub">
+									Khách: <span th:text="${b.contactName}">--</span>
+									• <span th:text="${#temporals.format(b.createdAt, 'dd/MM/yyyy')}">--/--/----</span>
+								</div>
+							</div>
+							<span class="pill">Ghi chú</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="card mt-16 reveal" data-skeleton>
+				<div class="card-head">
+					<div class="card-title">Top tour đặt nhiều</div>
+				</div>
+				<div class="card-body">
+					<div class="list">
+						<div th:if="${#lists.isEmpty(topTours)}" class="muted">Chưa có dữ liệu tour nổi bật.</div>
+						<div th:each="t,iter : ${topTours}" class="list-item reveal">
+							<div class="li-main">
+								<div class="li-title" th:text="${t.title}">Tour</div>
+								<div class="li-sub">
+									<span th:text="${t.total}">0</span> booking
+								</div>
+							</div>
+							<span class="pill" th:text="'Top ' + ${iter.index + 1}">Top 1</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{layout/base :: layout(
+			pageTitle=${pageTitle},
+			activeNav=${activeNav},
+			content=~{::content},
+			additionalJs=~{::additionalJs}
+	  )}">
+
+<th:block th:fragment="content">
+	<section class="booking-hero">
+		<div class="container">
+			<a class="booking-back" href="javascript:history.back()">← Quay lại</a>
+			<h1 class="booking-title">ĐẶT TOUR</h1>
+			<div class="booking-steps">
+				<div class="booking-step is-active" data-step="info">
+					<div class="step-circle"><i class="fa-solid fa-clipboard-list"></i></div>
+					<div class="step-text">Nhập thông tin</div>
+				</div>
+				<div class="step-arrow">→</div>
+				<div class="booking-step" data-step="payment">
+					<div class="step-circle"><i class="fa-solid fa-credit-card"></i></div>
+					<div class="step-text">Thanh toán</div>
+				</div>
+				<div class="step-arrow">→</div>
+				<div class="booking-step" data-step="done">
+					<div class="step-circle"><i class="fa-solid fa-check"></i></div>
+					<div class="step-text">Hoàn tất</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="booking-main" id="bookingRoot"
+			 th:attr="data-adult-price=${adultPrice},data-child-price=${childPrice},data-slug=${detail.slug},data-date=${selectedDate != null ? #temporals.format(selectedDate, 'yyyy-MM-dd') : ''}">
+		<div class="container">
+			<div class="booking-grid" id="bookingGrid">
+				<div class="booking-left">
+					<div class="booking-result booking-result--success" id="bookingResultSuccess" hidden>
+						<div class="result-icon">✓</div>
+						<div class="result-content">
+							<b>Thanh toán thành công</b>
+							<p id="bookingResultSuccessDesc">Giao dịch đã hoàn tất. Chúng tôi sẽ liên hệ sớm.</p>
+						</div>
+						<div class="result-actions">
+							<a class="btn-outline" th:href="@{/customer/bookings}">Xem tour đã đặt</a>
+						</div>
+					</div>
+
+					<div class="booking-result booking-result--failed" id="bookingResultFailed" hidden>
+						<div class="result-icon">!</div>
+						<div class="result-content">
+							<b>Thanh toán chưa thành công</b>
+							<p>Vui lòng thử lại hoặc chọn phương thức khác.</p>
+						</div>
+						<div class="result-actions">
+							<button class="btn-pay retry-pay" id="retryPayBtn" type="button">Thanh toán lại</button>
+						</div>
+					</div>
+					<div class="booking-content" id="bookingContentLeft">
+						<div class="booking-card">
+							<h2>Thông tin liên lạc</h2>
+							<div class="booking-form-grid">
+							<div class="booking-field">
+								<label>Họ tên <span>*</span></label>
+								<input id="contactName" class="input" placeholder="Liên hệ"
+									   th:value="${currentUserProfile != null ? currentUserProfile.fullName : ''}">
+							</div>
+							<div class="booking-field">
+								<label>Điện thoại <span>*</span></label>
+								<input id="contactPhone" class="input" placeholder="Nhập số điện thoại"
+									   th:value="${currentUserProfile != null ? currentUserProfile.phone : ''}">
+							</div>
+							<div class="booking-field">
+								<label>Email <span>*</span></label>
+								<input id="contactEmail" class="input" placeholder="Nhập email"
+									   th:value="${currentUser != null ? currentUser.email : ''}">
+							</div>
+							<div class="booking-field">
+								<label>Địa chỉ</label>
+								<input id="contactAddress" class="input" placeholder="Nhập địa chỉ"
+									   th:value="${currentUserProfile != null ? currentUserProfile.address : ''}">
+							</div>
+							</div>
+						</div>
+
+						<div class="booking-card">
+						<h2>Hành khách</h2>
+						<div class="booking-pax-grid">
+							<div class="pax-card">
+								<div>
+									<b>Người lớn</b>
+									<span>Từ 12 tuổi trở lên</span>
+								</div>
+								<div class="pax-control" data-pax="adult">
+									<button type="button" class="pax-btn" data-action="minus">−</button>
+									<span class="pax-value" data-value>1</span>
+									<button type="button" class="pax-btn" data-action="plus">+</button>
+								</div>
+							</div>
+							<div class="pax-card">
+								<div>
+									<b>Trẻ em</b>
+									<span>Dưới 11 tuổi</span>
+								</div>
+								<div class="pax-control" data-pax="child">
+									<button type="button" class="pax-btn" data-action="minus">−</button>
+									<span class="pax-value" data-value>0</span>
+									<button type="button" class="pax-btn" data-action="plus">+</button>
+								</div>
+							</div>
+						</div>
+
+						<div class="booking-passengers" id="passengerList">
+							<div class="passenger-list" data-pax-list="adult"></div>
+							<div class="passenger-list" data-pax-list="child"></div>
+						</div>
+
+						<template id="adultPassengerTpl">
+							<div class="passenger-item" data-passenger-type="ADULT">
+								<div class="passenger-title">
+									<i class="fa-solid fa-user"></i>
+									<b>Người lớn (Từ 12 trở lên)</b>
+								</div>
+								<div class="passenger-grid">
+									<div class="booking-field">
+										<label>Họ tên <span>*</span></label>
+										<input class="input" data-field="name" placeholder="Liên hệ">
+									</div>
+									<div class="booking-field">
+										<label>Giới tính <span>*</span></label>
+										<select class="input">
+											<option>Nam</option>
+											<option>Nữ</option>
+										</select>
+									</div>
+									<div class="booking-field">
+										<label>Ngày sinh <span>*</span></label>
+										<input class="input" data-field="dob" type="date">
+									</div>
+								</div>
+							</div>
+						</template>
+
+						<template id="childPassengerTpl">
+							<div class="passenger-item" data-passenger-type="CHILD">
+								<div class="passenger-title">
+									<i class="fa-solid fa-child"></i>
+									<b>Trẻ em (Dưới 11 tuổi)</b>
+								</div>
+								<div class="passenger-grid">
+									<div class="booking-field">
+										<label>Họ tên <span>*</span></label>
+										<input class="input" data-field="name" placeholder="Họ tên trẻ em">
+									</div>
+									<div class="booking-field">
+										<label>Giới tính <span>*</span></label>
+										<select class="input">
+											<option>Nam</option>
+											<option>Nữ</option>
+										</select>
+									</div>
+									<div class="booking-field">
+										<label>Ngày sinh <span>*</span></label>
+										<input class="input" data-field="dob" type="date">
+									</div>
+								</div>
+							</div>
+						</template>
+						</div>
+
+						<div class="booking-card">
+							<h2>Ghi chú</h2>
+							<textarea id="contactNote" class="booking-textarea" rows="4" placeholder="Quý khách có ghi chú lưu ý gì, hãy nói với chúng tôi"></textarea>
+						</div>
+					</div>
+				</div>
+
+				<aside class="booking-right" id="bookingContentRight">
+					<div class="booking-card summary-card">
+						<h3>Tóm tắt chuyến đi</h3>
+						<div class="summary-head">
+							<img th:src="${#lists.isEmpty(detail.imageUrls) ? '/images/login-bg.jpg' : detail.imageUrls[0]}" alt="Tour">
+							<div>
+								<b th:text="${detail.title}">Tour</b>
+								<div class="summary-code">Mã tour: <span th:text="${detail.code}">CODE</span></div>
+								<div class="summary-date" th:if="${selectedDate != null}">Ngày khởi hành: <span th:text="${#temporals.format(selectedDate, 'dd/MM/yyyy')}">--/--/----</span></div>
+							</div>
+						</div>
+						<div class="summary-divider"></div>
+						<div class="summary-row">
+							<span>Khởi hành</span>
+							<b th:text="${detail.startLocationName}">--</b>
+						</div>
+						<div class="summary-row">
+							<span>Điểm đến</span>
+							<b th:text="${#strings.listJoin(detail.destinationNames, ' - ')}">--</b>
+						</div>
+						<div class="summary-row">
+							<span>Thời gian</span>
+							<b th:text="${detail.durationDays + 'N' + detail.durationNights + 'D'}">2N1D</b>
+						</div>
+					</div>
+
+					<div class="booking-card coupon-card">
+						<div class="coupon-head">
+							<b>Mã giảm giá</b>
+							<button type="button" class="coupon-add">+ Thêm mã giảm giá</button>
+						</div>
+						<div class="coupon-input">
+							<input class="input" placeholder="Nhập mã giảm giá">
+							<button type="button" class="btn-apply">Áp dụng</button>
+						</div>
+					</div>
+
+					<div class="booking-card price-breakdown">
+						<h3>Thành tiền</h3>
+						<div class="price-row">
+							<span>Người lớn</span>
+							<b id="adultAmount">--</b>
+						</div>
+						<div class="price-row">
+							<span>Trẻ em</span>
+							<b id="childAmount">--</b>
+						</div>
+						<div class="price-row discount">
+							<span>Giảm giá</span>
+							<b id="discountAmount">0 đ</b>
+						</div>
+						<div class="price-divider"></div>
+						<div class="price-row total">
+							<span>Tạm tính</span>
+							<b id="subtotalAmount">--</b>
+						</div>
+					</div>
+
+					<div class="booking-card total-card">
+						<div class="total-row">
+							<span>Tổng tiền</span>
+							<b id="totalAmount" th:text="${detail.basePrice != null ? (#numbers.formatDecimal(detail.basePrice, 0, 'COMMA', 0, 'POINT') + ' đ') : '0 đ'}">0 đ</b>
+						</div>
+						<button class="btn-pay" id="payBtn" type="button">Thanh toán</button>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</section>
+</th:block>
+
+<th:block th:fragment="additionalJs">
+	<script th:src="@{/js/public-booking.js}"></script>
+</th:block>
+
+</html>

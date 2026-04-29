@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header class="topbar" th:fragment="siteHeader(active)">
+    <div class="container topbar-inner">
+        <a class="brand" th:href="@{/}">
+            <img th:src="@{/images/logo.png}" alt="Vietravel">
+            <span>Vietravel</span>
+        </a>
+
+        <nav class="nav">
+            <a class="nav-link"
+               th:classappend="${active}=='destination'?' is-active':''"
+               href="#"
+               data-destination-trigger
+               aria-haspopup="true"
+               aria-expanded="false">Điểm đến</a>
+            <a class="nav-link" th:classappend="${active}=='promotion'?' is-active':''" href="#">Khuyến mãi</a>
+            <a class="nav-link" th:classappend="${active}=='news'?' is-active':''" href="#">Tin tức</a>
+            <a class="nav-link" th:classappend="${active}=='contact'?' is-active':''" th:href="@{/contact}">Liên hệ</a>
+        </nav>
+
+        <div class="nav-mega"
+             id="destinationMenu"
+             data-category-endpoint="/api/admin/tour-categories"
+             data-destination-endpoint="/api/admin/destinations">
+            <style>
+                .nav-mega-layout{display:grid;grid-template-columns:160px 1fr;gap:16px;align-items:start;grid-column:1 / -1}
+                .nav-mega-sidebar{padding-right:6px;border-right:1px solid rgba(229,231,235,.9)}
+                .nav-mega-tabs{display:flex;flex-direction:column;gap:10px}
+                .nav-mega-tab{width:100%;text-align:left;background:transparent;border:0;font-weight:900;font-size:13px;color:#0b1220;cursor:pointer;padding:6px 2px}
+                .nav-mega-tab.is-active{color:var(--primary);text-decoration:underline;text-underline-offset:6px}
+                .nav-mega-content .nav-mega-groups{display:block}
+                .nav-mega-group{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;grid-auto-rows:max-content;align-content:start}
+                .nav-mega-col{display:flex;flex-direction:column;gap:8px;min-width:0;align-self:start}
+                .nav-mega-list{display:flex;flex-direction:column;gap:8px}
+                .nav-mega-list a{display:block;line-height:1.45;white-space:normal;color:#475569}
+                .nav-mega-list a:hover{color:var(--primary)}
+                @media (max-width:980px){.nav-mega-layout{grid-template-columns:1fr}.nav-mega-sidebar{border-right:0}}
+                .nav-mega-title-sm{color:#0f172a}
+            </style>
+            <div class="nav-mega-head">
+                <div class="nav-mega-title">Điểm đến</div>
+                <button class="nav-mega-close" type="button" data-mega-close aria-label="Đóng">×</button>
+            </div>
+            <div class="nav-mega-body">
+                <div class="nav-mega-layout">
+                    <div class="nav-mega-sidebar">
+                        <div class="nav-mega-tabs">
+                            <button class="nav-mega-tab is-active" type="button" data-mega-tab="nuoc-ngoai">NƯỚC NGOÀI</button>
+                            <button class="nav-mega-tab" type="button" data-mega-tab="trong-nuoc">TRONG NƯỚC</button>
+                        </div>
+                    </div>
+                    <div class="nav-mega-content">
+                        <div class="nav-mega-groups">
+                            <div class="nav-mega-group" data-mega-group="nuoc-ngoai"></div>
+                            <div class="nav-mega-group" data-mega-group="trong-nuoc" style="display:none"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="topbar-right">
+            <th:block th:unless="${currentUser}">
+                <a class="nav-link" th:href="@{/auth/register}">Đăng ký</a>
+                <a class="btn-outline" th:href="@{/auth/login}">Đăng nhập</a>
+            </th:block>
+
+            <div th:if="${currentUser}" class="noti-wrap" data-noti>
+                <button class="icon-btn noti-btn" type="button" title="Thông báo" data-noti-toggle>
+                    <span class="ic">🔔</span>
+                    <span class="noti-badge" data-noti-count hidden>0</span>
+                </button>
+                <div class="noti-dropdown" data-noti-dropdown>
+                    <div class="noti-dropdown-head">
+                        <div class="noti-title">Thông báo</div>
+                    </div>
+                    <div class="noti-list" data-noti-list></div>
+                </div>
+            </div>
+
+            <div th:if="${currentUser}" class="user-profile-area">
+                <span class="user-name-display"
+                      th:text="${currentUserProfile != null && currentUserProfile.fullName != null ? currentUserProfile.fullName : 'User'}">
+                    User
+                </span>
+
+                <div class="user-avatar-circle">
+                    <img th:src="${currentUserProfile != null && currentUserProfile.avatar != null ? currentUserProfile.avatar : '/images/default-avatar.png'}"
+                         alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+
+                <div class="user-dropdown-menu">
+                    <a href="/profile"><i class="fa-solid fa-user"></i> Hồ sơ cá nhân</a>
+                    <a href="/my-bookings"><i class="fa-solid fa-ticket"></i> Vé đã đặt</a>
+                    <div class="dropdown-divider"></div>
+
+                    <form th:action="@{/logout}" method="post" style="margin: 0;">
+                        <button type="submit" class="logout-btn">
+                            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <button class="burger" type="button" id="burgerBtn" aria-label="Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="mobile-nav" id="mobileNav">
+        <a href="#">Điểm đến</a>
+        <a href="#">Khuyến mãi</a>
+        <a href="#">Tin tức</a>
+        <a th:href="@{/contact}">Liên hệ</a>
+        <div class="mobile-actions">
+            <th:block th:unless="${currentUser}">
+                <a th:href="@{/auth/register}">Đăng ký</a>
+                <a th:href="@{/auth/login}">Đăng nhập</a>
+            </th:block>
+            <th:block th:if="${currentUser}">
+                <a href="/profile">Hồ sơ cá nhân</a>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" style="background:none; border:none; color:inherit; font:inherit; cursor:pointer;">Đăng xuất</button>
+                </form>
+            </th:block>
+        </div>
+    </div>
+
+</header>
+</body>
+</html>

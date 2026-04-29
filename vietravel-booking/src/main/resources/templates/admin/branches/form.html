@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <div class="grid-12">
+        <div class="col-8">
+            <div class="card booking-detail-card branch-form-card">
+                <div class="card-head">
+                    <div>
+                        <div class="card-title" th:text="${mode == 'edit' ? 'Cập nhật chi nhánh' : 'Thêm chi nhánh'}">Thêm chi nhánh</div>
+                        <div class="branch-subtitle">Điền đầy đủ thông tin để quản lý chi nhánh hiệu quả.</div>
+                    </div>
+                    <div class="card-actions">
+                        <a class="btn btn-ghost" th:href="@{/admin/branches}">Quay lại</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                      <form id="branchForm" method="post"
+                          th:action="${mode == 'edit' && branch != null} ? @{'/admin/branches/' + ${branch.id}} : @{/admin/branches}">
+                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                        <div class="form-section">
+                            <div class="form-section-title">Thông tin chi nhánh</div>
+                            <div class="form-help">Các trường bắt buộc giúp định danh chi nhánh.</div>
+                            <div class="grid-12" style="gap:16px;margin-top:12px">
+                                <div class="col-6">
+                                    <label class="muted">Khu vực</label>
+                                    <input class="input" name="region" placeholder="MIEN_BAC / MIEN_TRUNG / TP_HCM..." required
+                                           th:value="${branch != null ? branch.region : ''}">
+                                </div>
+                                <div class="col-6">
+                                    <label class="muted">Tên chi nhánh</label>
+                                    <input class="input" name="name" placeholder="Tên chi nhánh" required
+                                           th:value="${branch != null ? branch.name : ''}">
+                                </div>
+                                <div class="col-12">
+                                    <label class="muted">Địa chỉ</label>
+                                    <input class="input" name="address" placeholder="Địa chỉ" required
+                                           th:value="${branch != null ? branch.address : ''}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="form-section-title">Thông tin liên hệ</div>
+                            <div class="form-help">Thông tin giúp khách hàng liên lạc nhanh chóng.</div>
+                            <div class="grid-12" style="gap:16px;margin-top:12px">
+                                <div class="col-4">
+                                    <label class="muted">Hotline</label>
+                                    <input class="input" name="hotline" placeholder="Hotline"
+                                           th:value="${branch != null ? branch.hotline : ''}">
+                                </div>
+                                <div class="col-4">
+                                    <label class="muted">Email</label>
+                                    <input class="input" type="email" name="email" placeholder="Email"
+                                           th:value="${branch != null ? branch.email : ''}">
+                                </div>
+                                <div class="col-4">
+                                    <label class="muted">Fax</label>
+                                    <input class="input" name="fax" placeholder="Fax"
+                                           th:value="${branch != null ? branch.fax : ''}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-actions" style="margin-top:18px">
+                            <button class="btn btn-primary" type="submit" th:text="${mode == 'edit' ? 'Cập nhật' : 'Tạo mới'}">Tạo mới</button>
+                            <a class="btn btn-ghost" th:href="@{/admin/branches}">Hủy</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card booking-detail-card branch-form-card">
+                <div class="card-head">
+                    <div class="card-title">Thiết lập hiển thị</div>
+                </div>
+                <div class="card-body">
+                    <div class="form-section" style="margin-bottom:0">
+                        <label class="muted">Thứ tự</label>
+                        <input class="input" type="number" name="sortOrder" min="0" step="1" form="branchForm"
+                               th:value="${branch != null && branch.sortOrder != null ? branch.sortOrder : 0}">
+                        <div class="form-help">Số nhỏ hơn sẽ hiển thị trước.</div>
+                    </div>
+                    <div class="form-section" style="margin-top:16px">
+                        <label class="muted">Trạng thái</label>
+                        <select class="select" name="isActive" form="branchForm">
+                            <option value="true" th:selected="${branch == null || branch.isActive}">Hoạt động</option>
+                            <option value="false" th:selected="${branch != null && branch.isActive == false}">Tạm ngưng</option>
+                        </select>
+                        <div class="form-help">Tạm ngưng sẽ ẩn chi nhánh khỏi trang công khai.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

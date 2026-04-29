@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <div class="tc-page">
+        <nav class="tc-breadcrumb">
+            <a href="/admin">Bảng điều khiển</a>
+            <span class="sep">/</span>
+            <a href="/admin/tour-categories">Danh mục tour</a>
+            <span class="sep">/</span>
+            <span class="current" th:text="${tourCategoryId!=null?'Cập nhật':'Thêm mới'}">Thêm mới</span>
+        </nav>
+
+        <div class="card reveal tc-card">
+            <div class="tc-wrap" data-page="tour-categories-form">
+
+                <div class="tc-head">
+                    <div class="tc-title">
+                        <h2 id="title">Danh mục tour</h2>
+                    </div>
+                    <a class="tc-btn" href="/admin/tour-categories">Quay lại</a>
+                </div>
+
+                <div id="err" style="display:none;padding:10px 12px;border-radius:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);color:#b42318;font-weight:900"></div>
+
+                <form id="form" class="tc-form">
+                    <input type="hidden" id="id" th:value="${tourCategoryId!=null?tourCategoryId:''}">
+
+                    <div class="tc-grid2">
+                        <div class="tc-field">
+                            <label>Tên danh mục</label>
+                            <input id="name" class="input" placeholder="VD: Tour trong nước" required>
+                        </div>
+                        <div class="tc-field">
+                            <label>Slug</label>
+                            <input id="slug" class="input" placeholder="VD: tour-trong-nuoc">
+                        </div>
+                    </div>
+
+                    <div class="tc-grid2">
+                        <div class="tc-field">
+                            <label>Danh mục cha</label>
+                            <select id="parentId" class="input">
+                                <option value="">-- Không có --</option>
+                            </select>
+                        </div>
+                        <div class="tc-field">
+                            <label>Sắp xếp</label>
+                            <input id="sortOrder" class="input" type="number" step="1" value="0" required>
+                        </div>
+                    </div>
+
+                    <div class="tc-activeRow">
+                        <label class="tc-chip">
+                            <input id="isActive" type="checkbox" checked>
+                            Đang hoạt động
+                        </label>
+                    </div>
+
+                    <div class="tc-foot">
+                        <button type="button" id="btnDelete" class="tc-btn danger" style="display:none">Xóa</button>
+                        <button type="submit" class="tc-btn primary">Lưu</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="tcToastWrap" class="tc-toastWrap"></div>
+
+    <div id="tcModal" class="tc-modalBackdrop">
+        <div class="tc-modal">
+            <div class="tc-modalHead">
+                <h3 id="tcModalTitle">Xác nhận</h3>
+                <button id="tcModalClose" class="tc-btn sm">Đóng</button>
+            </div>
+            <div id="tcModalBody" class="tc-modalBody"></div>
+            <div class="tc-modalFoot">
+                <button id="tcModalCancel" class="tc-btn">Hủy</button>
+                <button id="tcModalOk" class="tc-btn danger">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

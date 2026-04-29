@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <div class="grid-12">
+        <div class="col-7">
+            <div class="card booking-process-card">
+                <div class="card-head">
+                    <div class="card-title">Liên hệ khách hàng</div>
+                    <div class="card-actions">
+                        <form method="get" th:action="@{/admin/contacts}" style="display:flex;gap:10px;align-items:center">
+                            <select class="select" name="status" style="min-width:160px">
+                                <option value="" th:selected="${#strings.isEmpty(selectedStatus)}">Tất cả trạng thái</option>
+                                <option th:each="s : ${statusOptions}"
+                                        th:value="${s.name()}"
+                                        th:text="${s == T(com.vietravel.booking.domain.entity.support.ContactInquiryStatus).NEW ? 'Mới' : (s == T(com.vietravel.booking.domain.entity.support.ContactInquiryStatus).READ ? 'Đã xem' : 'Đã phản hồi')}"
+                                        th:selected="${selectedStatus == s.name()}">
+                                </option>
+                            </select>
+                            <input class="search-input" name="q" placeholder="Tìm theo khách hàng..." th:value="${selectedQuery}">
+                            <button class="btn btn-ghost" type="submit">Lọc</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-wrap">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Khách hàng</th>
+                                <th>Email</th>
+                                <th>Điện thoại</th>
+                                <th>Chủ đề</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày gửi</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${#lists.isEmpty(inquiries)}">
+                                <td colspan="6" class="muted">Chưa có thắc mắc.</td>
+                            </tr>
+                            <tr th:each="c : ${inquiries}" class="reveal">
+                                <td th:text="${c.fullName}">--</td>
+                                <td th:text="${c.email}">--</td>
+                                <td th:text="${c.phone}">--</td>
+                                <td>
+                                    <a th:href="@{/admin/contacts(id=${c.id},status=${selectedStatus},q=${selectedQuery})}"
+                                       th:text="${c.subject}">--</a>
+                                </td>
+                                <td>
+                                    <span th:switch="${c.status != null ? c.status.name() : ''}">
+                                        <span th:case="'NEW'" class="badge badge-pending">Mới</span>
+                                        <span th:case="'READ'" class="badge badge-confirmed">Đã xem</span>
+                                        <span th:case="'RESOLVED'" class="badge badge-confirmed">Đã phản hồi</span>
+                                        <span th:case="*" class="badge badge-confirmed">--</span>
+                                    </span>
+                                </td>
+                                <td th:text="${#temporals.format(c.createdAt, 'dd/MM/yyyy')}">--/--/----</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-5">
+            <div class="card">
+                <div class="card-head">
+                    <div class="card-title">Chi tiết phản hồi</div>
+                </div>
+                <div class="card-body">
+                    <div th:if="${selectedInquiry == null}" class="placeholder-chart">Chưa có thắc mắc để hiển thị</div>
+                    <div th:if="${selectedInquiry != null}">
+                        <div class="li-title" th:text="${selectedInquiry.subject}">Chủ đề</div>
+                        <div class="li-sub" style="margin-top:8px">
+                            Khách: <span th:text="${selectedInquiry.fullName}">--</span>
+                            • <span th:text="${selectedInquiry.phone}">--</span>
+                        </div>
+                        <div class="li-sub" style="margin-top:6px">
+                            Email: <span th:text="${selectedInquiry.email}">--</span>
+                        </div>
+                        <div class="li-sub" style="margin-top:6px">
+                            Trạng thái:
+                            <span th:switch="${selectedInquiry.status != null ? selectedInquiry.status.name() : ''}">
+                                <span th:case="'NEW'">Mới</span>
+                                <span th:case="'READ'">Đã xem</span>
+                                <span th:case="'RESOLVED'">Đã phản hồi</span>
+                                <span th:case="*">Mới</span>
+                            </span>
+                        </div>
+                        <div class="li-sub" style="margin-top:10px" th:text="${selectedInquiry.content}">Nội dung</div>
+                        <div class="li-sub" style="margin-top:12px" th:if="${selectedInquiry.replyHistory != null}">
+                            <b>Lịch sử phản hồi</b>
+                            <pre style="white-space:pre-wrap;margin-top:6px" th:text="${selectedInquiry.replyHistory}">Lịch sử</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

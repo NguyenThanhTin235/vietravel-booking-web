@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/staff :: layout(
+      pageTitle='Yêu cầu hủy tour',
+      activeMenu='bookings',
+      activeSubMenu='cancel-requests',
+      content=~{::content},
+      additionalJs=~{::additionalJs}
+)}">
+
+<th:block th:fragment="content">
+    <div class="card">
+        <div class="card-head">
+            <div class="card-title">Danh sách yêu cầu hủy</div>
+            <div class="card-actions">
+                <a class="btn btn-ghost" th:href="@{/staff/bookings/process}">Quay lại đặt tour</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Mã</th>
+                        <th>Khách hàng</th>
+                        <th>Tour</th>
+                        <th>Lý do</th>
+                        <th>Thời gian</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(cancelBookings)}">
+                        <td colspan="7" class="muted">Chưa có yêu cầu hủy tour.</td>
+                    </tr>
+                    <tr th:each="b : ${cancelBookings}" class="reveal">
+                        <td th:text="${b.bookingCode}">BK</td>
+                        <td th:text="${b.contactName}">--</td>
+                        <td th:text="${b.departure != null && b.departure.tour != null ? b.departure.tour.title : 'Tour'}">Tour</td>
+                        <td th:text="${b.note != null && !#strings.isEmpty(b.note) ? b.note : 'Không ghi rõ'}">Lý do</td>
+                        <td th:text="${#temporals.format(b.updatedAt, 'dd/MM/yyyy')}">--/--/----</td>
+                        <td><span class="badge badge-pending">Chờ duyệt</span></td>
+                        <td>
+                            <div class="table-actions process-actions-row">
+                                <a class="btn btn-ghost" th:href="@{'/staff/bookings/' + ${b.id} + '/cancel-review'}">Xử lý</a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="additionalJs"></th:block>
+
+</html>

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin :: layout(
+      pageTitle=${pageTitle},
+      activeMenu=${activeMenu},
+      activeSubMenu=${activeSubMenu},
+      content=~{admin/branches/form :: content},
+      additionalJs=~{::additionalJs}
+)}">
+
+<th:block th:fragment="additionalJs"></th:block>
+
+</html>

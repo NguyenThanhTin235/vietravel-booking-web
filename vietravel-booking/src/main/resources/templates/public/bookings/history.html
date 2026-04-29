@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(
+            pageTitle=${pageTitle},
+            activeNav=${activeNav},
+        content=~{::content},
+        additionalJs=~{::additionalJs}
+      )}">
+
+<th:block th:fragment="content">
+    <section class="booking-hero">
+        <div class="container">
+            <a class="booking-back" th:href="@{/profile}">← Quay lại</a>
+            <h1 class="booking-title">TOUR ĐÃ ĐẶT</h1>
+        </div>
+    </section>
+
+    <section class="booking-main">
+        <div class="container">
+            <div class="booking-card booking-filter">
+                <form class="booking-filter-grid" method="get" th:action="@{/customer/bookings}">
+                    <div class="booking-field">
+                        <label>Trạng thái tour</label>
+                        <select class="input" name="status">
+                            <option value="" th:selected="${selectedStatus == ''}">Tất cả</option>
+                            <option value="PENDING" th:selected="${selectedStatus == 'PENDING'}">Chờ xác nhận</option>
+                            <option value="CONFIRMED" th:selected="${selectedStatus == 'CONFIRMED'}">Đã xác nhận</option>
+                            <option value="CANCEL_REQUESTED" th:selected="${selectedStatus == 'CANCEL_REQUESTED'}">Yêu cầu hủy</option>
+                            <option value="CANCELED" th:selected="${selectedStatus == 'CANCELED'}">Đã hủy</option>
+                            <option value="COMPLETED" th:selected="${selectedStatus == 'COMPLETED'}">Hoàn tất</option>
+                        </select>
+                    </div>
+                    <div class="booking-field">
+                        <label>Trạng thái thanh toán</label>
+                        <select class="input" name="payment">
+                            <option value="" th:selected="${selectedPayment == ''}">Tất cả</option>
+                            <option value="INIT" th:selected="${selectedPayment == 'INIT'}">Chưa thanh toán</option>
+                            <option value="SUCCESS" th:selected="${selectedPayment == 'SUCCESS'}">Thành công</option>
+                            <option value="FAILED" th:selected="${selectedPayment == 'FAILED'}">Thất bại</option>
+                            <option value="REFUNDED" th:selected="${selectedPayment == 'REFUNDED'}">Đã hoàn tiền</option>
+                        </select>
+                    </div>
+                    <div class="booking-filter-actions">
+                        <button class="btn-pay" type="submit">Lọc kết quả</button>
+                        <a class="btn-outline" th:href="@{/customer/bookings}">Xóa lọc</a>
+                    </div>
+                </form>
+            </div>
+            <div th:if="${#lists.isEmpty(bookings)}" class="booking-card">
+                <h2>Chưa có đơn đặt</h2>
+                <p style="color: var(--muted); margin: 0;">Bạn chưa đặt tour nào. Hãy khám phá các tour mới nhất.</p>
+                <div style="margin-top: 12px;">
+                    <a class="btn-pay" th:href="@{/tour/tim-kiem}">Tìm tour</a>
+                </div>
+            </div>
+
+            <div th:if="${!#lists.isEmpty(bookings)}" class="booking-grid" style="grid-template-columns:1fr;">
+                <div th:each="item : ${bookings}" class="booking-card booking-history-card">
+                    <div class="summary-head" style="align-items:center;">
+                        <img th:src="${item.thumbnailUrl}" alt="Tour">
+                        <div>
+                            <b th:text="${item.booking.departure != null && item.booking.departure.tour != null ? item.booking.departure.tour.title : 'Tour'}">Tour</b>
+                            <div class="summary-code">Mã đặt tour: <span th:text="${item.booking.bookingCode}">BK</span></div>
+                            <div class="summary-date" th:if="${item.booking.departure != null && item.booking.departure.startDate != null}">
+                                Ngày khởi hành: <span th:text="${#temporals.format(item.booking.departure.startDate, 'dd/MM/yyyy')}">--/--/----</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-row">
+                        <span>Trạng thái</span>
+                        <b class="status-badge" th:classappend="' status-' + ${item.booking.status}">
+                            <span th:switch="${item.booking.status != null ? item.booking.status.name() : ''}">
+                                <span th:case="'PENDING'">Chờ xác nhận</span>
+                                <span th:case="'CONFIRMED'">Đã xác nhận</span>
+                                <span th:case="'CANCEL_REQUESTED'">Yêu cầu hủy</span>
+                                <span th:case="'CANCELED'">Đã hủy</span>
+                                <span th:case="'COMPLETED'">Hoàn tất</span>
+                                <span th:case="*" th:text="${item.booking.status}">Trạng thái</span>
+                            </span>
+                        </b>
+                    </div>
+                    <div class="summary-row">
+                        <span>Thanh toán</span>
+                        <b class="status-badge" th:classappend="' status-' + ${item.paymentStatus}">
+                            <span th:switch="${item.paymentStatus != null ? item.paymentStatus.name() : ''}">
+                                <span th:case="'INIT'">Chưa thanh toán</span>
+                                <span th:case="'SUCCESS'">Thành công</span>
+                                <span th:case="'FAILED'">Thất bại</span>
+                                <span th:case="'REFUNDED'">Đã hoàn tiền</span>
+                                <span th:case="*" th:text="${item.paymentStatus}">Thanh toán</span>
+                            </span>
+                        </b>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tổng tiền</span>
+                        <b class="price-highlight" th:text="${#numbers.formatDecimal(item.booking.totalAmount, 0, 'COMMA', 0, 'POINT') + ' đ'}">0 đ</b>
+                    </div>
+                    <div class="summary-row booking-history-actions">
+                        <a class="btn-outline" th:href="@{'/customer/bookings/' + ${item.booking.id}}">Xem chi tiết</a>
+                        <a class="btn-outline" th:if="${item.booking.departure != null && item.booking.departure.tour != null}"
+                           th:href="@{'/tour/' + ${item.booking.departure.tour.slug}}">Xem tour</a>
+                        <form th:if="${item.canCancel}" method="post"
+                              th:action="@{'/customer/bookings/' + ${item.booking.id} + '/cancel-request'}">
+                            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <input type="hidden" name="cancelReason">
+                            <input type="hidden" name="cancelReasonOther">
+                            <button class="btn-outline js-cancel-request-btn" type="button"
+                                    th:attr="data-booking-code=${item.booking.bookingCode}">Yêu cầu hủy</button>
+                        </form>
+                        <span class="pill" th:if="${item.canCancel}">Có thể hủy</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="booking-pagination" th:if="${totalPages > 1}">
+                <a class="btn-outline" th:if="${currentPage > 1}"
+                   th:href="@{/customer/bookings(page=${currentPage - 1},status=${selectedStatus},payment=${selectedPayment})}">← Trước</a>
+                <span class="pagination-info">Trang <b th:text="${currentPage}">1</b> / <b th:text="${totalPages}">1</b></span>
+                <a class="btn-outline" th:if="${currentPage < totalPages}"
+                   th:href="@{/customer/bookings(page=${currentPage + 1},status=${selectedStatus},payment=${selectedPayment})}">Sau →</a>
+            </div>
+        </div>
+    </section>
+
+    <div id="cancelRequestModal" class="booking-modal" aria-hidden="true">
+        <div class="booking-modal-backdrop" data-cancel-request-close></div>
+        <div class="booking-modal-card" role="dialog" aria-modal="true" aria-labelledby="cancelRequestTitle">
+            <button class="booking-modal-close" type="button" data-cancel-request-close>×</button>
+            <h3 id="cancelRequestTitle">Yêu cầu hủy tour</h3>
+            <div class="booking-modal-body">
+                <div class="modal-field">
+                    <label class="modal-label" for="cancelRequestSelect">Chọn lý do hủy</label>
+                    <select id="cancelRequestSelect" class="modal-input">
+                        <option value="">-- Chọn lý do --</option>
+                        <option value="CUSTOMER_REQUEST">Khách yêu cầu hủy</option>
+                        <option value="PAYMENT_FAILED">Thanh toán thất bại</option>
+                        <option value="NO_SHOW">Khách không xác nhận</option>
+                        <option value="SOLD_OUT">Hết chỗ</option>
+                        <option value="SCHEDULE_CHANGED">Thay đổi lịch khởi hành</option>
+                        <option value="OTHER">Lý do khác</option>
+                    </select>
+                </div>
+                <div class="modal-field" id="cancelRequestOtherWrap" style="display:none">
+                    <label class="modal-label" for="cancelRequestOther">Lý do khác</label>
+                    <input id="cancelRequestOther" class="modal-input" type="text" placeholder="Nhập lý do khác">
+                </div>
+                <div id="cancelRequestError" class="modal-error"></div>
+            </div>
+            <div class="booking-modal-actions">
+                <button class="btn-outline" type="button" data-cancel-request-close>Hủy</button>
+                <button id="cancelRequestSubmit" class="btn-pay" type="button">Gửi yêu cầu</button>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="additionalJs">
+    <script th:src="@{/js/customer-bookings.js}"></script>
+</th:block>
+
+</html>

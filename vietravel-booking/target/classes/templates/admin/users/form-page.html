@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin :: layout(
+      pageTitle=${pageTitle},
+      activeMenu=${activeMenu},
+      activeSubMenu=${activeSubMenu},
+      content=~{admin/users/form :: content},
+      additionalCss=~{::additionalCss},
+      additionalJs=~{::additionalJs}
+)}">
+
+<th:block th:fragment="additionalCss">
+    <link rel="stylesheet" th:href="@{/css/admin-users.css}">
+</th:block>
+
+<th:block th:fragment="additionalJs">
+    <script th:src="@{/js/admin-users.js}"></script>
+</th:block>
+
+</html>

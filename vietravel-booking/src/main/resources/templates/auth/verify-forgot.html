@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nhập mã OTP</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+<body>
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-left">
+            <div class="brand"><img th:src="@{/images/auth/logo.png}" alt="logo"></div>
+        </div>
+        <div class="auth-right">
+            <div class="plane"></div>
+            <h1 class="h1">Nhập mã OTP</h1>
+            <div class="muted-text">Mã gửi tới: <b th:text="${email}"></b></div>
+            <form class="form" id="otp-form">
+                <div class="otp-wrap">
+                    <input class="otp" maxlength="1" inputmode="numeric">
+                    <input class="otp" maxlength="1" inputmode="numeric">
+                    <input class="otp" maxlength="1" inputmode="numeric">
+                    <input class="otp" maxlength="1" inputmode="numeric">
+                    <input class="otp" maxlength="1" inputmode="numeric">
+                    <input class="otp" maxlength="1" inputmode="numeric">
+                </div>
+                <button class="btn" type="submit">XÁC NHẬN</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    const email = /*[[${email}]]*/ '';
+    const inputs = [...document.querySelectorAll(".otp")];
+    inputs.forEach((input, idx) => {
+        input.addEventListener("input", () => {
+            if (input.value && idx < inputs.length - 1) inputs[idx + 1].focus();
+        });
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Backspace" && !input.value && idx > 0) inputs[idx - 1].focus();
+        });
+    });
+    document.getElementById("otp-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const code = inputs.map(i => i.value).join("");
+        if (code.length !== 6) {
+            alert("Vui lòng nhập đủ 6 số");
+            return;
+        }
+        window.location.href = `/auth/reset-password?email=${email}&code=${code}`;
+    });
+</script>
+</body>
+</html>

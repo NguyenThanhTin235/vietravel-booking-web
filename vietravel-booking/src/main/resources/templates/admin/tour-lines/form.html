@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+
+    <div class="tl-page">
+
+        <nav class="tl-breadcrumb">
+            <a href="/admin">Bảng điều khiển</a>
+            <span class="sep">/</span>
+            <a href="/admin/tour-lines">Dòng tour</a>
+            <span class="sep">/</span>
+            <span class="current" th:text="${tourLineId!=null?'Cập nhật':'Thêm mới'}">Thêm mới</span>
+        </nav>
+
+        <div class="card reveal tl-card" >
+            <div class="tl-wrap" data-page="tour-lines-form">
+
+                <div class="tl-head">
+                    <div class="tl-title">
+                        <h2 id="title">Dòng tour</h2>
+                    </div>
+                    <a class="tl-btn" href="/admin/tour-lines">Quay lại</a>
+                </div>
+
+                <div id="err" style="display:none;padding:10px 12px;border-radius:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);color:#b42318;font-weight:900"></div>
+
+                <form id="form" class="tl-form">
+                    <input type="hidden" id="id" th:value="${tourLineId!=null?tourLineId:''}">
+
+                    <div class="tl-grid2">
+                        <div class="tl-field">
+                            <label>Code</label>
+                            <input id="code" class="input" placeholder="VD: CAO_CAP" required>
+                        </div>
+                        <div class="tl-field">
+                            <label>Tên hiển thị</label>
+                            <input id="name" class="input" placeholder="VD: Cao cấp" required>
+                        </div>
+                    </div>
+
+                    <div class="tl-grid2">
+                        <div class="tl-field">
+                            <label>Giá thấp nhất (VND)</label>
+                            <input id="minPrice" class="input" type="number" min="0" step="1000" placeholder="0" required>
+                        </div>
+                        <div class="tl-field">
+                            <label>Giá cao nhất (VND)</label>
+                            <input id="maxPrice" class="input" type="number" min="0" step="1000" placeholder="999999999" required>
+                        </div>
+                    </div>
+
+                    <div class="tl-grid2">
+                        <div class="tl-field">
+                            <label>Sắp xếp</label>
+                            <input id="sortOrder" class="input" type="number" step="1" value="0" required>
+                        </div>
+                        <div class="tl-field" style="display:flex;align-items:flex-end;gap:10px">
+                            <label class="tl-chip" style="background:rgba(34,197,94,.10);border-color:rgba(34,197,94,.22)">
+                                <input id="isActive" type="checkbox" checked>
+                                Đang hoạt động
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="tl-foot">
+                        <button type="button" id="btnDelete" class="tl-btn danger" style="display:none">Xóa</button>
+                        <button type="submit" class="tl-btn primary">Lưu</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div id="tlToastWrap" class="tl-toastWrap"></div>
+
+    <div id="tlModal" class="tl-modalBackdrop">
+        <div class="tl-modal">
+            <div class="tl-modalHead">
+                <h3 id="tlModalTitle">Xác nhận</h3>
+                <button id="tlModalClose" class="tl-btn sm">Đóng</button>
+            </div>
+            <div id="tlModalBody" class="tl-modalBody"></div>
+            <div class="tl-modalFoot">
+                <button id="tlModalCancel" class="tl-btn">Hủy</button>
+                <button id="tlModalOk" class="tl-btn danger">Xóa</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

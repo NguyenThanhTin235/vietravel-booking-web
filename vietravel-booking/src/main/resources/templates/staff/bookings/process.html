@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/staff :: layout(
+      pageTitle='Xử lý đặt tour',
+      activeMenu='bookings',
+      activeSubMenu='process',
+      content=~{::content},
+      additionalJs=~{::additionalJs}
+)}">
+
+<th:block th:fragment="content">
+    <div class="card booking-process-card">
+        <div class="card-head">
+            <div class="card-actions process-actions">
+                <form class="process-filter" method="get" th:action="@{/staff/bookings/process}">
+                    <div class="process-search">
+                        <span class="process-search-icon">🔎</span>
+                        <input class="search-input" data-table-search placeholder="Tìm mã, khách hàng hoặc tour...">
+                    </div>
+                    <div class="process-date">
+                        <span class="process-date-label">Từ</span>
+                        <input class="input" type="date" name="from"
+                               th:value="${#strings.isEmpty(selectedFrom) ? #temporals.format(T(java.time.LocalDate).now(), 'yyyy-MM-dd') : selectedFrom}">
+                    </div>
+                    <div class="process-date">
+                        <span class="process-date-label">Đến</span>
+                        <input class="input" type="date" name="to"
+                               th:value="${#strings.isEmpty(selectedTo) ? #temporals.format(T(java.time.LocalDate).now(), 'yyyy-MM-dd') : selectedTo}">
+                    </div>
+                    <div class="process-select">
+                        <span class="process-date-label">Trạng thái</span>
+                        <select class="select" name="status">
+                            <option value="" th:selected="${#strings.isEmpty(selectedStatus)}">Tất cả</option>
+                                    <option th:each="s : ${statusOptions}"
+                                        th:value="${s.name()}"
+                                        th:text="${s == T(com.vietravel.booking.domain.entity.booking.BookingStatus).PENDING ? 'Chờ xác nhận' : (s == T(com.vietravel.booking.domain.entity.booking.BookingStatus).CONFIRMED ? 'Đã xác nhận' : (s == T(com.vietravel.booking.domain.entity.booking.BookingStatus).CANCEL_REQUESTED ? 'Yêu cầu hủy' : (s == T(com.vietravel.booking.domain.entity.booking.BookingStatus).CANCELED ? 'Đã hủy' : 'Hoàn tất')))}"
+                                        th:selected="${selectedStatus == s.name()}">
+                                    </option>
+                        </select>
+                    </div>
+                    <button class="btn btn-ghost" type="submit">Lọc</button>
+                    <a class="btn btn-ghost" th:href="@{/staff/bookings/process}">Xóa lọc</a>
+                </form>
+                <span class="process-count">Hiển thị: <b data-table-count th:text="${#lists.size(bookingViews)}">0</b></span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-wrap process-table">
+                <table class="table" data-table>
+                    <thead>
+                    <tr>
+                        <th>Khách hàng</th>
+                        <th>Tour</th>
+                        <th>Ngày</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái đặt tour</th>
+                        <th>Thanh toán</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(bookingViews)}">
+                        <td colspan="7" class="muted">Chưa có đơn đặt tour.</td>
+                    </tr>
+                    <tr th:each="item : ${bookingViews}" class="reveal">
+                        <td th:text="${item.booking.contactName}">--</td>
+                        <td th:text="${item.booking.departure != null && item.booking.departure.tour != null ? item.booking.departure.tour.title : 'Tour'}">Tour</td>
+                        <td th:text="${item.booking.departure != null && item.booking.departure.startDate != null ? #temporals.format(item.booking.departure.startDate, 'dd/MM/yyyy') : #temporals.format(item.booking.createdAt, 'dd/MM/yyyy')}">--/--/----</td>
+                        <td th:text="${#numbers.formatDecimal(item.booking.totalAmount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</td>
+                        <td>
+                            <span th:switch="${item.booking.status != null ? item.booking.status.name() : ''}">
+                                <span th:case="'PENDING'" class="badge badge-pending">Chờ xác nhận</span>
+                                <span th:case="'CONFIRMED'" class="badge badge-confirmed">Đã xác nhận</span>
+                                <span th:case="'CANCEL_REQUESTED'" class="badge badge-canceled">Yêu cầu hủy</span>
+                                <span th:case="'CANCELED'" class="badge badge-canceled">Đã hủy</span>
+                                <span th:case="'COMPLETED'" class="badge badge-confirmed">Hoàn tất</span>
+                                <span th:case="*" class="badge badge-confirmed">Đang xử lý</span>
+                            </span>
+                        </td>
+                        <td>
+                            <span th:switch="${item.paymentStatus != null ? item.paymentStatus.name() : ''}">
+                                <span th:case="'INIT'" class="badge badge-pending">Chưa thanh toán</span>
+                                <span th:case="'SUCCESS'" class="badge badge-confirmed">Thành công</span>
+                                <span th:case="'FAILED'" class="badge badge-canceled">Thất bại</span>
+                                <span th:case="'REFUNDED'" class="badge badge-canceled">Đã hoàn tiền</span>
+                                <span th:case="*" class="badge badge-confirmed">—</span>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="table-actions process-actions-row">
+                                                                  <a class="btn btn-ghost"
+                                                                      th:href="@{'/staff/bookings/' + ${item.booking.id}}">
+                                                                        Chi tiết
+                                                                </a>
+                                                                    <form th:if="${item.booking.status != null && item.booking.status.name() == 'PENDING'}"
+                                                                      th:action="@{'/staff/bookings/' + ${item.booking.id} + '/confirm'}" method="post"
+                                                                      class="js-confirm-form" data-confirm-message="Xác nhận booking này?">
+                                                                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <button class="btn btn-ghost" type="submit">Xác nhận</button>
+                                </form>
+                                  <form th:if="${item.booking.status != null && (item.booking.status.name() == 'PENDING' || item.booking.status.name() == 'CONFIRMED' || item.booking.status.name() == 'CANCEL_REQUESTED')}"
+                                      th:action="@{'/staff/bookings/' + ${item.booking.id} + '/cancel'}" method="post">
+                                                                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                                                    <input type="hidden" name="cancelReason">
+                                                                    <input type="hidden" name="cancelReasonOther">
+                                                                    <button class="btn btn-ghost js-cancel-btn" type="button"
+                                                                            th:attr="data-booking-code=${item.booking.bookingCode}">Hủy tour</button>
+                                </form>
+                                <div th:if="${item.booking.status != null && item.booking.status.name() == 'CANCEL_REQUESTED'}" class="process-actions-row">
+                                    <a class="btn btn-ghost" th:href="@{'/staff/bookings/' + ${item.booking.id} + '/cancel-review'}">Xử lý hủy</a>
+                                </div>
+                                <span th:if="${item.booking.status == null || item.booking.status.name() == 'CANCELED' || item.booking.status.name() == 'COMPLETED'}" class="muted">—</span>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="booking-pagination" th:if="${totalPages > 1}">
+                <a class="btn btn-ghost" th:if="${currentPage > 1}"
+                         th:href="@{/staff/bookings/process(page=${currentPage - 1},from=${selectedFrom},to=${selectedTo},status=${selectedStatus})}">← Trước</a>
+                <span class="pagination-info">Trang <b th:text="${currentPage}">1</b> / <b th:text="${totalPages}">1</b></span>
+                <a class="btn btn-ghost" th:if="${currentPage < totalPages}"
+                         th:href="@{/staff/bookings/process(page=${currentPage + 1},from=${selectedFrom},to=${selectedTo},status=${selectedStatus})}">Sau →</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="cancelModal" class="staff-modal-backdrop" aria-hidden="true">
+        <div class="staff-modal" role="dialog" aria-modal="true" aria-labelledby="cancelModalTitle">
+            <div class="staff-modal-head">
+                <h3 id="cancelModalTitle">Hủy tour</h3>
+                <button class="staff-modal-close" type="button" data-cancel-modal-close>×</button>
+            </div>
+            <div class="staff-modal-body">
+                <div class="modal-field">
+                    <label class="modal-label" for="cancelReasonSelect">Chọn lý do hủy</label>
+                    <select id="cancelReasonSelect" class="modal-select">
+                        <option value="">-- Chọn lý do --</option>
+                        <option value="CUSTOMER_REQUEST">Khách yêu cầu hủy</option>
+                        <option value="PAYMENT_FAILED">Thanh toán thất bại</option>
+                        <option value="NO_SHOW">Khách không xác nhận</option>
+                        <option value="SOLD_OUT">Hết chỗ</option>
+                        <option value="SCHEDULE_CHANGED">Thay đổi lịch khởi hành</option>
+                        <option value="OTHER">Lý do khác</option>
+                    </select>
+                </div>
+                <div class="modal-field" id="cancelReasonOtherWrap" style="display:none">
+                    <label class="modal-label" for="cancelReasonOther">Lý do khác</label>
+                    <input id="cancelReasonOther" class="modal-input" type="text" placeholder="Nhập lý do khác">
+                </div>
+                <div id="cancelReasonError" class="modal-error"></div>
+            </div>
+            <div class="staff-modal-foot">
+                <button class="btn btn-ghost" type="button" data-cancel-modal-close>Hủy</button>
+                <button id="cancelReasonSubmit" class="btn btn-ghost" type="button">Xác nhận hủy</button>
+            </div>
+        </div>
+    </div>
+
+</th:block>
+
+<th:block th:fragment="additionalJs">
+    <script th:src="@{/js/staff-bookings.js}"></script>
+</th:block>
+
+</html>

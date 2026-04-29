@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <div class="card booking-process-card">
+        <div class="card-head">
+            <div class="card-actions process-actions">
+                <form class="process-filter" method="get" th:action="@{/admin/payments}">
+                    <div class="process-search">
+                        <span class="process-search-icon">🔎</span>
+                        <input class="search-input" name="q" placeholder="Tìm mã booking, khách hàng, tour, mã GD..."
+                               th:value="${selectedQuery}">
+                    </div>
+                    <div class="process-select">
+                        <span class="process-date-label">Trạng thái</span>
+                        <select class="select" name="status">
+                            <option value="" th:selected="${#strings.isEmpty(selectedStatus)}">Tất cả</option>
+                            <option th:each="s : ${statusOptions}"
+                                    th:value="${s.name()}"
+                                    th:text="${s == T(com.vietravel.booking.domain.entity.booking.PaymentStatus).INIT ? 'Chưa thanh toán' : (s == T(com.vietravel.booking.domain.entity.booking.PaymentStatus).SUCCESS ? 'Thành công' : (s == T(com.vietravel.booking.domain.entity.booking.PaymentStatus).FAILED ? 'Thất bại' : 'Đã hoàn tiền'))}"
+                                    th:selected="${selectedStatus == s.name()}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="process-select">
+                        <span class="process-date-label">Phương thức</span>
+                        <select class="select" name="method">
+                            <option value="" th:selected="${#strings.isEmpty(selectedMethod)}">Tất cả</option>
+                            <option th:each="m : ${methodOptions}"
+                                    th:value="${m.name()}"
+                                    th:text="${m == T(com.vietravel.booking.domain.entity.booking.PaymentMethod).VNPAY_MOCK ? 'VNPAY' : 'Tiền mặt'}"
+                                    th:selected="${selectedMethod == m.name()}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="process-select">
+                        <span class="process-date-label">Loại</span>
+                        <select class="select" name="type">
+                            <option value="" th:selected="${#strings.isEmpty(selectedType)}">Tất cả</option>
+                            <option th:each="t : ${typeOptions}"
+                                    th:value="${t.name()}"
+                                    th:text="${t == T(com.vietravel.booking.domain.entity.booking.PaymentType).PAY ? 'Thanh toán' : 'Hoàn tiền'}"
+                                    th:selected="${selectedType == t.name()}">
+                            </option>
+                        </select>
+                    </div>
+                    <button class="btn btn-ghost" type="submit">Lọc</button>
+                    <a class="btn btn-ghost" th:href="@{/admin/payments}">Xóa lọc</a>
+                </form>
+                <span class="process-count">Hiển thị: <b th:text="${#lists.size(payments)}">0</b></span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-wrap process-table">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Mã booking</th>
+                        <th>Khách hàng</th>
+                        <th>Tour</th>
+                        <th>Số tiền</th>
+                        <th>Trạng thái</th>
+                        <th>Phương thức</th>
+                        <th>Thời gian</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(payments)}">
+                        <td colspan="8" class="muted">Chưa có giao dịch.</td>
+                    </tr>
+                    <tr th:each="p : ${payments}" class="reveal">
+                        <td th:text="${p.booking != null ? p.booking.bookingCode : '--'}">BK</td>
+                        <td th:text="${p.booking != null ? p.booking.contactName : '--'}">--</td>
+                        <td th:text="${p.booking != null && p.booking.departure != null && p.booking.departure.tour != null ? p.booking.departure.tour.title : 'Tour'}">Tour</td>
+                        <td th:text="${p.amount != null ? #numbers.formatDecimal(p.amount, 0, 'COMMA', 0, 'POINT') + ' ₫' : '--'}">0 ₫</td>
+                        <td>
+                            <span class="status-badge" th:classappend="' status-' + ${p.status}">
+                                <span th:switch="${p.status != null ? p.status.name() : ''}">
+                                    <span th:case="'INIT'">Chưa thanh toán</span>
+                                    <span th:case="'SUCCESS'">Thành công</span>
+                                    <span th:case="'FAILED'">Thất bại</span>
+                                    <span th:case="'REFUNDED'">Đã hoàn tiền</span>
+                                    <span th:case="*" th:text="${p.status}">—</span>
+                                </span>
+                            </span>
+                        </td>
+                        <td>
+                            <span th:switch="${p.method != null ? p.method.name() : ''}">
+                                <span th:case="'VNPAY_MOCK'">VNPAY</span>
+                                <span th:case="'CASH'">Tiền mặt</span>
+                                <span th:case="*">—</span>
+                            </span>
+                        </td>
+                        <td th:text="${p.createdAt != null ? #temporals.format(p.createdAt, 'dd/MM/yyyy HH:mm') : '--'}">--</td>
+                        <td>
+                            <div class="table-actions process-actions-row">
+                                <a class="btn btn-ghost" th:href="@{'/admin/payments/' + ${p.id}}">Chi tiết</a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="booking-pagination" th:if="${totalPages > 1}">
+                <a class="btn btn-ghost" th:if="${currentPage > 1}"
+                   th:href="@{/admin/payments(page=${currentPage - 1},status=${selectedStatus},method=${selectedMethod},type=${selectedType},q=${selectedQuery})}">← Trước</a>
+                <span class="pagination-info">Trang <b th:text="${currentPage}">1</b> / <b th:text="${totalPages}">1</b></span>
+                <a class="btn btn-ghost" th:if="${currentPage < totalPages}"
+                   th:href="@{/admin/payments(page=${currentPage + 1},status=${selectedStatus},method=${selectedMethod},type=${selectedType},q=${selectedQuery})}">Sau →</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

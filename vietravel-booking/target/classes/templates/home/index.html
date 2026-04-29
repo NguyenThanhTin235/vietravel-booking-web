@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(
+            pageTitle=${pageTitle},
+            activeNav=${activeNav},
+            content=~{::content},
+            additionalJs=~{::additionalJs}
+      )}">
+
+<th:block th:fragment="content">
+
+    <section class="hero" id="hero">
+        <div class="container hero-inner">
+            <h1 class="hero-title">
+                Cuộc sống là hành trình <span>Khám phá</span><br>
+                Hãy tận hưởng từng khoảnh khắc
+            </h1>
+
+            <form class="searchbar" th:action="@{/tour/tim-kiem}" method="get" id="heroSearch">
+                <div class="sb-item">
+                    <div class="sb-label">Bạn muốn đi đâu?</div>
+                    <div class="sb-input">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <input type="text" name="q" placeholder="Nhập điểm đến (VD: Đà Nẵng, Phú Quốc...)"
+                               th:value="${param.q}">
+                    </div>
+                </div>
+
+                <div class="sb-item">
+                    <div class="sb-label">Thời gian</div>
+                    <div class="sb-input">
+                        <i class="fa-regular fa-calendar"></i>
+                        <input type="date" name="date" placeholder="Chọn ngày"
+                               th:value="${param.date}" autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="sb-item">
+                    <div class="sb-label">Dòng tour</div>
+                    <div class="sb-input">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <select name="tourLineId" id="tourLineSelect">
+                            <option value="">Tất cả dòng tour</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="sb-btn" type="submit" aria-label="Tìm kiếm">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </form>
+
+            <div class="hero-art">
+                <img th:src="@{/images/login-bg.jpg}" alt="Ảnh nền test (login-bg)">
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-head">
+                <h2>Trải nghiệm phổ biến</h2>
+                <a class="seeall" href="#">Xem tất cả</a>
+            </div>
+
+            <div class="popular-grid reveal">
+                <a class="cat big" href="#">
+                    <img th:src="@{/images/login-bg.jpg}" alt="Du thuyền">
+                    <span class="cat-label">Du thuyền</span>
+                </a>
+
+                <div class="popular-right">
+                    <a class="cat" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Tour biển"><span class="cat-label">Tour biển</span></a>
+                    <a class="cat" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Tour thành phố"><span class="cat-label">Tour thành phố</span></a>
+                    <a class="cat" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Bảo tàng"><span class="cat-label">Bảo tàng</span></a>
+                    <a class="cat" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Ẩm thực"><span class="cat-label">Ẩm thực</span></a>
+                    <a class="cat" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Trekking"><span class="cat-label">Trekking</span></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section soft">
+        <div class="container">
+            <div class="section-head">
+                <h2>Tour nổi bật</h2>
+                <a class="seeall" th:href="@{/tour/tim-kiem}">Xem tất cả</a>
+            </div>
+
+            <div class="cards">
+                <article class="card reveal" th:if="${#lists.isEmpty(featuredTours)}">
+                    <div class="card-body">
+                        <h3>Chưa có tour nổi bật.</h3>
+                        <div class="price">Hãy quay lại sau.</div>
+                    </div>
+                </article>
+
+                <article class="card reveal" th:each="t : ${featuredTours}"
+                         th:with="thumb=${t.images != null && !#lists.isEmpty(t.images.?[isThumbnail]) ? t.images.?[isThumbnail][0] : (t.images != null && !#lists.isEmpty(t.images) ? t.images[0] : null)}">
+                    <a th:href="@{'/tour/' + ${t.slug}}" class="card-img" style="display:block">
+                        <img th:src="${thumb != null ? thumb.imageUrl : '/images/login-bg.jpg'}" th:alt="${t.title}">
+                        <span class="pill" th:text="${t.startLocation != null ? t.startLocation.name : 'Tour nổi bật'}">Tour nổi bật</span>
+                    </a>
+                    <div class="card-body">
+                        <h3 th:text="${t.title}">Tên tour</h3>
+                        <div class="meta">
+                            <span th:text="${t.durationDays != null ? t.durationDays + ' ngày' : 'Lịch trình'}">Lịch trình</span>
+                            <span>•</span>
+                            <span th:text="${t.tourLine != null ? t.tourLine.name : 'Tour'}">Tour</span>
+                        </div>
+                        <div class="price">Từ <b th:text="${t.basePrice != null ? #numbers.formatDecimal(t.basePrice, 0, 'COMMA', 0, 'POINT') + ' ₫' : 'Liên hệ'}">0 ₫</b></div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section dark">
+        <div class="container">
+            <div class="section-head invert">
+                <h2>Điểm đến thịnh hành</h2>
+                <a class="seeall" th:href="@{/tour/tim-kiem}">Xem tất cả</a>
+            </div>
+
+            <div class="destinations">
+                <a class="dest reveal" th:if="${#lists.isEmpty(popularDestinations)}" href="#">
+                    <img th:src="@{/images/login-bg.jpg}" alt="Điểm đến">
+                    <div class="dest-text">
+                        <div class="dest-name">Chưa có dữ liệu</div>
+                        <div class="dest-sub">0 tour</div>
+                    </div>
+                </a>
+                <a class="dest reveal" th:each="item : ${popularDestinations}"
+                   th:href="@{/tour/tim-kiem(destinationId=${item.destination.id})}">
+                    <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/login-bg.jpg'}" th:alt="${item.destination.name}">
+                    <div class="dest-text">
+                        <div class="dest-name" th:text="${item.destination.name}">Điểm đến</div>
+                        <div class="dest-sub" th:text="${item.total + ' tour'}">0 tour</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+</th:block>
+
+<th:block th:fragment="additionalJs">
+    <script th:src="@{/js/home.js}"></script>
+</th:block>
+
+</html>
