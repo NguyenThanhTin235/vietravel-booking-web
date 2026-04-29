@@ -84,63 +84,31 @@
         <div class="container">
             <div class="section-head">
                 <h2>Tour nổi bật</h2>
-                <a class="seeall" href="#">Xem tất cả</a>
+                <a class="seeall" th:href="@{/tour/tim-kiem}">Xem tất cả</a>
             </div>
 
             <div class="cards">
-                <article class="card reveal">
-                    <div class="card-img">
-                        <img th:src="@{/images/login-bg.jpg}" alt="Tour 1">
-                        <span class="pill">Paris, Pháp</span>
-                    </div>
+                <article class="card reveal" th:if="${#lists.isEmpty(featuredTours)}">
                     <div class="card-body">
-                        <h3>Khám phá sa mạc Arizona bằng xe địa hình (ATV)</h3>
-                        <div class="meta">
-                            <span><i class="fa-solid fa-star"></i> 4.8 (243)</span><span>•</span><span>4 ngày</span>
-                        </div>
-                        <div class="price">Từ <b>4.890.000 ₫</b></div>
+                        <h3>Chưa có tour nổi bật.</h3>
+                        <div class="price">Hãy quay lại sau.</div>
                     </div>
                 </article>
 
-                <article class="card reveal">
-                    <div class="card-img">
-                        <img th:src="@{/images/login-bg.jpg}" alt="Tour 2">
-                        <span class="pill">New York, Mỹ</span>
-                    </div>
+                <article class="card reveal" th:each="t : ${featuredTours}"
+                         th:with="thumb=${t.images != null && !#lists.isEmpty(t.images.?[isThumbnail]) ? t.images.?[isThumbnail][0] : (t.images != null && !#lists.isEmpty(t.images) ? t.images[0] : null)}">
+                    <a th:href="@{'/tour/' + ${t.slug}}" class="card-img" style="display:block">
+                        <img th:src="${thumb != null ? thumb.imageUrl : '/images/login-bg.jpg'}" th:alt="${t.title}">
+                        <span class="pill" th:text="${t.startLocation != null ? t.startLocation.name : 'Tour nổi bật'}">Tour nổi bật</span>
+                    </a>
                     <div class="card-body">
-                        <h3>Lặn biển ngắm rùa tại Turtle Town (Molokini)</h3>
+                        <h3 th:text="${t.title}">Tên tour</h3>
                         <div class="meta">
-                            <span><i class="fa-solid fa-star"></i> 4.8 (243)</span><span>•</span><span>4 ngày</span>
+                            <span th:text="${t.durationDays != null ? t.durationDays + ' ngày' : 'Lịch trình'}">Lịch trình</span>
+                            <span>•</span>
+                            <span th:text="${t.tourLine != null ? t.tourLine.name : 'Tour'}">Tour</span>
                         </div>
-                        <div class="price">Từ <b>5.950.000 ₫</b></div>
-                    </div>
-                </article>
-
-                <article class="card reveal">
-                    <div class="card-img">
-                        <img th:src="@{/images/login-bg.jpg}" alt="Tour 3">
-                        <span class="pill">London, Anh</span>
-                    </div>
-                    <div class="card-body">
-                        <h3>Tham quan Westminster &amp; vé vào Tu viện Westminster</h3>
-                        <div class="meta">
-                            <span><i class="fa-solid fa-star"></i> 4.8 (243)</span><span>•</span><span>4 ngày</span>
-                        </div>
-                        <div class="price">Từ <b>24.900.000 ₫</b></div>
-                    </div>
-                </article>
-
-                <article class="card reveal">
-                    <div class="card-img">
-                        <img th:src="@{/images/login-bg.jpg}" alt="Tour 4">
-                        <span class="pill">New York, Mỹ</span>
-                    </div>
-                    <div class="card-body">
-                        <h3>Tour vòng quanh đảo trọn gói (bao gồm bữa trưa)</h3>
-                        <div class="meta">
-                            <span><i class="fa-solid fa-star"></i> 4.8 (243)</span><span>•</span><span>4 ngày</span>
-                        </div>
-                        <div class="price">Từ <b>19.990.000 ₫</b></div>
+                        <div class="price">Từ <b th:text="${t.basePrice != null ? #numbers.formatDecimal(t.basePrice, 0, 'COMMA', 0, 'POINT') + ' ₫' : 'Liên hệ'}">0 ₫</b></div>
                     </div>
                 </article>
             </div>
@@ -151,14 +119,25 @@
         <div class="container">
             <div class="section-head invert">
                 <h2>Điểm đến thịnh hành</h2>
-                <a class="seeall" href="#">Xem tất cả</a>
+                <a class="seeall" th:href="@{/tour/tim-kiem}">Xem tất cả</a>
             </div>
 
             <div class="destinations">
-                <a class="dest reveal" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Bali"><div class="dest-text"><div class="dest-name">Bali</div><div class="dest-sub">100+ tour</div></div></a>
-                <a class="dest reveal" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Roma"><div class="dest-text"><div class="dest-name">Roma</div><div class="dest-sub">100+ tour</div></div></a>
-                <a class="dest reveal" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Phuket"><div class="dest-text"><div class="dest-name">Phuket</div><div class="dest-sub">100+ tour</div></div></a>
-                <a class="dest reveal" href="#"><img th:src="@{/images/login-bg.jpg}" alt="Paris"><div class="dest-text"><div class="dest-name">Paris</div><div class="dest-sub">100+ tour</div></div></a>
+                <a class="dest reveal" th:if="${#lists.isEmpty(popularDestinations)}" href="#">
+                    <img th:src="@{/images/login-bg.jpg}" alt="Điểm đến">
+                    <div class="dest-text">
+                        <div class="dest-name">Chưa có dữ liệu</div>
+                        <div class="dest-sub">0 tour</div>
+                    </div>
+                </a>
+                <a class="dest reveal" th:each="item : ${popularDestinations}"
+                   th:href="@{/tour/tim-kiem(destinationId=${item.destination.id})}">
+                    <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/login-bg.jpg'}" th:alt="${item.destination.name}">
+                    <div class="dest-text">
+                        <div class="dest-name" th:text="${item.destination.name}">Điểm đến</div>
+                        <div class="dest-sub" th:text="${item.total + ' tour'}">0 tour</div>
+                    </div>
+                </a>
             </div>
         </div>
     </section>

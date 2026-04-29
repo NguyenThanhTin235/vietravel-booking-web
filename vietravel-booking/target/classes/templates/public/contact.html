@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(
+            pageTitle=${pageTitle},
+            activeNav=${activeNav},
+            content=~{::content},
+            additionalJs=~{::additionalJs}
+      )}">
+
+<th:block th:fragment="content">
+    <section class="contact-hero">
+        <div class="container">
+            <h1 class="contact-title">LIÊN HỆ</h1>
+            <p class="contact-sub">
+                Để có thể đáp ứng được các yêu cầu và đóng góp ý kiến của quý khách,
+                xin vui lòng gửi thông tin hoặc gọi đến hotline các chi nhánh bên dưới.
+            </p>
+        </div>
+    </section>
+
+    <section class="contact-main">
+        <div class="container contact-grid">
+            <div class="contact-form-card">
+                <h2>THÔNG TIN LIÊN LẠC</h2>
+                <div class="contact-alert" th:if="${sentSuccess}">
+                    Cảm ơn bạn! Yêu cầu đã được gửi, chúng tôi sẽ phản hồi sớm.
+                </div>
+                <form method="post" th:action="@{/contact}" class="contact-form">
+                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label>Loại thông tin <span class="req">*</span></label>
+                            <select name="infoType" class="input" required>
+                                <option value="Du lịch">Du lịch</option>
+                                <option value="Vé">Vé</option>
+                                <option value="Dịch vụ">Dịch vụ</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label>Họ tên <span class="req">*</span></label>
+                            <input name="fullName" class="input" placeholder="Liên hệ" required>
+                        </div>
+                        <div class="form-field">
+                            <label>Email <span class="req">*</span></label>
+                            <input name="email" class="input" type="email" placeholder="Nhập email" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label>Điện thoại <span class="req">*</span></label>
+                            <input name="phone" class="input" placeholder="Nhập số điện thoại" required>
+                        </div>
+                        <div class="form-field">
+                            <label>Chi nhánh</label>
+                            <select name="companyName" class="input">
+                                <option value="">Chọn chi nhánh</option>
+                                <th:block th:each="g : ${branchGroups}">
+                                    <optgroup th:label="${g.label}">
+                                        <option th:each="b : ${g.branches}"
+                                                th:value="${b.name}"
+                                                th:text="${b.name}">
+                                        </option>
+                                    </optgroup>
+                                </th:block>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label>Số khách</label>
+                            <input name="guestCount" class="input" type="number" min="0" value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field" style="grid-column: 1 / -1;">
+                            <label>Địa chỉ</label>
+                            <input name="address" class="input" placeholder="Nhập địa chỉ">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field" style="grid-column: 1 / -1;">
+                            <label>Tiêu đề <span class="req">*</span></label>
+                            <input name="subject" class="input" placeholder="Nhập tiêu đề" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field" style="grid-column: 1 / -1;">
+                            <label>Nội dung <span class="req">*</span></label>
+                            <textarea name="content" rows="5" class="input" placeholder="Nhập nội dung" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn-outline" type="reset">Nhập lại</button>
+                        <button class="btn-primary" type="submit">Gửi ngay</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="contact-branches">
+                <h2>CHI NHÁNH TOÀN CẦU</h2>
+                <div class="branch-tabs" th:if="${branchGroups != null}">
+                    <button class="branch-tab"
+                            th:each="g, iter : ${branchGroups}"
+                            th:text="${g.label}"
+                            th:attr="data-region=${g.region}"
+                            th:classappend="${iter.index == 0} ? ' active' : ''">
+                        Khu vực
+                    </button>
+                </div>
+
+                <div class="branch-list" th:each="g, iter : ${branchGroups}"
+                     th:attr="data-region=${g.region}"
+                     th:classappend="${iter.index == 0} ? ' active' : ''">
+                    <div class="branch-card" th:each="b : ${g.branches}">
+                        <h3 th:text="${b.name}">Chi nhánh</h3>
+                        <div class="branch-item">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span th:text="${b.address}">Địa chỉ</span>
+                        </div>
+                        <div class="branch-item" th:if="${b.hotline != null}">
+                            <i class="fa-solid fa-phone"></i>
+                            <span th:text="${b.hotline}">Hotline</span>
+                        </div>
+                        <div class="branch-item" th:if="${b.fax != null}">
+                            <i class="fa-solid fa-fax"></i>
+                            <span th:text="${b.fax}">Fax</span>
+                        </div>
+                        <div class="branch-item" th:if="${b.email != null}">
+                            <i class="fa-solid fa-envelope"></i>
+                            <span th:text="${b.email}">Email</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="branch-empty" th:if="${branchGroups == null || #lists.isEmpty(branchGroups)}">
+                    Chưa có dữ liệu chi nhánh.
+                </div>
+            </div>
+        </div>
+    </section>
+</th:block>
+
+<th:block th:fragment="additionalJs">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var tabs = document.querySelectorAll(".branch-tab");
+            var lists = document.querySelectorAll(".branch-list");
+            tabs.forEach(function (tab) {
+                tab.addEventListener("click", function () {
+                    var region = tab.getAttribute("data-region");
+                    tabs.forEach(function (t) { t.classList.remove("active"); });
+                    lists.forEach(function (l) { l.classList.remove("active"); });
+                    tab.classList.add("active");
+                    var target = document.querySelector('.branch-list[data-region="' + region + '"]');
+                    if (target) target.classList.add("active");
+                });
+            });
+        });
+    </script>
+</th:block>
+
+</html>

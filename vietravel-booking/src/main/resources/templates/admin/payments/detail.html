@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin :: layout(
+      pageTitle=${pageTitle},
+      activeMenu=${activeMenu},
+      activeSubMenu=${activeSubMenu},
+      content=~{::content},
+      additionalJs=~{::additionalJs}
+)}">
+
+<th:block th:fragment="content">
+    <div class="grid-12">
+        <div class="col-8">
+            <div class="card booking-detail-card">
+                <div class="card-head">
+                    <div>
+                        <div class="card-title">Thông tin giao dịch</div>
+                        <div class="detail-subtitle">Chi tiết thanh toán và booking liên quan.</div>
+                    </div>
+                    <div class="card-actions">
+                        <a class="btn btn-ghost" th:href="@{/admin/payments}">Quay lại</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div th:if="${payment == null}" class="muted">Không tìm thấy giao dịch.</div>
+                    <div th:if="${payment != null}">
+                        <div class="list detail-hero">
+                            <div class="list-item">
+                                <div class="li-main">
+                                    <div class="li-title">Mã giao dịch: <span th:text="${payment.txnRef}">TXN</span></div>
+                                    <div class="li-sub">Ngày tạo: <span th:text="${payment.createdAt != null ? #temporals.format(payment.createdAt, 'dd/MM/yyyy HH:mm') : '--'}">--</span></div>
+                                </div>
+                                <span class="status-badge" th:classappend="' status-' + ${payment.status}">
+                                    <span th:switch="${payment.status != null ? payment.status.name() : ''}">
+                                        <span th:case="'INIT'">Chưa thanh toán</span>
+                                        <span th:case="'SUCCESS'">Thành công</span>
+                                        <span th:case="'FAILED'">Thất bại</span>
+                                        <span th:case="'REFUNDED'">Đã hoàn tiền</span>
+                                        <span th:case="*" th:text="${payment.status}">—</span>
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="booking-info-section">
+                            <div class="section-title">Thông tin thanh toán</div>
+                            <div class="li-sub">Số tiền: <b th:text="${payment.amount != null ? #numbers.formatDecimal(payment.amount, 0, 'COMMA', 0, 'POINT') + ' ₫' : '--'}">0 ₫</b></div>
+                            <div class="li-sub" style="margin-top:6px">Loại: <b th:text="${payment.paymentType != null ? (payment.paymentType.name() == 'PAY' ? 'Thanh toán' : 'Hoàn tiền') : '--'}">--</b></div>
+                            <div class="li-sub" style="margin-top:6px">Phương thức: <b th:text="${payment.method != null ? (payment.method.name() == 'VNPAY_MOCK' ? 'VNPAY' : 'Tiền mặt') : '--'}">--</b></div>
+                        </div>
+                        <div class="booking-info-section" th:if="${payment.booking != null}">
+                            <div class="section-title">Booking</div>
+                            <div class="li-sub">Mã booking: <b th:text="${payment.booking.bookingCode}">BK</b></div>
+                            <div class="li-sub" style="margin-top:6px">Khách hàng: <b th:text="${payment.booking.contactName}">--</b></div>
+                            <div class="li-sub" style="margin-top:6px">Điện thoại: <b th:text="${payment.booking.contactPhone}">--</b></div>
+                            <div class="li-sub" style="margin-top:6px">Email: <b th:text="${payment.booking.contactEmail}">--</b></div>
+                            <div class="li-sub" style="margin-top:6px">Tour: <b th:text="${payment.booking.departure != null && payment.booking.departure.tour != null ? payment.booking.departure.tour.title : '--'}">--</b></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card booking-detail-card">
+                <div class="card-head">
+                    <div class="card-title">Trạng thái booking</div>
+                </div>
+                <div class="card-body">
+                    <div th:if="${payment == null || payment.booking == null}" class="muted">Không có dữ liệu booking.</div>
+                    <div th:if="${payment != null && payment.booking != null}">
+                        <div class="list detail-hero">
+                            <div class="list-item">
+                                <div class="li-main">
+                                    <div class="li-title">Mã booking: <span th:text="${payment.booking.bookingCode}">BK</span></div>
+                                    <div class="li-sub">Ngày tạo: <span th:text="${payment.booking.createdAt != null ? #temporals.format(payment.booking.createdAt, 'dd/MM/yyyy') : '--'}">--</span></div>
+                                </div>
+                                <span th:switch="${payment.booking.status != null ? payment.booking.status.name() : ''}">
+                                    <span th:case="'PENDING'" class="badge badge-pending">Chờ xác nhận</span>
+                                    <span th:case="'CONFIRMED'" class="badge badge-confirmed">Đã xác nhận</span>
+                                    <span th:case="'CANCEL_REQUESTED'" class="badge badge-canceled">Yêu cầu hủy</span>
+                                    <span th:case="'CANCELED'" class="badge badge-canceled">Đã hủy</span>
+                                    <span th:case="'COMPLETED'" class="badge badge-confirmed">Hoàn tất</span>
+                                    <span th:case="*" class="badge badge-confirmed">Đang xử lý</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="booking-info-section">
+                            <div class="section-title">Tổng tiền</div>
+                            <div class="li-sub">Giá trị booking: <b th:text="${payment.booking.totalAmount != null ? #numbers.formatDecimal(payment.booking.totalAmount, 0, 'COMMA', 0, 'POINT') + ' ₫' : '--'}">0 ₫</b></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="additionalJs"></th:block>
+
+</html>

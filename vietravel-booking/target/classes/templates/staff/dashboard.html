@@ -18,7 +18,7 @@
 					<div class="kpi-label">Đơn chờ xác nhận</div>
 					<div class="kpi-value" data-counter th:attr="data-to=${kpiPending!=null?kpiPending:0}"
 						 th:text="${kpiPending!=null?kpiPending:'0'}">0</div>
-					<div class="kpi-note">PENDING / PAID</div>
+					<div class="kpi-note">PENDING</div>
 				</div>
 
 				<div class="card kpi reveal">
@@ -63,7 +63,6 @@
 							</div>
 							<span th:switch="${b.status != null ? b.status.name() : ''}">
 								<span th:case="'PENDING'" class="badge badge-pending">Chờ xác nhận</span>
-								<span th:case="'PAID'" class="badge badge-pending">Chờ xác nhận</span>
 								<span th:case="'CONFIRMED'" class="badge badge-confirmed">Đã xác nhận</span>
 								<span th:case="'CANCEL_REQUESTED'" class="badge badge-canceled">Yêu cầu hủy</span>
 								<span th:case="'CANCELED'" class="badge badge-canceled">Đã hủy</span>

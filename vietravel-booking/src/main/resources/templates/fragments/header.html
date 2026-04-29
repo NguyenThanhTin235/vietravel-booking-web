@@ -17,7 +17,7 @@
                aria-expanded="false">Điểm đến</a>
             <a class="nav-link" th:classappend="${active}=='promotion'?' is-active':''" href="#">Khuyến mãi</a>
             <a class="nav-link" th:classappend="${active}=='news'?' is-active':''" href="#">Tin tức</a>
-            <a class="nav-link" th:classappend="${active}=='contact'?' is-active':''" href="#">Liên hệ</a>
+            <a class="nav-link" th:classappend="${active}=='contact'?' is-active':''" th:href="@{/contact}">Liên hệ</a>
         </nav>
 
         <div class="nav-mega"
@@ -114,7 +114,7 @@
         <a href="#">Điểm đến</a>
         <a href="#">Khuyến mãi</a>
         <a href="#">Tin tức</a>
-        <a href="#">Liên hệ</a>
+        <a th:href="@{/contact}">Liên hệ</a>
         <div class="mobile-actions">
             <th:block th:unless="${currentUser}">
                 <a th:href="@{/auth/register}">Đăng ký</a>

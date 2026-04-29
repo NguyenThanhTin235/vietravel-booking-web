@@ -64,6 +64,37 @@ public class MailService {
         sendHtmlMail(toEmail, subject, content, "Vietravel Booking");
     }
 
+    public void sendContactReply(@NonNull String toEmail,
+            @NonNull String subject,
+            @NonNull String message,
+            @NonNull String customerName) {
+        Objects.requireNonNull(toEmail, "toEmail");
+        Objects.requireNonNull(subject, "subject");
+        Objects.requireNonNull(message, "message");
+        Objects.requireNonNull(customerName, "customerName");
+        String content = """
+                <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                    <h2 style="color: #0d6efd;">Xin chào %s,</h2>
+
+                    <p>Chúng tôi đã nhận được yêu cầu của bạn và phản hồi như sau:</p>
+
+                    <div style="background:#f8fafc;border:1px solid #e2e8f0;padding:16px;border-radius:12px;margin:16px 0;">
+                        %s
+                    </div>
+
+                    <p>Nếu cần hỗ trợ thêm, vui lòng phản hồi email này hoặc liên hệ hotline chi nhánh.</p>
+
+                    <p style="margin-top: 24px;">
+                        Trân trọng,<br>
+                        <strong>Đội ngũ Vietravel Booking</strong>
+                    </p>
+                </div>
+                """
+                .formatted(customerName, message.replace("\n", "<br>"));
+
+        sendHtmlMail(toEmail, subject, content, "Vietravel Booking");
+    }
+
     private void sendHtmlMail(@NonNull String to,
             @NonNull String subject,
             @NonNull String htmlContent,

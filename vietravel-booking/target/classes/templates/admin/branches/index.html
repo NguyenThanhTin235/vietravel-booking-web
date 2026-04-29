@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <div class="branch-page">
+        <div class="card booking-process-card">
+            <div class="card-head branch-header">
+                <div>
+                    <div class="branch-title">Quản lý chi nhánh</div>
+                    <div class="branch-subtitle">Theo dõi và cập nhật thông tin các chi nhánh Vietravel.</div>
+                </div>
+                <div class="branch-toolbar">
+                    <span class="process-count">Tổng: <b th:text="${#lists.size(branches)}">0</b></span>
+                    <a class="btn btn-primary" th:href="@{/admin/branches/create}">+ Thêm chi nhánh</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <form class="process-filter branch-filters" method="get" th:action="@{/admin/branches}">
+                    <div class="process-search">
+                        <span class="process-search-icon">🔎</span>
+                        <input class="search-input" name="q" placeholder="Tìm tên, địa chỉ, hotline, email..."
+                               th:value="${selectedQuery}">
+                    </div>
+                    <div class="process-search">
+                        <span class="process-search-icon">📍</span>
+                        <input class="search-input" name="region" placeholder="Khu vực (VD: MIEN_BAC, TP_HCM...)"
+                               th:value="${selectedRegion}">
+                    </div>
+                    <div class="process-select">
+                        <span class="process-date-label">Trạng thái</span>
+                        <select class="select" name="active">
+                            <option value="" th:selected="${#strings.isEmpty(selectedActive)}">Tất cả</option>
+                            <option value="true" th:selected="${selectedActive == 'true'}">Đang hoạt động</option>
+                            <option value="false" th:selected="${selectedActive == 'false'}">Tạm ngưng</option>
+                        </select>
+                    </div>
+                    <div class="branch-filter-actions">
+                        <button class="btn btn-ghost" type="submit">Lọc</button>
+                        <a class="btn btn-ghost" th:href="@{/admin/branches}">Xóa lọc</a>
+                    </div>
+                </form>
+
+                <div class="table-wrap">
+                    <table class="table branch-table">
+                    <thead>
+                    <tr>
+                        <th>Khu vực</th>
+                        <th>Tên chi nhánh</th>
+                        <th>Địa chỉ</th>
+                        <th>Hotline</th>
+                        <th>Email</th>
+                        <th>Thứ tự</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(branches)}">
+                        <td colspan="8" class="muted">Chưa có chi nhánh.</td>
+                    </tr>
+                    <tr th:each="b : ${branches}" class="reveal">
+                        <td><span class="branch-region" th:text="${b.region}">MIEN_BAC</span></td>
+                        <td>
+                            <div class="branch-name" th:text="${b.name}">Chi nhánh</div>
+                            <div class="branch-meta" th:text="${b.fax != null ? 'Fax: ' + b.fax : ''}"></div>
+                        </td>
+                        <td th:text="${b.address}">--</td>
+                        <td>
+                            <div class="branch-contact">
+                                <span th:text="${b.hotline != null ? b.hotline : '--'}">--</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="branch-contact">
+                                <span th:text="${b.email != null ? b.email : '--'}">--</span>
+                            </div>
+                        </td>
+                        <td th:text="${b.sortOrder != null ? b.sortOrder : 0}">0</td>
+                        <td>
+                            <span th:if="${b.isActive}" class="badge badge-confirmed">Hoạt động</span>
+                            <span th:if="${b.isActive == false}" class="badge badge-canceled">Tạm ngưng</span>
+                        </td>
+                        <td>
+                            <div class="table-actions process-actions-row branch-actions">
+                                <a class="btn btn-ghost" th:href="@{'/admin/branches/' + ${b.id} + '/edit'}">Sửa</a>
+                                <form th:action="@{'/admin/branches/' + ${b.id} + '/toggle'}" method="post">
+                                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <button class="btn btn-ghost" type="submit" th:text="${b.isActive ? 'Tạm ngưng' : 'Kích hoạt'}">Kích hoạt</button>
+                                </form>
+                                <form th:action="@{'/admin/branches/' + ${b.id} + '/delete'}" method="post" onsubmit="return confirm('Xóa chi nhánh này?');">
+                                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <button class="btn btn-danger" type="submit">Xóa</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                </div>
+
+                <div class="booking-pagination" th:if="${totalPages > 1}">
+                    <a class="btn btn-ghost" th:if="${currentPage > 1}"
+                       th:href="@{/admin/branches(page=${currentPage - 1},region=${selectedRegion},active=${selectedActive},q=${selectedQuery})}">← Trước</a>
+                    <span class="pagination-info">Trang <b th:text="${currentPage}">1</b> / <b th:text="${totalPages}">1</b></span>
+                    <a class="btn btn-ghost" th:if="${currentPage < totalPages}"
+                       th:href="@{/admin/branches(page=${currentPage + 1},region=${selectedRegion},active=${selectedActive},q=${selectedQuery})}">Sau →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

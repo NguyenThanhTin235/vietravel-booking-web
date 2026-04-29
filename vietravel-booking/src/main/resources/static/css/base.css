@@ -1590,8 +1590,7 @@ img {
 }
 
 .status-CONFIRMED,
-.status-SUCCESS,
-.status-PAID {
+.status-SUCCESS {
     background: rgba(16, 185, 129, .12);
     color: #047857;
     border-color: rgba(16, 185, 129, .35)
@@ -1615,6 +1614,155 @@ img {
     background: rgba(14, 116, 144, .12);
     color: #0e7490;
     border-color: rgba(14, 116, 144, .35)
+}
+
+/* Contact */
+.contact-hero {
+    padding: 48px 0 12px;
+    text-align: center
+}
+
+.contact-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--primary)
+}
+
+.contact-sub {
+    max-width: 780px;
+    margin: 12px auto 0;
+    color: #0f172a;
+    line-height: 1.6
+}
+
+.contact-main {
+    padding: 24px 0 60px
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 28px
+}
+
+.contact-form-card,
+.contact-branches {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, .08)
+}
+
+.contact-form-card h2,
+.contact-branches h2 {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 14px
+}
+
+.contact-alert {
+    background: #ecfdf3;
+    color: #166534;
+    border: 1px solid #86efac;
+    padding: 10px 14px;
+    border-radius: 12px;
+    margin-bottom: 14px
+}
+
+.contact-form .form-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 16px
+}
+
+.contact-form label {
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: block
+}
+
+.contact-form .req {
+    color: #ef4444
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px
+}
+
+.branch-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px
+}
+
+.branch-tab {
+    border: 1px solid #cbd5f5;
+    background: #fff;
+    color: #0f172a;
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 600
+}
+
+.branch-tab.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary)
+}
+
+.branch-list {
+    display: none;
+    max-height: 420px;
+    overflow: auto;
+    padding-right: 6px
+}
+
+.branch-list.active {
+    display: block
+}
+
+.branch-card {
+    padding: 14px 0;
+    border-bottom: 1px solid #e2e8f0
+}
+
+.branch-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px
+}
+
+.branch-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    color: #0f172a;
+    font-size: 14px;
+    margin-bottom: 6px
+}
+
+.branch-item i {
+    color: var(--primary);
+    margin-top: 2px
+}
+
+.branch-empty {
+    color: var(--muted)
+}
+
+@media (max-width: 1100px) {
+    .contact-grid {
+        grid-template-columns: 1fr
+    }
+
+    .contact-form .form-row {
+        grid-template-columns: 1fr
+    }
 }
 
 .booking-history-card .summary-head img {

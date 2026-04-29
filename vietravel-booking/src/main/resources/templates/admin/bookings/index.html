@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <div class="card booking-process-card">
+        <div class="card-head">
+            <div class="card-actions process-actions">
+                <form class="process-filter" method="get" th:action="@{/admin/bookings}">
+                    <div class="process-search">
+                        <span class="process-search-icon">🔎</span>
+                        <input class="search-input" name="customer" placeholder="Tìm khách hàng (tên/email/SĐT...)"
+                               th:value="${selectedCustomer}">
+                    </div>
+                    <div class="process-search">
+                        <span class="process-search-icon">🧳</span>
+                        <input class="search-input" name="tour" placeholder="Tìm tour..."
+                               th:value="${selectedTour}">
+                    </div>
+                    <div class="process-select">
+                        <span class="process-date-label">Trạng thái</span>
+                        <select class="select" name="status">
+                            <option value="" th:selected="${#strings.isEmpty(selectedStatus)}">Tất cả</option>
+                                    <option th:each="s : ${statusOptions}"
+                                        th:value="${s.name()}"
+                                        th:text="${s == T(com.vietravel.booking.domain.entity.booking.BookingStatus).PENDING ? 'Chờ xác nhận' : (s == T(com.vietravel.booking.domain.entity.booking.BookingStatus).CONFIRMED ? 'Đã xác nhận' : (s == T(com.vietravel.booking.domain.entity.booking.BookingStatus).CANCEL_REQUESTED ? 'Yêu cầu hủy' : (s == T(com.vietravel.booking.domain.entity.booking.BookingStatus).CANCELED ? 'Đã hủy' : 'Hoàn tất')))}"
+                                        th:selected="${selectedStatus == s.name()}">
+                                    </option>
+                        </select>
+                    </div>
+                    <button class="btn btn-ghost" type="submit">Lọc</button>
+                    <a class="btn btn-ghost" th:href="@{/admin/bookings}">Xóa lọc</a>
+                </form>
+                <span class="process-count">Hiển thị: <b th:text="${#lists.size(bookingViews)}">0</b></span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-wrap process-table">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Khách hàng</th>
+                        <th>Tour</th>
+                        <th>Ngày</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái đặt tour</th>
+                        <th>Thanh toán</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(bookingViews)}">
+                        <td colspan="7" class="muted">Chưa có đơn đặt tour.</td>
+                    </tr>
+                    <tr th:each="item : ${bookingViews}" class="reveal">
+                        <td th:text="${item.booking.contactName}">--</td>
+                        <td th:text="${item.booking.departure != null && item.booking.departure.tour != null ? item.booking.departure.tour.title : 'Tour'}">Tour</td>
+                        <td th:text="${item.booking.departure != null && item.booking.departure.startDate != null ? #temporals.format(item.booking.departure.startDate, 'dd/MM/yyyy') : #temporals.format(item.booking.createdAt, 'dd/MM/yyyy')}">--/--/----</td>
+                        <td th:text="${#numbers.formatDecimal(item.booking.totalAmount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</td>
+                        <td>
+                            <span th:switch="${item.booking.status != null ? item.booking.status.name() : ''}">
+                                <span th:case="'PENDING'" class="badge badge-pending">Chờ xác nhận</span>
+                                <span th:case="'CONFIRMED'" class="badge badge-confirmed">Đã xác nhận</span>
+                                <span th:case="'CANCEL_REQUESTED'" class="badge badge-canceled">Yêu cầu hủy</span>
+                                <span th:case="'CANCELED'" class="badge badge-canceled">Đã hủy</span>
+                                <span th:case="'COMPLETED'" class="badge badge-confirmed">Hoàn tất</span>
+                                <span th:case="*" class="badge badge-confirmed">Đang xử lý</span>
+                            </span>
+                        </td>
+                        <td>
+                            <span th:switch="${item.paymentStatus != null ? item.paymentStatus.name() : ''}">
+                                <span th:case="'INIT'" class="badge badge-pending">Chưa thanh toán</span>
+                                <span th:case="'SUCCESS'" class="badge badge-confirmed">Thành công</span>
+                                <span th:case="'FAILED'" class="badge badge-canceled">Thất bại</span>
+                                <span th:case="'REFUNDED'" class="badge badge-canceled">Đã hoàn tiền</span>
+                                <span th:case="*" class="badge badge-confirmed">—</span>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="table-actions process-actions-row">
+                                <a class="btn btn-ghost" th:href="@{'/admin/bookings/' + ${item.booking.id}}">Chi tiết</a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="booking-pagination" th:if="${totalPages > 1}">
+                <a class="btn btn-ghost" th:if="${currentPage > 1}"
+                   th:href="@{/admin/bookings(page=${currentPage - 1},status=${selectedStatus},customer=${selectedCustomer},tour=${selectedTour})}">← Trước</a>
+                <span class="pagination-info">Trang <b th:text="${currentPage}">1</b> / <b th:text="${totalPages}">1</b></span>
+                <a class="btn btn-ghost" th:if="${currentPage < totalPages}"
+                   th:href="@{/admin/bookings(page=${currentPage + 1},status=${selectedStatus},customer=${selectedCustomer},tour=${selectedTour})}">Sau →</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

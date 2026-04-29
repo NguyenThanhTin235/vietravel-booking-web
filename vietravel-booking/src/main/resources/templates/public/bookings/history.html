@@ -24,7 +24,6 @@
                         <select class="input" name="status">
                             <option value="" th:selected="${selectedStatus == ''}">Tất cả</option>
                             <option value="PENDING" th:selected="${selectedStatus == 'PENDING'}">Chờ xác nhận</option>
-                            <option value="PAID" th:selected="${selectedStatus == 'PAID'}">Đã thanh toán</option>
                             <option value="CONFIRMED" th:selected="${selectedStatus == 'CONFIRMED'}">Đã xác nhận</option>
                             <option value="CANCEL_REQUESTED" th:selected="${selectedStatus == 'CANCEL_REQUESTED'}">Yêu cầu hủy</option>
                             <option value="CANCELED" th:selected="${selectedStatus == 'CANCELED'}">Đã hủy</option>
@@ -73,7 +72,6 @@
                         <b class="status-badge" th:classappend="' status-' + ${item.booking.status}">
                             <span th:switch="${item.booking.status != null ? item.booking.status.name() : ''}">
                                 <span th:case="'PENDING'">Chờ xác nhận</span>
-                                <span th:case="'PAID'">Đã thanh toán</span>
                                 <span th:case="'CONFIRMED'">Đã xác nhận</span>
                                 <span th:case="'CANCEL_REQUESTED'">Yêu cầu hủy</span>
                                 <span th:case="'CANCELED'">Đã hủy</span>
