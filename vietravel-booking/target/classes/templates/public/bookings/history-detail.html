@@ -36,7 +36,6 @@
                             <b class="status-badge" th:classappend="' status-' + ${bookingView.booking.status}">
                                 <span th:switch="${bookingView.booking.status != null ? bookingView.booking.status.name() : ''}">
                                     <span th:case="'PENDING'">Chờ xác nhận</span>
-                                    <span th:case="'PAID'">Đã thanh toán</span>
                                     <span th:case="'CONFIRMED'">Đã xác nhận</span>
                                     <span th:case="'CANCEL_REQUESTED'">Yêu cầu hủy</span>
                                     <span th:case="'CANCELED'">Đã hủy</span>

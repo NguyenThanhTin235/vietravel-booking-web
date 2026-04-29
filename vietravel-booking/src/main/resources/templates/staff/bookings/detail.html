@@ -89,7 +89,6 @@
                                 </div>
                                 <span th:switch="${bookingView.booking.status != null ? bookingView.booking.status.name() : ''}">
                                     <span th:case="'PENDING'" class="badge badge-pending">Chờ xác nhận</span>
-                                    <span th:case="'PAID'" class="badge badge-pending">Chờ xác nhận</span>
                                     <span th:case="'CONFIRMED'" class="badge badge-confirmed">Đã xác nhận</span>
                                     <span th:case="'CANCEL_REQUESTED'" class="badge badge-canceled">Yêu cầu hủy</span>
                                     <span th:case="'CANCELED'" class="badge badge-canceled">Đã hủy</span>
@@ -142,13 +141,13 @@
                         <div class="booking-info-section booking-info-actions">
                             <div class="section-title">Thao tác</div>
                             <div class="detail-actions">
-                                <form th:if="${bookingView.booking.status != null && (bookingView.booking.status.name() == 'PENDING' || bookingView.booking.status.name() == 'PAID')}"
+                                  <form th:if="${bookingView.booking.status != null && bookingView.booking.status.name() == 'PENDING'}"
                                       th:action="@{'/staff/bookings/' + ${bookingView.booking.id} + '/confirm'}" method="post"
                                       class="js-confirm-form" data-confirm-message="Xác nhận booking này?">
                                     <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                     <button class="btn btn-ghost" type="submit">Xác nhận</button>
                                 </form>
-                                <form th:if="${bookingView.booking.status != null && (bookingView.booking.status.name() == 'PENDING' || bookingView.booking.status.name() == 'PAID' || bookingView.booking.status.name() == 'CONFIRMED' || bookingView.booking.status.name() == 'CANCEL_REQUESTED')}"
+                                  <form th:if="${bookingView.booking.status != null && (bookingView.booking.status.name() == 'PENDING' || bookingView.booking.status.name() == 'CONFIRMED' || bookingView.booking.status.name() == 'CANCEL_REQUESTED')}"
                                       th:action="@{'/staff/bookings/' + ${bookingView.booking.id} + '/cancel'}" method="post">
                                     <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                     <input type="hidden" name="cancelReason">

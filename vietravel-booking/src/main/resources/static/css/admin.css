@@ -878,6 +878,105 @@ img {
     border-color: rgba(239, 68, 68, .35)
 }
 
+/* Branches */
+.branch-page .card-head {
+    align-items: center;
+    gap: 12px
+}
+
+.branch-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap
+}
+
+.branch-title {
+    font-size: 20px;
+    font-weight: 700
+}
+
+.branch-subtitle {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 4px
+}
+
+.branch-toolbar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap
+}
+
+.branch-filters {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 12px
+}
+
+.branch-filter-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center
+}
+
+.branch-table td {
+    vertical-align: top
+}
+
+.branch-region {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #4338ca;
+    background: #eef2ff
+}
+
+.branch-name {
+    font-weight: 600
+}
+
+.branch-meta {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--muted)
+}
+
+.branch-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: #0f172a
+}
+
+.branch-actions {
+    gap: 8px
+}
+
+.branch-form-card .form-section {
+    margin-bottom: 16px
+}
+
+.branch-form-card .form-section-title {
+    font-weight: 700
+}
+
+.branch-form-card .form-help {
+    color: var(--muted);
+    font-size: 12px
+}
+
+@media (max-width: 1100px) {
+    .branch-filters {
+        grid-template-columns: 1fr
+    }
+}
+
 .placeholder-chart {
     height: 240px;
     border-radius: 16px;

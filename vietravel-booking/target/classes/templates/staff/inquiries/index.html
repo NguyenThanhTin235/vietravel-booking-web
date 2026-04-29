@@ -10,58 +10,102 @@
 
 <th:block th:fragment="content">
     <div class="grid-12">
-        <div class="col-8">
+        <div class="col-7">
             <div class="card">
                 <div class="card-head">
-                    <div class="card-title">Danh sách ghi chú từ khách</div>
-                    <div class="card-actions">
-                        <input class="search-input"
-                               style="max-width:240px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:#fff"
-                               placeholder="Tìm theo khách hàng...">
+                    <div class="card-title">Danh sách thắc mắc</div>
+                    <div class="card-actions" style="gap:10px;display:flex;align-items:center">
+                        <form method="get" th:action="@{/staff/inquiries}" style="display:flex;gap:10px;align-items:center">
+                            <select class="select" name="status" style="min-width:160px">
+                                <option value="" th:selected="${#strings.isEmpty(selectedStatus)}">Tất cả trạng thái</option>
+                                <option th:each="s : ${statusOptions}"
+                                        th:value="${s.name()}"
+                                        th:text="${s == T(com.vietravel.booking.domain.entity.support.ContactInquiryStatus).NEW ? 'Mới' : (s == T(com.vietravel.booking.domain.entity.support.ContactInquiryStatus).READ ? 'Đã xem' : 'Đã phản hồi')}"
+                                        th:selected="${selectedStatus == s.name()}">
+                                </option>
+                            </select>
+                            <input class="search-input" name="q"
+                                   style="max-width:220px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:#fff"
+                                   placeholder="Tìm theo khách hàng..." th:value="${selectedQuery}">
+                            <button class="btn btn-ghost" type="submit">Lọc</button>
+                        </form>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="list">
-                        <div th:if="${#lists.isEmpty(inquiries)}" class="muted">Chưa có ghi chú từ khách.</div>
-                        <div th:each="b : ${inquiries}" class="list-item reveal">
+                        <div th:if="${#lists.isEmpty(inquiries)}" class="muted">Chưa có thắc mắc.</div>
+                        <a th:each="b : ${inquiries}" class="list-item reveal"
+                           th:href="@{/staff/inquiries(id=${b.id},status=${selectedStatus},q=${selectedQuery})}">
                             <div class="thumb"></div>
                             <div class="li-main">
-                                <div class="li-title" th:text="${#strings.abbreviate(b.note, 52)}">Ghi chú</div>
+                                <div class="li-title" th:text="${#strings.abbreviate(b.subject, 52)}">Chủ đề</div>
                                 <div class="li-sub">
-                                    Khách: <span th:text="${b.contactName}">--</span>
+                                    Khách: <span th:text="${b.fullName}">--</span>
                                     • <span th:text="${#temporals.format(b.createdAt, 'dd/MM/yyyy')}">--/--/----</span>
                                 </div>
                             </div>
-                            <span class="pill">Ghi chú</span>
-                        </div>
+                            <span class="pill" th:switch="${b.status != null ? b.status.name() : ''}">
+                                <span th:case="'NEW'">Mới</span>
+                                <span th:case="'READ'">Đã xem</span>
+                                <span th:case="'RESOLVED'">Đã phản hồi</span>
+                                <span th:case="*">Mới</span>
+                            </span>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-5">
             <div class="card">
                 <div class="card-head">
-                    <div class="card-title">Chi tiết ghi chú</div>
+                    <div class="card-title">Chi tiết thắc mắc</div>
                 </div>
                 <div class="card-body">
-                    <div th:if="${selectedInquiry == null}" class="placeholder-chart">Chưa có ghi chú để hiển thị</div>
+                    <div th:if="${selectedInquiry == null}" class="placeholder-chart">Chưa có thắc mắc để hiển thị</div>
                     <div th:if="${selectedInquiry != null}">
-                        <div class="li-title" th:text="${#strings.abbreviate(selectedInquiry.note, 80)}">Ghi chú</div>
+                        <div class="li-title" th:text="${selectedInquiry.subject}">Chủ đề</div>
                         <div class="li-sub" style="margin-top:8px">
-                            Khách: <span th:text="${selectedInquiry.contactName}">--</span>
-                            • <span th:text="${selectedInquiry.contactPhone}">--</span>
+                            Khách: <span th:text="${selectedInquiry.fullName}">--</span>
+                            • <span th:text="${selectedInquiry.phone}">--</span>
                         </div>
                         <div class="li-sub" style="margin-top:6px">
-                            Tour: <span th:text="${selectedInquiry.departure != null && selectedInquiry.departure.tour != null ? selectedInquiry.departure.tour.title : 'Tour'}">Tour</span>
+                            Email: <span th:text="${selectedInquiry.email}">--</span>
                         </div>
                         <div class="li-sub" style="margin-top:6px">
-                            Mã đặt: <span th:text="${selectedInquiry.bookingCode}">BK</span>
+                            Loại: <span th:text="${selectedInquiry.infoType}">--</span>
                             • <span th:text="${#temporals.format(selectedInquiry.createdAt, 'dd/MM/yyyy')}">--/--/----</span>
                         </div>
-                        <div style="margin-top:16px;display:flex;gap:10px">
-                            <button class="btn btn-ghost" type="button" disabled>Đã xem</button>
-                            <button class="btn btn-primary" type="button" disabled>Phản hồi</button>
+                        <div class="li-sub" style="margin-top:6px">
+                            Trạng thái:
+                            <span th:switch="${selectedInquiry.status != null ? selectedInquiry.status.name() : ''}">
+                                <span th:case="'NEW'">Mới</span>
+                                <span th:case="'READ'">Đã xem</span>
+                                <span th:case="'RESOLVED'">Đã phản hồi</span>
+                                <span th:case="*">Mới</span>
+                            </span>
                         </div>
+                        <div class="li-sub" style="margin-top:12px" th:text="${selectedInquiry.content}">
+                            Nội dung
+                        </div>
+                        <div class="li-sub" style="margin-top:12px" th:if="${selectedInquiry.replyHistory != null}">
+                            <b>Lịch sử phản hồi</b>
+                            <pre style="white-space:pre-wrap;margin-top:6px" th:text="${selectedInquiry.replyHistory}">Lịch sử</pre>
+                        </div>
+
+                        <form th:action="@{'/staff/inquiries/' + ${selectedInquiry.id} + '/reply'}" method="post" style="margin-top:16px">
+                            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <label class="muted" style="display:block;margin-bottom:6px">Tiêu đề phản hồi</label>
+                            <input class="input" name="replySubject" placeholder="Phản hồi cho khách" style="margin-bottom:10px">
+                            <label class="muted" style="display:block;margin-bottom:6px">Nội dung phản hồi</label>
+                            <textarea class="input" name="replyMessage" rows="4" placeholder="Nhập nội dung phản hồi" required></textarea>
+                            <div style="margin-top:12px;display:flex;gap:10px">
+                                <button class="btn btn-primary" type="submit">Gửi phản hồi</button>
+                            </div>
+                        </form>
+                        <form th:action="@{'/staff/inquiries/' + ${selectedInquiry.id} + '/read'}" method="post" style="margin-top:10px">
+                            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button class="btn btn-ghost" type="submit">Đánh dấu đã xem</button>
+                        </form>
                     </div>
                 </div>
             </div>

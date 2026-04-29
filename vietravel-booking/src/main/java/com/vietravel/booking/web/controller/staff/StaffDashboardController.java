@@ -29,14 +29,13 @@ public class StaffDashboardController {
           LocalDateTime endOfDay = startOfDay.plusDays(1);
 
           model.addAttribute("kpiToday", bookingRepository.countByCreatedAtBetween(startOfDay, endOfDay));
-          model.addAttribute("kpiPending", bookingRepository.countByStatus(BookingStatus.PENDING)
-                    + bookingRepository.countByStatus(BookingStatus.PAID));
+          model.addAttribute("kpiPending", bookingRepository.countByStatus(BookingStatus.PENDING));
           model.addAttribute("kpiCancel", bookingRepository.countByStatus(BookingStatus.CANCEL_REQUESTED));
           model.addAttribute("kpiQuestions", bookingRepository.countNotesSince(now.minusHours(24)));
 
           model.addAttribute("recentBookings", bookingRepository.findTop5ByOrderByCreatedAtDesc());
           model.addAttribute("pendingBookings", bookingRepository.findTop5ByStatusInOrderByCreatedAtDesc(
-                    Arrays.asList(BookingStatus.PENDING, BookingStatus.PAID, BookingStatus.CANCEL_REQUESTED)));
+                    Arrays.asList(BookingStatus.PENDING, BookingStatus.CANCEL_REQUESTED)));
           model.addAttribute("recentNotes", bookingRepository.findRecentNotes(PageRequest.of(0, 5)));
           model.addAttribute("topTours", bookingRepository.findTopTours(PageRequest.of(0, 3)));
 

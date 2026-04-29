@@ -338,7 +338,7 @@ public class BookingService {
           if (booking == null || booking.getStatus() == null) {
                return false;
           }
-          if (booking.getStatus() == BookingStatus.PENDING || booking.getStatus() == BookingStatus.PAID) {
+          if (booking.getStatus() == BookingStatus.PENDING) {
                booking.setStatus(BookingStatus.CONFIRMED);
                bookingRepository.save(booking);
                if (booking.getUser() != null) {
