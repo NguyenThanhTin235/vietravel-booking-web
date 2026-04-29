@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -62,13 +63,46 @@ public class BookingCustomerViewController {
           model.addAttribute("pageTitle", "Chi tiết booking");
           model.addAttribute("activeNav", "profile");
           model.addAttribute("bookingView", view);
+          model.addAttribute("cancelHistoryPairs", buildCancelHistoryPairs(view.getBooking().getNote()));
           return "public/bookings/history-detail";
      }
 
      @PostMapping("/{id}/cancel")
      public String cancel(@PathVariable("id") Long id) {
-          boolean canceled = bookingService.cancelMyBooking(id);
-          return "redirect:/customer/bookings/" + id + "?canceled=" + (canceled ? "success" : "failed");
+          return "redirect:/customer/bookings/" + id;
+     }
+
+     @PostMapping("/{id}/cancel-request")
+     public String requestCancel(@PathVariable("id") Long id,
+               @RequestParam(value = "cancelReason", required = false) String cancelReason,
+               @RequestParam(value = "cancelReasonOther", required = false) String cancelReasonOther) {
+          String reason = resolveCancelReason(cancelReason, cancelReasonOther);
+          boolean requested = bookingService.requestCancelMyBooking(id, reason);
+          return "redirect:/customer/bookings/" + id + "?cancelRequest=" + (requested ? "success" : "failed");
+     }
+
+     private String resolveCancelReason(String cancelReason, String cancelReasonOther) {
+          if (cancelReason == null || cancelReason.isBlank()) {
+               return null;
+          }
+          switch (cancelReason) {
+               case "CUSTOMER_REQUEST":
+                    return "Khách yêu cầu hủy";
+               case "PAYMENT_FAILED":
+                    return "Thanh toán thất bại";
+               case "NO_SHOW":
+                    return "Khách không xác nhận";
+               case "SOLD_OUT":
+                    return "Hết chỗ";
+               case "SCHEDULE_CHANGED":
+                    return "Thay đổi lịch khởi hành";
+               case "OTHER":
+                    return cancelReasonOther != null && !cancelReasonOther.isBlank()
+                              ? cancelReasonOther.trim()
+                              : null;
+               default:
+                    return cancelReason;
+          }
      }
 
      private BookingStatus parseBookingStatus(String raw) {
@@ -90,6 +124,75 @@ public class BookingCustomerViewController {
                return PaymentStatus.valueOf(raw);
           } catch (IllegalArgumentException ex) {
                return null;
+          }
+     }
+
+     private List<CancelHistoryPair> buildCancelHistoryPairs(String note) {
+          if (note == null || note.isBlank()) {
+               return List.of();
+          }
+          List<CancelHistoryPair> pairs = new ArrayList<>();
+          CancelHistoryPair current = null;
+          String[] lines = note.split("\\n");
+          for (String raw : lines) {
+               String line = raw == null ? "" : raw.trim();
+               if (line.isEmpty()) {
+                    continue;
+               }
+               if (line.startsWith("Yêu cầu hủy (KH):")) {
+                    current = new CancelHistoryPair();
+                    current.request = line.replace("Yêu cầu hủy (KH):", "").trim();
+                    pairs.add(current);
+                    continue;
+               }
+               if (line.startsWith("Duyệt hủy (NV):")) {
+                    if (current == null) {
+                         current = new CancelHistoryPair();
+                         pairs.add(current);
+                    }
+                    current.response = line.replace("Duyệt hủy (NV):", "").trim();
+                    current.responseType = "approve";
+                    current = null;
+                    continue;
+               }
+               if (line.startsWith("Từ chối hủy (NV):")) {
+                    if (current == null) {
+                         current = new CancelHistoryPair();
+                         pairs.add(current);
+                    }
+                    current.response = line.replace("Từ chối hủy (NV):", "").trim();
+                    current.responseType = "reject";
+                    current = null;
+                    continue;
+               }
+               if (line.startsWith("Lý do hủy (NV):")) {
+                    if (current == null) {
+                         current = new CancelHistoryPair();
+                         pairs.add(current);
+                    }
+                    current.response = line.replace("Lý do hủy (NV):", "").trim();
+                    current.responseType = "staff";
+                    current = null;
+               }
+          }
+          return pairs;
+     }
+
+     public static class CancelHistoryPair {
+          private String request;
+          private String response;
+          private String responseType;
+
+          public String getRequest() {
+               return request;
+          }
+
+          public String getResponse() {
+               return response;
+          }
+
+          public String getResponseType() {
+               return responseType;
           }
      }
 }

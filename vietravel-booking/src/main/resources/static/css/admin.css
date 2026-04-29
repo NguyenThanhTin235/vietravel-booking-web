@@ -494,6 +494,193 @@ img {
     color: var(--danger)
 }
 
+/* ===== NOTIFICATIONS ===== */
+.noti-wrap {
+    position: relative;
+    display: inline-flex;
+}
+
+.noti-btn {
+    position: relative;
+}
+
+.noti-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+    padding: 0 4px;
+    line-height: 1;
+}
+
+.noti-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    width: min(320px, 90vw);
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 10px;
+    z-index: 1000;
+    display: none;
+}
+
+.noti-wrap.open .noti-dropdown {
+    display: block;
+}
+
+.noti-dropdown-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 6px 8px;
+}
+
+.noti-title {
+    font-weight: 900;
+}
+
+.noti-list {
+    max-height: 320px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 4px;
+}
+
+.noti-item {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px 10px;
+    background: #fff;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.noti-item.is-unread {
+    background: rgba(59, 130, 246, .06);
+    border-color: rgba(59, 130, 246, .25);
+}
+
+.noti-item-title {
+    font-weight: 800;
+    font-size: 13px;
+}
+
+.noti-item-msg {
+    font-size: 12.5px;
+    color: #475569;
+}
+
+.noti-item-time {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.noti-empty {
+    padding: 12px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12.5px;
+}
+
+.noti-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, .45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.noti-modal.show {
+    display: flex;
+}
+
+.noti-modal-card {
+    width: min(520px, 92vw);
+    background: #fff;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.noti-modal-head {
+    padding: 12px 16px;
+    font-weight: 900;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #16a34a;
+    color: #fff;
+}
+
+.noti-modal-card.info .noti-modal-head {
+    background: #2563eb;
+}
+
+.noti-modal-card.success .noti-modal-head {
+    background: #16a34a;
+}
+
+.noti-modal-card.warning .noti-modal-head {
+    background: #f59e0b;
+}
+
+.noti-modal-card.error .noti-modal-head {
+    background: #ef4444;
+}
+
+.noti-modal-close {
+    background: transparent;
+    border: 0;
+    color: inherit;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.noti-modal-body {
+    padding: 14px 16px;
+    color: #475569;
+    font-weight: 700;
+    font-size: 13.5px;
+}
+
+.noti-modal-time {
+    font-size: 12.5px;
+    color: #64748b;
+    margin-bottom: 10px;
+}
+
+.noti-modal-message {
+    line-height: 1.6;
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.noti-modal-foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 16px 16px;
+}
+
 /* ===== CONTENT UI ===== */
 .grid-12 {
     display: grid;
@@ -509,8 +696,16 @@ img {
     grid-column: span 8
 }
 
+.col-7 {
+    grid-column: span 7
+}
+
 .col-4 {
     grid-column: span 4
+}
+
+.col-5 {
+    grid-column: span 5
 }
 
 .card {
@@ -600,6 +795,17 @@ img {
 
 .btn-primary:hover {
     filter: brightness(1.02)
+}
+
+.btn-danger {
+    background: rgba(239, 68, 68, .12);
+    border-color: rgba(239, 68, 68, .35);
+    color: #b91c1c;
+    font-weight: 800;
+}
+
+.btn-danger:hover {
+    background: rgba(239, 68, 68, .2);
 }
 
 .btn-ghost {
@@ -1295,6 +1501,138 @@ img {
 
 .booking-info-actions .detail-actions {
     margin-top: 6px;
+}
+
+.review-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding: 16px 18px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(37, 99, 235, .16), rgba(139, 92, 246, .16));
+    border: 1px solid rgba(148, 163, 184, .22);
+}
+
+.review-hero-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.review-hero-sub {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+.review-toggle-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.review-shell .review-card {
+    border: 1px solid rgba(148, 163, 184, .25);
+}
+
+.review-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-top: 12px;
+}
+
+.review-block {
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid rgba(148, 163, 184, .2);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, .05);
+}
+
+.review-label {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #64748b;
+    margin-bottom: 6px;
+}
+
+.review-value {
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+
+.review-sub {
+    font-size: 13px;
+    color: #334155;
+    margin-top: 4px;
+}
+
+.review-divider {
+    height: 1px;
+    background: rgba(148, 163, 184, .25);
+    margin: 16px 0;
+}
+
+.review-note {
+    background: #f8fafc;
+    border: 1px dashed rgba(148, 163, 184, .35);
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.review-action {
+    background: #fff;
+    border: 1px solid rgba(148, 163, 184, .2);
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, .05);
+    margin-bottom: 14px;
+}
+
+.review-form {
+    display: none;
+}
+
+.review-form.is-open {
+    display: block;
+}
+
+.review-action-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.review-action-title {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.review-pill {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+}
+
+.review-pill.approve {
+    background: rgba(34, 197, 94, .12);
+    color: #15803d;
+}
+
+.review-pill.reject {
+    background: rgba(239, 68, 68, .12);
+    color: #b91c1c;
 }
 
 .footer-inner {

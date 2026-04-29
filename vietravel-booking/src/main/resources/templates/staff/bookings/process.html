@@ -107,6 +107,9 @@
                                                                     <button class="btn btn-ghost js-cancel-btn" type="button"
                                                                             th:attr="data-booking-code=${item.booking.bookingCode}">Hủy tour</button>
                                 </form>
+                                <div th:if="${item.booking.status != null && item.booking.status.name() == 'CANCEL_REQUESTED'}" class="process-actions-row">
+                                    <a class="btn btn-ghost" th:href="@{'/staff/bookings/' + ${item.booking.id} + '/cancel-review'}">Xử lý hủy</a>
+                                </div>
                                 <span th:if="${item.booking.status == null || item.booking.status.name() == 'CANCELED' || item.booking.status.name() == 'COMPLETED'}" class="muted">—</span>
                             </div>
                         </td>
@@ -155,6 +158,7 @@
             </div>
         </div>
     </div>
+
 </th:block>
 
 <th:block th:fragment="additionalJs">

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/staff :: layout(
+      pageTitle=${pageTitle},
+      activeMenu=${activeMenu},
+      activeSubMenu=${activeSubMenu},
+      content=~{::content},
+      additionalJs=~{::additionalJs}
+)}">
+
+<th:block th:fragment="content">
+    <div class="review-hero">
+        <div>
+            <div class="review-hero-title">Xử lý yêu cầu hủy tour</div>
+            <div class="review-hero-sub">Xem nhanh thông tin booking và phản hồi yêu cầu hủy.</div>
+        </div>
+        <a class="btn btn-ghost" th:href="@{/staff/bookings/process}">Quay lại danh sách</a>
+    </div>
+
+    <div class="grid-12 review-shell">
+        <div class="col-7">
+            <div class="card booking-detail-card review-card">
+                <div class="card-head">
+                    <div class="card-title">Tóm tắt booking</div>
+                    <div class="review-toggle-actions" th:if="${bookingView != null}">
+                        <button class="btn btn-ghost" type="button" data-review-toggle="approve">Duyệt</button>
+                        <button class="btn btn-ghost" type="button" data-review-toggle="reject">Từ chối</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div th:if="${bookingView == null}" class="muted">Không tìm thấy booking.</div>
+                    <div th:if="${bookingView != null}">
+                        <div class="list detail-hero">
+                            <div class="list-item">
+                                <div class="li-main">
+                                    <div class="li-title">Mã booking: <span th:text="${bookingView.booking.bookingCode}">BK</span></div>
+                                    <div class="li-sub">Ngày tạo: <span th:text="${#temporals.format(bookingView.booking.createdAt, 'dd/MM/yyyy')}">--/--/----</span></div>
+                                </div>
+                                <span th:switch="${bookingView.booking.status != null ? bookingView.booking.status.name() : ''}">
+                                    <span th:case="'CANCEL_REQUESTED'" class="badge badge-canceled">Yêu cầu hủy</span>
+                                    <span th:case="'CANCELED'" class="badge badge-canceled">Đã hủy</span>
+                                    <span th:case="'CONFIRMED'" class="badge badge-confirmed">Đã xác nhận</span>
+                                    <span th:case="'PAID'" class="badge badge-pending">Chờ xác nhận</span>
+                                    <span th:case="'PENDING'" class="badge badge-pending">Chờ xác nhận</span>
+                                    <span th:case="'COMPLETED'" class="badge badge-confirmed">Hoàn tất</span>
+                                    <span th:case="*" class="badge badge-confirmed">Đang xử lý</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="review-grid">
+                            <div class="review-block">
+                                <div class="review-label">Tour</div>
+                                <div class="review-value" th:text="${bookingView.booking.departure != null && bookingView.booking.departure.tour != null ? bookingView.booking.departure.tour.title : 'Tour'}">Tour</div>
+                                <div class="review-sub">Khởi hành: <span th:text="${bookingView.booking.departure != null && bookingView.booking.departure.startDate != null ? #temporals.format(bookingView.booking.departure.startDate, 'dd/MM/yyyy') : '--/--/----'}">--/--/----</span></div>
+                            </div>
+                            <div class="review-block">
+                                <div class="review-label">Liên hệ</div>
+                                <div class="review-sub">Họ tên: <b th:text="${bookingView.booking.contactName}">--</b></div>
+                                <div class="review-sub">Điện thoại: <b th:text="${bookingView.booking.contactPhone}">--</b></div>
+                                <div class="review-sub">Email: <b th:text="${bookingView.booking.contactEmail}">--</b></div>
+                            </div>
+                            <div class="review-block">
+                                <div class="review-label">Thanh toán</div>
+                                <div class="review-sub">Tổng tiền: <b th:text="${#numbers.formatDecimal(bookingView.booking.totalAmount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</b></div>
+                                <div class="review-sub">Trạng thái:
+                                    <span th:switch="${bookingView.paymentStatus != null ? bookingView.paymentStatus.name() : ''}">
+                                        <span th:case="'INIT'" class="badge badge-pending">Chưa thanh toán</span>
+                                        <span th:case="'SUCCESS'" class="badge badge-confirmed">Thành công</span>
+                                        <span th:case="'FAILED'" class="badge badge-canceled">Thất bại</span>
+                                        <span th:case="'REFUNDED'" class="badge badge-canceled">Đã hoàn tiền</span>
+                                        <span th:case="*" class="badge badge-confirmed">—</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="review-divider"></div>
+
+                        <div class="review-history" th:if="${bookingView.booking.note != null && !#strings.isEmpty(bookingView.booking.note)}">
+                            <div class="review-label">Lịch sử xử lý</div>
+                            <pre class="review-note" th:text="${bookingView.booking.note}">Ghi chú</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-5">
+            <div class="card booking-detail-card review-card">
+                <div class="card-head">
+                    <div class="card-title">Phản hồi yêu cầu</div>
+                </div>
+                <div class="card-body">
+                    <div th:if="${bookingView == null}" class="muted">Không tìm thấy booking.</div>
+                    <div th:if="${bookingView != null}">
+                        <div class="review-action review-form" data-review-form="approve">
+                            <div class="review-action-head">
+                                <span class="review-pill approve">Duyệt</span>
+                                <span class="review-action-title">Chấp nhận yêu cầu hủy</span>
+                            </div>
+                            <form th:action="@{'/staff/bookings/' + ${bookingView.booking.id} + '/cancel-approve'}" method="post"
+                                  class="js-confirm-form" data-confirm-message="Duyệt yêu cầu hủy tour này?">
+                                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <label class="modal-label" for="approveReason">Ghi chú duyệt (tùy chọn)</label>
+                                <input id="approveReason" class="modal-input" type="text" name="reason" placeholder="Nhập ghi chú">
+                                <button class="btn btn-ghost" type="submit" style="margin-top:12px">Duyệt yêu cầu</button>
+                            </form>
+                        </div>
+
+                        <div class="review-action review-form" data-review-form="reject">
+                            <div class="review-action-head">
+                                <span class="review-pill reject">Từ chối</span>
+                                <span class="review-action-title">Từ chối yêu cầu hủy</span>
+                            </div>
+                            <form th:action="@{'/staff/bookings/' + ${bookingView.booking.id} + '/cancel-reject'}" method="post">
+                                <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <label class="modal-label" for="rejectReason">Lý do từ chối</label>
+                                <input id="rejectReason" class="modal-input" type="text" name="reason" placeholder="Nhập lý do" required>
+                                <button class="btn btn-ghost" type="submit" style="margin-top:12px">Từ chối yêu cầu</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="additionalJs">
+    <script th:src="@{/js/staff-bookings.js}"></script>
+    <script th:src="@{/js/staff-cancel-review.js}"></script>
+</th:block>
+
+</html>

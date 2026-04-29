@@ -91,14 +91,27 @@ public class StaffBookingController {
           return "staff/bookings/detail";
      }
 
-     @GetMapping("/cancel-requests")
-     public String cancelRequests(Model model) {
-          model.addAttribute("pageTitle", "Yêu cầu hủy tour");
+     @GetMapping("/{id}/cancel-review")
+     public String cancelReview(@PathVariable Long id, Model model) {
+          model.addAttribute("pageTitle", "Duyệt yêu cầu hủy");
           model.addAttribute("activeMenu", "bookings");
-          model.addAttribute("activeSubMenu", "cancel-requests");
-          model.addAttribute("cancelBookings", bookingRepository.findTop50ByStatusOrderByCreatedAtDesc(
-                    BookingStatus.CANCEL_REQUESTED));
-          return "staff/bookings/cancel-requests";
+          model.addAttribute("activeSubMenu", "process");
+          model.addAttribute("bookingView", bookingService.getBookingViewById(id, false));
+          return "staff/bookings/cancel-review";
+     }
+
+     @PostMapping("/{id}/cancel-approve")
+     public String approveCancel(@PathVariable Long id,
+               @RequestParam(value = "reason", required = false) String reason) {
+          bookingService.approveCancelRequestByStaff(id, reason);
+          return "redirect:/staff/bookings/process?toast=approve-success";
+     }
+
+     @PostMapping("/{id}/cancel-reject")
+     public String rejectCancel(@PathVariable Long id,
+               @RequestParam(value = "reason", required = false) String reason) {
+          bookingService.rejectCancelRequestByStaff(id, reason);
+          return "redirect:/staff/bookings/process?toast=reject-success";
      }
 
      @PostMapping("/{id}/confirm")

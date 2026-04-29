@@ -67,6 +67,19 @@
                 <a class="btn-outline" th:href="@{/auth/login}">Đăng nhập</a>
             </th:block>
 
+            <div th:if="${currentUser}" class="noti-wrap" data-noti>
+                <button class="icon-btn noti-btn" type="button" title="Thông báo" data-noti-toggle>
+                    <span class="ic">🔔</span>
+                    <span class="noti-badge" data-noti-count hidden>0</span>
+                </button>
+                <div class="noti-dropdown" data-noti-dropdown>
+                    <div class="noti-dropdown-head">
+                        <div class="noti-title">Thông báo</div>
+                    </div>
+                    <div class="noti-list" data-noti-list></div>
+                </div>
+            </div>
+
             <div th:if="${currentUser}" class="user-profile-area">
                 <span class="user-name-display"
                       th:text="${currentUserProfile != null && currentUserProfile.fullName != null ? currentUserProfile.fullName : 'User'}">
@@ -115,6 +128,7 @@
             </th:block>
         </div>
     </div>
+
 </header>
 </body>
 </html>

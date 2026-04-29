@@ -84,7 +84,8 @@ public class DestinationService {
             slug = toSlug(req.getName());
         d.setSlug(slug.trim());
 
-        TourCategory cat = tourCategoryRepository.findById(req.getCategoryId())
+        Long categoryId = Objects.requireNonNull(req.getCategoryId(), "categoryId");
+        TourCategory cat = tourCategoryRepository.findById(categoryId)
                 .orElseThrow(() -> new RuntimeException("Danh mục không tồn tại"));
         d.setCategory(cat);
 

@@ -103,18 +103,82 @@
             <div class="booking-card booking-detail-card" th:if="${bookingView.canCancel}">
                 <div class="booking-detail-actions">
                     <div>
-                        <b>Có thể hủy tour</b>
+                        <b>Có thể yêu cầu hủy tour</b>
                         <p class="muted">Chỉ cho phép hủy trước ngày khởi hành ít nhất 7 ngày.</p>
                     </div>
-                    <form method="post" th:action="@{'/customer/bookings/' + ${bookingView.booking.id} + '/cancel'}">
-                        <button class="btn-pay" type="submit">Hủy tour</button>
+                    <form method="post" th:action="@{'/customer/bookings/' + ${bookingView.booking.id} + '/cancel-request'}">
+                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <input type="hidden" name="cancelReason">
+                        <input type="hidden" name="cancelReasonOther">
+                        <button class="btn-pay js-cancel-request-btn" type="button"
+                                th:attr="data-booking-code=${bookingView.booking.bookingCode}">Yêu cầu hủy</button>
                     </form>
+                </div>
+            </div>
+
+            <div class="booking-card booking-detail-card" th:if="${bookingView.booking.status != null && bookingView.booking.status.name() == 'CANCEL_REQUESTED'}">
+                <div class="booking-detail-actions">
+                    <div>
+                        <b>Đã gửi yêu cầu hủy</b>
+                        <p class="muted">Yêu cầu đang chờ nhân viên xác nhận.</p>
+                    </div>
+                    <span class="pill">Chờ duyệt</span>
+                </div>
+            </div>
+
+            <div class="booking-card booking-detail-card" th:if="${cancelHistoryPairs != null && !#lists.isEmpty(cancelHistoryPairs)}">
+                <h2>Lịch sử hủy tour</h2>
+                <div class="booking-detail-passengers" style="gap: 12px;">
+                    <div th:each="pair : ${cancelHistoryPairs}" class="passenger-row" style="align-items:flex-start;">
+                        <div style="flex:1;">
+                            <b>Yêu cầu</b>
+                            <div class="summary-date" th:text="${pair.request != null && !#strings.isEmpty(pair.request) ? pair.request : 'Không ghi rõ'}">--</div>
+                        </div>
+                        <div style="flex:1;">
+                            <b>Phản hồi</b>
+                            <div class="summary-date" th:text="${pair.response != null && !#strings.isEmpty(pair.response) ? pair.response : 'Chưa phản hồi'}">--</div>
+                        </div>
+                        <span class="pill" th:if="${pair.responseType != null}" th:text="${pair.responseType == 'approve' ? 'Đã duyệt' : (pair.responseType == 'reject' ? 'Từ chối' : 'Đã xử lý')}">Trạng thái</span>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <div id="cancelRequestModal" class="booking-modal" aria-hidden="true">
+        <div class="booking-modal-backdrop" data-cancel-request-close></div>
+        <div class="booking-modal-card" role="dialog" aria-modal="true" aria-labelledby="cancelRequestTitle">
+            <button class="booking-modal-close" type="button" data-cancel-request-close>×</button>
+            <h3 id="cancelRequestTitle">Yêu cầu hủy tour</h3>
+            <div class="booking-modal-body">
+                <div class="modal-field">
+                    <label class="modal-label" for="cancelRequestSelect">Chọn lý do hủy</label>
+                    <select id="cancelRequestSelect" class="modal-input">
+                        <option value="">-- Chọn lý do --</option>
+                        <option value="CUSTOMER_REQUEST">Khách yêu cầu hủy</option>
+                        <option value="PAYMENT_FAILED">Thanh toán thất bại</option>
+                        <option value="NO_SHOW">Khách không xác nhận</option>
+                        <option value="SOLD_OUT">Hết chỗ</option>
+                        <option value="SCHEDULE_CHANGED">Thay đổi lịch khởi hành</option>
+                        <option value="OTHER">Lý do khác</option>
+                    </select>
+                </div>
+                <div class="modal-field" id="cancelRequestOtherWrap" style="display:none">
+                    <label class="modal-label" for="cancelRequestOther">Lý do khác</label>
+                    <input id="cancelRequestOther" class="modal-input" type="text" placeholder="Nhập lý do khác">
+                </div>
+                <div id="cancelRequestError" class="modal-error"></div>
+            </div>
+            <div class="booking-modal-actions">
+                <button class="btn-outline" type="button" data-cancel-request-close>Hủy</button>
+                <button id="cancelRequestSubmit" class="btn-pay" type="button">Gửi yêu cầu</button>
+            </div>
+        </div>
+    </div>
 </th:block>
 
-<th:block th:fragment="additionalJs"></th:block>
+<th:block th:fragment="additionalJs">
+    <script th:src="@{/js/customer-bookings.js}"></script>
+</th:block>
 
 </html>

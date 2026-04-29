@@ -51,6 +51,7 @@ public class TourAdminService {
           return toDetailRes(t);
      }
 
+     @SuppressWarnings("null")
      @Transactional
      public TourAdminDetailResponse create(TourUpsertRequest req) {
           validate(req, null);
@@ -58,9 +59,11 @@ public class TourAdminService {
           Tour t = new Tour();
           apply(t, req);
 
-          return toDetailRes(tourRepository.save(t));
+          Tour saved = Objects.requireNonNull(tourRepository.save(t), "savedTour");
+          return toDetailRes(saved);
      }
 
+     @SuppressWarnings("null")
      @Transactional
      public TourAdminDetailResponse update(Long id, TourUpsertRequest req) {
           Objects.requireNonNull(id, "id");
@@ -70,16 +73,19 @@ public class TourAdminService {
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy tour"));
 
           apply(t, req);
-          return toDetailRes(tourRepository.save(t));
+          Tour saved = Objects.requireNonNull(tourRepository.save(t), "savedTour");
+          return toDetailRes(saved);
      }
 
+     @SuppressWarnings("null")
      @Transactional
      public TourAdminDetailResponse toggle(Long id) {
           Objects.requireNonNull(id, "id");
           Tour t = tourRepository.findById(id)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy tour"));
           t.setIsActive(t.getIsActive() == null || !t.getIsActive());
-          return toDetailRes(tourRepository.save(t));
+          Tour saved = Objects.requireNonNull(tourRepository.save(t), "savedTour");
+          return toDetailRes(saved);
      }
 
      private void validate(TourUpsertRequest req, Long id) {
@@ -131,9 +137,11 @@ public class TourAdminService {
           t.setTitle(req.getTitle().trim());
           t.setSlug(slug);
 
-          TourLine line = tourLineRepository.findById(req.getTourLineId())
+          Long tourLineId = Objects.requireNonNull(req.getTourLineId(), "tourLineId");
+          TourLine line = tourLineRepository.findById(tourLineId)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Không tìm thấy dòng tour"));
-          TransportMode mode = transportModeRepository.findById(req.getTransportModeId())
+          Long transportModeId = Objects.requireNonNull(req.getTransportModeId(), "transportModeId");
+          TransportMode mode = transportModeRepository.findById(transportModeId)
                     .orElseThrow(
                               () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Không tìm thấy phương tiện"));
           t.setTourLine(line);
@@ -144,7 +152,8 @@ public class TourAdminService {
           t.setBasePrice(req.getBasePrice());
 
           if (req.getStartLocationId() != null) {
-               Destination start = destinationRepository.findById(req.getStartLocationId())
+               Long startLocationId = Objects.requireNonNull(req.getStartLocationId(), "startLocationId");
+               Destination start = destinationRepository.findById(startLocationId)
                          .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
                                    "Không tìm thấy điểm khởi hành"));
                t.setStartLocation(start);

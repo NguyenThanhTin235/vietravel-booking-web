@@ -148,6 +148,21 @@ img {
     gap: 14px
 }
 
+.icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    border: 1px solid rgba(229, 231, 235, .9);
+    background: #fff;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+}
+
+.ic {
+    font-size: 16px
+}
+
 .nav-link.muted {
     color: var(--muted)
 }
@@ -2233,6 +2248,124 @@ img {
     color: #ef4444
 }
 
+.booking-modal-overlay,
+.booking-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 2000;
+}
+
+.booking-modal-overlay.is-open,
+.booking-modal.is-open {
+    display: flex;
+}
+
+.booking-modal-card,
+.booking-modal-panel {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 24px 48px rgba(15, 23, 42, 0.25);
+    overflow: hidden;
+}
+
+.booking-modal {
+    background: rgba(15, 23, 42, 0.55);
+}
+
+.booking-modal-backdrop {
+    position: absolute;
+    inset: 0;
+}
+
+.booking-modal-card {
+    position: relative;
+    z-index: 1;
+}
+
+.booking-modal__header,
+.booking-modal-card h3 {
+    padding: 18px 20px 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.booking-modal__title,
+.booking-modal-card h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.booking-modal__body,
+.booking-modal-body {
+    padding: 16px 20px;
+}
+
+.booking-modal__footer,
+.booking-modal-actions {
+    padding: 14px 20px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-end;
+    border-top: 1px solid #e5e7eb;
+}
+
+.booking-modal__label,
+.modal-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.booking-modal__select,
+.booking-modal__input,
+.modal-input {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+.booking-modal__helper {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 8px;
+}
+
+.booking-modal__error,
+.modal-error {
+    font-size: 13px;
+    color: #dc2626;
+    margin-top: 8px;
+    min-height: 18px;
+}
+
+.booking-modal__close,
+.booking-modal-close {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #64748b;
+}
+
+.booking-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+}
+
 @media (max-width:980px) {
     .tour-detail-layout {
         grid-template-columns: 1fr
@@ -2284,4 +2417,192 @@ img {
     .tour-meta {
         grid-template-columns: 1fr
     }
+}
+
+/* ===== NOTIFICATIONS ===== */
+.noti-wrap {
+    position: relative;
+    display: inline-flex;
+    margin-right: 10px;
+}
+
+.noti-btn {
+    position: relative;
+}
+
+.noti-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+    padding: 0 4px;
+    line-height: 1;
+}
+
+.noti-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    width: min(320px, 90vw);
+    background: #fff;
+    border: 1px solid rgba(229, 231, 235, .9);
+    border-radius: 16px;
+    box-shadow: 0 18px 50px rgba(2, 20, 60, .18);
+    padding: 10px;
+    z-index: 1000;
+    display: none;
+}
+
+.noti-wrap.open .noti-dropdown {
+    display: block;
+}
+
+.noti-dropdown-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 6px 8px;
+}
+
+.noti-title {
+    font-weight: 900;
+}
+
+.noti-list {
+    max-height: 320px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 4px;
+}
+
+.noti-item {
+    border: 1px solid rgba(229, 231, 235, .9);
+    border-radius: 12px;
+    padding: 8px 10px;
+    background: #fff;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.noti-item.is-unread {
+    background: rgba(59, 130, 246, .06);
+    border-color: rgba(59, 130, 246, .25);
+}
+
+.noti-item-title {
+    font-weight: 800;
+    font-size: 13px;
+}
+
+.noti-item-msg {
+    font-size: 12.5px;
+    color: #475569;
+}
+
+.noti-item-time {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.noti-empty {
+    padding: 12px;
+    text-align: center;
+    color: #64748b;
+    font-size: 12.5px;
+}
+
+.noti-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, .45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.noti-modal.show {
+    display: flex;
+}
+
+.noti-modal-card {
+    width: min(520px, 92vw);
+    background: #fff;
+    border-radius: 18px;
+    border: 1px solid rgba(229, 231, 235, .9);
+    box-shadow: 0 18px 50px rgba(2, 20, 60, .18);
+    overflow: hidden;
+}
+
+.noti-modal-head {
+    padding: 12px 16px;
+    font-weight: 900;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #16a34a;
+    color: #fff;
+}
+
+.noti-modal-card.info .noti-modal-head {
+    background: #2563eb;
+}
+
+.noti-modal-card.success .noti-modal-head {
+    background: #16a34a;
+}
+
+.noti-modal-card.warning .noti-modal-head {
+    background: #f59e0b;
+}
+
+.noti-modal-card.error .noti-modal-head {
+    background: #ef4444;
+}
+
+.noti-modal-close {
+    background: transparent;
+    border: 0;
+    color: inherit;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.noti-modal-body {
+    padding: 14px 16px;
+    color: #475569;
+    font-weight: 700;
+    font-size: 13.5px;
+}
+
+.noti-modal-time {
+    font-size: 12.5px;
+    color: #64748b;
+    margin-bottom: 10px;
+}
+
+.noti-modal-message {
+    line-height: 1.6;
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.noti-modal-foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 16px 16px;
 }

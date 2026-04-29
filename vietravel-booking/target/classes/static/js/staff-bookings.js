@@ -19,7 +19,9 @@
                "cancel-failed": { msg: "Không thể hủy tour", type: "error" },
                "confirm-success": { msg: "Đã xác nhận booking", type: "success" },
                "confirm-failed": { msg: "Không thể xác nhận booking", type: "error" },
-               "create-success": { msg: "Đã tạo booking", type: "success" }
+               "create-success": { msg: "Đã tạo booking", type: "success" },
+               "approve-success": { msg: "Đã duyệt yêu cầu hủy", type: "success" },
+               "reject-success": { msg: "Đã từ chối yêu cầu hủy", type: "success" }
           };
 
           var entry = map[toastKey];

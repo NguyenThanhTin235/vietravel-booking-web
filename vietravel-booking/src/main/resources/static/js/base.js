@@ -164,4 +164,177 @@ document.addEventListener("DOMContentLoaded", () => {
         link.textContent = "Mở nội dung trên WPS";
         frame.replaceWith(link);
     });
+
+    const notiWrap = document.querySelector("[data-noti]");
+    if (notiWrap) {
+        const toggle = notiWrap.querySelector("[data-noti-toggle]");
+        const list = notiWrap.querySelector("[data-noti-list]");
+        const badge = notiWrap.querySelector("[data-noti-count]");
+        const modal = document.querySelector("[data-noti-modal]");
+        const modalCard = modal ? modal.querySelector("[data-noti-modal-card]") : null;
+        const modalTitle = modal ? modal.querySelector("[data-noti-modal-title]") : null;
+        const modalTime = modal ? modal.querySelector("[data-noti-modal-time]") : null;
+        const modalMessage = modal ? modal.querySelector("[data-noti-modal-message]") : null;
+        const modalDelete = modal ? modal.querySelector("[data-noti-modal-delete]") : null;
+        const modalCloses = modal ? Array.from(modal.querySelectorAll("[data-noti-modal-close]")) : [];
+        let currentId = null;
+
+        const formatTime = (v) => {
+            if (!v) return "";
+            const d = new Date(v);
+            if (Number.isNaN(d.getTime())) return v;
+            return d.toLocaleString("vi-VN");
+        };
+
+        const setBadge = (count) => {
+            if (!badge) return;
+            if (!count) {
+                badge.hidden = true;
+                badge.textContent = "";
+                return;
+            }
+            badge.hidden = false;
+            badge.textContent = count > 99 ? "99+" : String(count);
+        };
+
+        const loadCount = async () => {
+            try {
+                const res = await fetch("/api/notifications/unread-count", { headers: { "X-Requested-With": "XMLHttpRequest" } });
+                const data = await res.json();
+                setBadge(data && typeof data.count === "number" ? data.count : 0);
+            } catch (_) {
+                setBadge(0);
+            }
+        };
+
+        const renderList = (items) => {
+            if (!list) return;
+            list.innerHTML = "";
+            if (!items || !items.length) {
+                const empty = document.createElement("div");
+                empty.className = "noti-empty";
+                empty.textContent = "Chưa có thông báo";
+                list.appendChild(empty);
+                return;
+            }
+            items.forEach((n) => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "noti-item" + (n.read ? "" : " is-unread");
+                btn.setAttribute("data-id", n.id);
+
+                const title = document.createElement("div");
+                title.className = "noti-item-title";
+                title.textContent = n.title || "Thông báo";
+
+                const msg = document.createElement("div");
+                msg.className = "noti-item-msg";
+                msg.textContent = n.message || "";
+
+                const time = document.createElement("div");
+                time.className = "noti-item-time";
+                time.textContent = formatTime(n.createdAt);
+
+                btn.appendChild(title);
+                btn.appendChild(msg);
+                btn.appendChild(time);
+                list.appendChild(btn);
+            });
+        };
+
+        const loadList = async () => {
+            try {
+                const res = await fetch("/api/notifications?limit=20", { headers: { "X-Requested-With": "XMLHttpRequest" } });
+                const data = await res.json();
+                renderList(Array.isArray(data) ? data : []);
+            } catch (_) {
+                renderList([]);
+            }
+        };
+
+        const setModalType = (type) => {
+            if (!modalCard) return;
+            modalCard.classList.remove("info", "success", "warning", "error");
+            if (!type) return;
+            modalCard.classList.add(String(type).toLowerCase());
+        };
+
+        const openDetail = async (id) => {
+            if (!id) return;
+            currentId = id;
+            try {
+                const res = await fetch(`/api/notifications/${encodeURIComponent(id)}`, { headers: { "X-Requested-With": "XMLHttpRequest" } });
+                const data = await res.json();
+                if (modalTitle) modalTitle.textContent = data.title || "Thông báo";
+                if (modalTime) modalTime.textContent = formatTime(data.createdAt);
+                if (modalMessage) modalMessage.textContent = data.message || "";
+                setModalType(data.type || "info");
+                if (modal) modal.classList.add("show");
+                await fetch(`/api/notifications/${encodeURIComponent(id)}/read`, { method: "POST", headers: { "X-Requested-With": "XMLHttpRequest" } });
+                await loadCount();
+                await loadList();
+            } catch (_) {
+            }
+        };
+
+        const deleteCurrent = async () => {
+            if (!currentId) return;
+            try {
+                await fetch(`/api/notifications/${encodeURIComponent(currentId)}`, { method: "DELETE", headers: { "X-Requested-With": "XMLHttpRequest" } });
+            } catch (_) {
+            }
+            closeModal();
+            await loadCount();
+            await loadList();
+        };
+
+        const closeModal = () => {
+            if (modal) modal.classList.remove("show");
+            currentId = null;
+        };
+
+        if (toggle) {
+            toggle.addEventListener("click", (e) => {
+                e.stopPropagation();
+                notiWrap.classList.toggle("open");
+                if (notiWrap.classList.contains("open")) {
+                    loadList();
+                    loadCount();
+                }
+            });
+        }
+
+        if (list) {
+            list.addEventListener("click", (e) => {
+                const btn = e.target.closest("[data-id]");
+                if (!btn) return;
+                openDetail(btn.getAttribute("data-id"));
+            });
+        }
+
+        if (modal) {
+            modal.addEventListener("click", (e) => {
+                if (e.target === modal) closeModal();
+            });
+        }
+
+        if (modalDelete) {
+            modalDelete.addEventListener("click", () => deleteCurrent());
+        }
+
+        modalCloses.forEach((btn) => btn.addEventListener("click", () => closeModal()));
+
+        document.addEventListener("click", (e) => {
+            if (!notiWrap.contains(e.target)) notiWrap.classList.remove("open");
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                notiWrap.classList.remove("open");
+                closeModal();
+            }
+        });
+
+        loadCount();
+    }
 });

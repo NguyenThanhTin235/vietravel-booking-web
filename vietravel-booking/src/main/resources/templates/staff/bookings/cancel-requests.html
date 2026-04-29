@@ -41,7 +41,11 @@
                         <td th:text="${b.note != null && !#strings.isEmpty(b.note) ? b.note : 'Không ghi rõ'}">Lý do</td>
                         <td th:text="${#temporals.format(b.updatedAt, 'dd/MM/yyyy')}">--/--/----</td>
                         <td><span class="badge badge-pending">Chờ duyệt</span></td>
-                        <td><span class="muted">—</span></td>
+                        <td>
+                            <div class="table-actions process-actions-row">
+                                <a class="btn btn-ghost" th:href="@{'/staff/bookings/' + ${b.id} + '/cancel-review'}">Xử lý</a>
+                            </div>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

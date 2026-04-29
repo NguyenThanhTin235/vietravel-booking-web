@@ -6,6 +6,8 @@ import com.vietravel.booking.domain.entity.booking.Payment;
 import com.vietravel.booking.domain.entity.booking.PaymentMethod;
 import com.vietravel.booking.domain.entity.booking.PaymentStatus;
 import com.vietravel.booking.domain.entity.booking.PaymentType;
+import com.vietravel.booking.domain.entity.support.NotificationType;
+import com.vietravel.booking.service.support.NotificationService;
 import com.vietravel.booking.domain.repository.booking.BookingRepository;
 import com.vietravel.booking.domain.repository.booking.PaymentRepository;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,14 @@ public class PaymentService {
 
      private final PaymentRepository paymentRepository;
      private final BookingRepository bookingRepository;
+     private final NotificationService notificationService;
 
-     public PaymentService(PaymentRepository paymentRepository, BookingRepository bookingRepository) {
+     public PaymentService(PaymentRepository paymentRepository,
+               BookingRepository bookingRepository,
+               NotificationService notificationService) {
           this.paymentRepository = paymentRepository;
           this.bookingRepository = bookingRepository;
+          this.notificationService = notificationService;
      }
 
      @Transactional
@@ -50,6 +56,14 @@ public class PaymentService {
           if (booking != null) {
                booking.setStatus(BookingStatus.PAID);
                bookingRepository.save(booking);
+               if (booking.getUser() != null) {
+                    notificationService.createForUser(
+                              booking.getUser(),
+                              "Thanh toán thành công",
+                              "Đơn hàng " + booking.getBookingCode() + " đã được thanh toán thành công.",
+                              NotificationType.SUCCESS,
+                              "/my-bookings");
+               }
           }
           return paymentRepository.save(payment);
      }
@@ -69,6 +83,15 @@ public class PaymentService {
                payment.getBooking().setStatus(BookingStatus.PAID);
           }
           paymentRepository.save(payment);
+
+          if (success && payment.getBooking() != null && payment.getBooking().getUser() != null) {
+               notificationService.createForUser(
+                         payment.getBooking().getUser(),
+                         "Thanh toán thành công",
+                         "Đơn hàng " + payment.getBooking().getBookingCode() + " đã được thanh toán thành công.",
+                         NotificationType.SUCCESS,
+                         "/my-bookings");
+          }
 
           if (payment.getBooking() == null || payment.getBooking().getId() == null) {
                return null;

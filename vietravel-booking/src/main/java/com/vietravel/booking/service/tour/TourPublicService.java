@@ -36,6 +36,7 @@ public class TourPublicService {
           this.departureRepository = departureRepository;
      }
 
+     @SuppressWarnings("null")
      @Transactional(readOnly = true)
      public Page<TourPublicListItem> search(
                String q,
@@ -55,7 +56,7 @@ public class TourPublicService {
           if (date != null) {
                tourIds = departureRepository.findTourIdsByStartDate(date);
                if (tourIds == null || tourIds.isEmpty()) {
-                    return new PageImpl<>(List.of(), PageRequest.of(page, size), 0);
+                    return new PageImpl<>(List.<TourPublicListItem>of(), PageRequest.of(page, size), 0);
                }
           }
 

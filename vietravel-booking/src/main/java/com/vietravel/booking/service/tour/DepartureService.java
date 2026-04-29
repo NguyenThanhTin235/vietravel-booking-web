@@ -2,7 +2,6 @@ package com.vietravel.booking.service.tour;
 
 import com.vietravel.booking.domain.entity.tour.Departure;
 import com.vietravel.booking.domain.entity.tour.DepartureStatus;
-import com.vietravel.booking.domain.entity.tour.StartLocation;
 import com.vietravel.booking.domain.entity.tour.Tour;
 import com.vietravel.booking.domain.repository.tour.DepartureRepository;
 import com.vietravel.booking.domain.repository.tour.TourRepository;
@@ -11,7 +10,6 @@ import com.vietravel.booking.web.dto.tour.DepartureUpsertRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
@@ -41,10 +39,12 @@ public class DepartureService {
                     .toList();
      }
 
+     @SuppressWarnings("null")
      @Transactional
      public DepartureAdminResponse create(DepartureUpsertRequest req) {
           validate(req, null);
-          Tour tour = tourRepository.findById(req.getTourId())
+          Long tourId = Objects.requireNonNull(req.getTourId(), "tourId");
+          Tour tour = tourRepository.findById(tourId)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy tour"));
           if (departureRepository.existsByTourIdAndStartDateAndStartLocation(
                     req.getTourId(), req.getStartDate(), req.getStartLocation())) {
@@ -53,9 +53,11 @@ public class DepartureService {
 
           Departure d = new Departure();
           apply(d, req, tour);
-          return toAdminRes(departureRepository.save(d));
+          Departure saved = Objects.requireNonNull(departureRepository.save(d), "savedDeparture");
+          return toAdminRes(saved);
      }
 
+     @SuppressWarnings("null")
      @Transactional
      public DepartureAdminResponse update(Long id, DepartureUpsertRequest req) {
           Objects.requireNonNull(id, "id");
@@ -63,7 +65,8 @@ public class DepartureService {
           Departure d = departureRepository.findDetailById(id)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch khởi hành"));
 
-          Tour tour = tourRepository.findById(req.getTourId())
+          Long tourId = Objects.requireNonNull(req.getTourId(), "tourId");
+          Tour tour = tourRepository.findById(tourId)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy tour"));
           if (departureRepository.existsByTourIdAndStartDateAndStartLocationAndIdNot(
                     req.getTourId(), req.getStartDate(), req.getStartLocation(), id)) {
@@ -71,7 +74,8 @@ public class DepartureService {
           }
 
           apply(d, req, tour);
-          return toAdminRes(departureRepository.save(d));
+          Departure saved = Objects.requireNonNull(departureRepository.save(d), "savedDeparture");
+          return toAdminRes(saved);
      }
 
      @Transactional

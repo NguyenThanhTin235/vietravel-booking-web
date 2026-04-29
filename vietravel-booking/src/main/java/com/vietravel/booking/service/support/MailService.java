@@ -18,6 +18,7 @@ public class MailService {
         this.mailSender = mailSender;
     }
 
+    @SuppressWarnings("null")
     public void sendVerifyCode(@NonNull String toEmail, @NonNull String otp) {
         Objects.requireNonNull(toEmail, "toEmail");
         Objects.requireNonNull(otp, "otp");
