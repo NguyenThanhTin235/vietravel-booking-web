@@ -1,6 +1,7 @@
 package com.vietravel.booking.service.payment;
 
 import com.vietravel.booking.domain.entity.booking.Booking;
+import com.vietravel.booking.domain.entity.booking.BookingStatus;
 import com.vietravel.booking.domain.entity.booking.Payment;
 import com.vietravel.booking.domain.entity.booking.PaymentMethod;
 import com.vietravel.booking.domain.entity.booking.PaymentStatus;
@@ -53,6 +54,7 @@ public class PaymentService {
           payment.setAmount(booking.getTotalAmount() == null ? BigDecimal.ZERO : booking.getTotalAmount());
           payment.setTxnRef(generateTxnRef(booking));
           if (booking != null) {
+               booking.setStatus(BookingStatus.PAID);
                bookingRepository.save(booking);
                if (booking.getUser() != null) {
                     notificationService.createForUser(
@@ -77,6 +79,9 @@ public class PaymentService {
           }
           Payment payment = opt.get();
           payment.setStatus(success ? PaymentStatus.SUCCESS : PaymentStatus.FAILED);
+          if (success && payment.getBooking() != null) {
+               payment.getBooking().setStatus(BookingStatus.PAID);
+          }
           paymentRepository.save(payment);
 
           if (success && payment.getBooking() != null && payment.getBooking().getUser() != null) {
