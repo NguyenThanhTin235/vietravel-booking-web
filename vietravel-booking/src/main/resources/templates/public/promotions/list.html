@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(
+      pageTitle=${pageTitle},
+      activeNav=${activeNav},
+      content=~{::content},
+      additionalJs=~{::additionalJs}
+)}">
+
+<th:block th:fragment="additionalJs">
+    <link rel="stylesheet" th:href="@{/css/promotions.css}">
+    <script th:src="@{/js/public-promotions.js}"></script>
+</th:block>
+
+<th:block th:fragment="content">
+    <section class="promotions-hero">
+        <div class="container hero-inner">
+            <h1>Khuyến mãi</h1>
+            <p class="muted">Danh sách chiến dịch giảm giá mới nhất.</p>
+        </div>
+    </section>
+
+    <section class="container promotions-grid">
+        <div th:if="${#lists.isEmpty(campaigns)}" class="muted">Chưa có chiến dịch.</div>
+        <article th:each="c : ${campaigns}" class="promo-card">
+            <div class="promo-banner">
+                <img th:if="${c.bannerUrl != null}" th:src="${c.bannerUrl}" alt="Banner">
+                <span th:if="${c.bannerUrl == null}">Vietravel Campaign</span>
+            </div>
+            <div class="promo-body">
+                <div class="promo-title" th:text="${c.name}">Tên chiến dịch</div>
+                <div class="promo-meta" th:text="${c.description}">Mô tả</div>
+                <div class="promo-discount">
+                    <span th:text="${c.discountType.name() == 'PERCENT' ? 'Giảm %' : 'Giảm tiền'}">Giảm %</span>
+                    <span class="promo-discount-value"
+                          th:text="${c.discountType.name() == 'PERCENT' ? c.discountValue + '%' : (#numbers.formatDecimal(c.discountValue,0,'COMMA',0,'POINT') + ' ₫')}">0</span>
+                </div>
+                <div class="promo-views">Lượt xem: <span th:text="${c.viewCount}">0</span></div>
+                <div class="promo-actions">
+                    <span class="promo-code" th:text="${c.code}">CODE</span>
+                    <a th:href="@{'/promotions/' + ${c.slug}}">Xem chi tiết</a>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <div class="container booking-pagination" th:if="${totalPages > 1}">
+        <a class="btn btn-ghost" th:if="${currentPage > 1}"
+           th:href="@{/promotions(page=${currentPage - 1})}">← Trước</a>
+        <span class="pagination-info">Trang <b th:text="${currentPage}">1</b> / <b th:text="${totalPages}">1</b></span>
+        <a class="btn btn-ghost" th:if="${currentPage < totalPages}"
+           th:href="@{/promotions(page=${currentPage + 1})}">Sau →</a>
+    </div>
+</th:block>
+
+</html>

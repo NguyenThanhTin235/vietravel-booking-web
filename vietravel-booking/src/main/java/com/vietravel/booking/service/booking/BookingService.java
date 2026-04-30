@@ -14,6 +14,7 @@ import com.vietravel.booking.domain.repository.tour.DepartureRepository;
 import com.vietravel.booking.domain.repository.tour.TourRepository;
 import com.vietravel.booking.service.support.NotificationService;
 import com.vietravel.booking.web.dto.booking.BookingCreateRequest;
+import com.vietravel.booking.service.promotion.CampaignService;
 import com.vietravel.booking.web.dto.booking.BookingCreateRequest.PassengerRequest;
 import com.vietravel.booking.web.dto.booking.BookingHistoryView;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -39,19 +40,22 @@ public class BookingService {
      private final UserAccountRepository userAccountRepository;
      private final PaymentRepository paymentRepository;
      private final NotificationService notificationService;
+     private final CampaignService campaignService;
 
      public BookingService(BookingRepository bookingRepository,
                TourRepository tourRepository,
                DepartureRepository departureRepository,
                UserAccountRepository userAccountRepository,
                PaymentRepository paymentRepository,
-               NotificationService notificationService) {
+               NotificationService notificationService,
+               CampaignService campaignService) {
           this.bookingRepository = bookingRepository;
           this.tourRepository = tourRepository;
           this.departureRepository = departureRepository;
           this.userAccountRepository = userAccountRepository;
           this.paymentRepository = paymentRepository;
           this.notificationService = notificationService;
+          this.campaignService = campaignService;
      }
 
      @Transactional
@@ -80,10 +84,19 @@ public class BookingService {
           BigDecimal childPrice = departure.getPriceChild() != null ? departure.getPriceChild() : BigDecimal.ZERO;
           BigDecimal totalAmount = adultPrice.multiply(BigDecimal.valueOf(totalAdult))
                     .add(childPrice.multiply(BigDecimal.valueOf(totalChild)));
+          UserAccount currentUser = getCurrentUser();
+          BigDecimal discountAmount = BigDecimal.ZERO;
+          CampaignService.CampaignDiscountResult discountResult = null;
+          if (req.getCouponCode() != null && !req.getCouponCode().isBlank()) {
+               discountResult = campaignService.applyDiscountForBooking(req.getCouponCode(), tour, totalAmount,
+                         currentUser);
+               discountAmount = discountResult.getDiscountAmount();
+               totalAmount = totalAmount.subtract(discountAmount);
+          }
 
           Booking booking = new Booking();
           booking.setBookingCode(generateBookingCode(req.getDate()));
-          booking.setUser(getCurrentUser());
+          booking.setUser(currentUser);
           booking.setDeparture(departure);
           booking.setContactName(req.getContactName().trim());
           booking.setContactPhone(req.getContactPhone().trim());
@@ -112,6 +125,9 @@ public class BookingService {
           booking.setPassengers(passengers);
 
           Booking saved = bookingRepository.save(booking);
+          if (discountResult != null && currentUser != null) {
+               campaignService.redeemCampaign(discountResult.getCampaign(), currentUser, saved, discountAmount);
+          }
           if (saved.getUser() != null) {
                notificationService.createForUser(
                          saved.getUser(),
@@ -512,6 +528,18 @@ public class BookingService {
                return PassengerType.CHILD;
           }
           return PassengerType.ADULT;
+     }
+
+     public Tour loadTourBySlug(String slug) {
+          if (slug == null || slug.isBlank()) {
+               throw new IllegalArgumentException("Không tìm thấy tour");
+          }
+          return tourRepository.findDetailBySlug(slug)
+                    .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy tour"));
+     }
+
+     public UserAccount getCurrentUserForPromo() {
+          return getCurrentUser();
      }
 
      private UserAccount getCurrentUser() {

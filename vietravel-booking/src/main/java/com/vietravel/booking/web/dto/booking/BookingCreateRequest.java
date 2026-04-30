@@ -20,6 +20,8 @@ public class BookingCreateRequest {
      private int totalAdult;
      private int totalChild;
 
+     private String couponCode;
+
      private List<PassengerRequest> passengers;
 
      public String getSlug() {
@@ -84,6 +86,14 @@ public class BookingCreateRequest {
 
      public void setTotalChild(int totalChild) {
           this.totalChild = totalChild;
+     }
+
+     public String getCouponCode() {
+          return couponCode;
+     }
+
+     public void setCouponCode(String couponCode) {
+          this.couponCode = couponCode;
      }
 
      public List<PassengerRequest> getPassengers() {

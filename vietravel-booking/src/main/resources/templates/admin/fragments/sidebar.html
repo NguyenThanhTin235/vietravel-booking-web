@@ -98,6 +98,13 @@
             <span class="nav-tx">Thanh toán</span>
         </a>
 
+        <a class="nav-item"
+           th:classappend="${activeMenu=='campaigns'} ? ' active' : ''"
+           th:href="@{/admin/campaigns}">
+            <span class="nav-ic">🏷</span>
+            <span class="nav-tx">Khuyến mãi</span>
+        </a>
+
         <div class="nav-section">NỘI DUNG</div>
 
         <a class="nav-item"
