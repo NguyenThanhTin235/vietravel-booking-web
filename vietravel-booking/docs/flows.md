@@ -1,0 +1,13 @@
+# Luong
+
+## Muc tieu
+- Ghi lai cac luong quan trong (chuc nang, quy trinh, trigger)
+
+## Mau nhat ky
+- Ngay: YYYY-MM-DD
+- Luong: Ten luong
+- Mo ta ngan: ...
+- Diem vao: ...
+- Diem ra: ...
+- Lien quan: file/duong dan
+- Ghi chu: ...

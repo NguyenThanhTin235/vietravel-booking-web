@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(
+      pageTitle=${pageTitle},
+      activeNav=${activeNav},
+      content=~{::content},
+      additionalJs=~{::additionalJs}
+)}">
+
+<th:block th:fragment="additionalJs">
+    <link rel="stylesheet" th:href="@{/css/promotions.css}">
+    <script th:src="@{/js/public-promotions.js}"></script>
+</th:block>
+
+<th:block th:fragment="content">
+    <section class="promo-detail">
+        <div class="container detail-head">
+            <div class="detail-banner">
+                <img th:if="${campaign.bannerUrl != null}" th:src="${campaign.bannerUrl}" alt="Banner">
+                <span th:if="${campaign.bannerUrl == null}">Vietravel Campaign</span>
+            </div>
+            <div class="detail-content">
+                <h1 class="detail-title" th:text="${campaign.name}">Tên chiến dịch</h1>
+                <div class="detail-discount">
+                    <span th:text="${campaign.discountType.name() == 'PERCENT' ? 'Giảm %' : 'Giảm tiền'}">Giảm %</span>
+                    <span class="detail-discount-value"
+                          th:text="${campaign.discountType.name() == 'PERCENT' ? campaign.discountValue + '%' : (#numbers.formatDecimal(campaign.discountValue,0,'COMMA',0,'POINT') + ' ₫')}">0</span>
+                </div>
+                <div class="detail-meta">Hiệu lực: <span th:text="${#temporals.format(campaign.startAt, 'dd/MM/yyyy HH:mm')}"></span> → <span th:text="${#temporals.format(campaign.endAt, 'dd/MM/yyyy HH:mm')}"></span></div>
+                <div class="detail-meta">Đã xem: <span th:text="${campaign.viewCount}">0</span></div>
+                <div class="detail-actions">
+                    <span class="detail-code" id="promoCode" th:text="${campaign.code}">CODE</span>
+                    <button class="btn-outline" type="button" id="copyCodeBtn">Sao chép mã</button>
+                </div>
+                <p class="detail-meta" th:text="${campaign.description}">Mô tả</p>
+            </div>
+        </div>
+
+        <div class="container" style="margin-top:24px">
+            <div class="detail-box">
+                <div><b>Loại giảm:</b>
+                    <span th:text="${campaign.discountType.name() == 'PERCENT' ? 'Giảm %' : 'Giảm tiền'}">Giảm %</span>
+                </div>
+                <div><b>Giá trị:</b>
+                    <span th:text="${campaign.discountType.name() == 'PERCENT' ? campaign.discountValue + '%' : (#numbers.formatDecimal(campaign.discountValue,0,'COMMA',0,'POINT') + ' ₫')}">0</span>
+                </div>
+                <div><b>Đơn tối thiểu:</b>
+                    <span th:text="${#numbers.formatDecimal(campaign.minOrder,0,'COMMA',0,'POINT') + ' ₫'}">0</span>
+                </div>
+                <div th:if="${campaign.maxDiscount != null}"><b>Giảm tối đa:</b>
+                    <span th:text="${#numbers.formatDecimal(campaign.maxDiscount,0,'COMMA',0,'POINT') + ' ₫'}">0</span>
+                </div>
+                <div><b>Lượt dùng:</b>
+                    <span th:text="${campaign.usageLimit != null && campaign.usageLimit > 0 ? (campaign.usedCount + '/' + campaign.usageLimit) : (campaign.usedCount + '/∞')}">0</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</th:block>
+
+</html>

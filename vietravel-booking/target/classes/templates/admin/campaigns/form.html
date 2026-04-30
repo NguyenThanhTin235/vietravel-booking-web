@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <div class="campaigns-page">
+        <nav class="tc-breadcrumb">
+            <a href="/admin">Bảng điều khiển</a>
+            <span class="sep">/</span>
+            <a href="/admin/campaigns">Chiến dịch</a>
+            <span class="sep">/</span>
+            <span class="current" th:text="${campaignId!=null?'Cập nhật':'Thêm mới'}">Thêm mới</span>
+        </nav>
+
+        <div class="card reveal tc-card">
+            <div class="tc-wrap" data-page="campaigns-form">
+                <div class="tc-head">
+                    <div class="tc-title">
+                        <h2 id="title">Chiến dịch</h2>
+                    </div>
+                    <a class="tc-btn" href="/admin/campaigns">Quay lại</a>
+                </div>
+
+                <div id="err" style="display:none;padding:10px 12px;border-radius:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);color:#b42318;font-weight:900"></div>
+
+                <form id="form" class="tc-form">
+                    <input type="hidden" id="id" th:value="${campaignId!=null?campaignId:''}">
+
+                    <div class="tc-grid2">
+                        <div class="tc-field">
+                            <label>Tên chiến dịch</label>
+                            <input id="name" class="input" placeholder="VD: Summer Sale" required>
+                        </div>
+                        <div class="tc-field">
+                            <label>Slug</label>
+                            <input id="slug" class="input" placeholder="VD: summer-sale">
+                        </div>
+                    </div>
+
+                    <div class="tc-grid2">
+                        <div class="tc-field">
+                            <label>Mã giảm giá</label>
+                            <input id="code" class="input" placeholder="VD: SUMMER2026" required>
+                        </div>
+                        <div class="tc-field">
+                            <label>Trạng thái</label>
+                            <select id="status" class="input">
+                                <option value="SCHEDULE">Chờ chạy</option>
+                                <option value="ACTIVE">Đang chạy</option>
+                                <option value="EXPIRED">Hết hạn</option>
+                                <option value="DISABLED">Tắt</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="tc-grid2">
+                        <div class="tc-field">
+                            <label>Bắt đầu</label>
+                            <input id="startAt" class="input" type="datetime-local" required>
+                        </div>
+                        <div class="tc-field">
+                            <label>Kết thúc</label>
+                            <input id="endAt" class="input" type="datetime-local" required>
+                        </div>
+                    </div>
+
+                    <div class="tc-grid2">
+                        <div class="tc-field">
+                            <label>Loại giảm giá</label>
+                            <select id="discountType" class="input">
+                                <option value="PERCENT">Giảm %</option>
+                                <option value="FIXED">Giảm tiền</option>
+                            </select>
+                        </div>
+                        <div class="tc-field">
+                            <label>Giá trị giảm</label>
+                            <input id="discountValue" class="input" type="number" step="0.01" min="0" required>
+                        </div>
+                    </div>
+
+                    <div class="tc-grid2">
+                        <div class="tc-field">
+                            <label>Đơn tối thiểu</label>
+                            <input id="minOrder" class="input" type="number" step="0.01" min="0">
+                        </div>
+                        <div class="tc-field">
+                            <label>Giảm tối đa</label>
+                            <input id="maxDiscount" class="input" type="number" step="0.01" min="0">
+                        </div>
+                    </div>
+
+                    <div class="tc-grid2">
+                        <div class="tc-field">
+                            <label>Giới hạn lượt dùng</label>
+                            <input id="usageLimit" class="input" type="number" step="1" min="0" value="0">
+                        </div>
+                        <div class="tc-field">
+                            <label>Lượt / người</label>
+                            <input id="perUserLimit" class="input" type="number" step="1" min="1" value="1">
+                        </div>
+                    </div>
+
+                    <div class="tc-field">
+                        <label>Banner</label>
+                        <div class="tc-banner-upload">
+                            <div class="tc-banner-preview" id="bannerPreviewWrap">
+                                <img id="bannerPreview" alt="Banner" style="display:none">
+                                <div class="tc-banner-empty">Chưa có banner</div>
+                            </div>
+                            <div class="tc-banner-actions">
+                                <input id="bannerFile" type="file" accept="image/*" hidden>
+                                <button type="button" id="btnChooseBanner" class="tc-btn">Chọn ảnh</button>
+                                <button type="button" id="btnRemoveBanner" class="tc-btn">Gỡ ảnh</button>
+                            </div>
+                        </div>
+                        <input id="bannerUrl" class="input" placeholder="https://">
+                    </div>
+
+                    <div class="tc-field">
+                        <label>Mô tả</label>
+                        <textarea id="description" class="input" rows="4" placeholder="Nội dung chiến dịch"></textarea>
+                    </div>
+
+                    <div class="tc-field">
+                        <label>Phạm vi áp dụng</label>
+                        <select id="scopeType" class="input">
+                            <option value="ALL">Toàn bộ</option>
+                            <option value="CATEGORY">Theo danh mục</option>
+                            <option value="TOUR">Theo tour</option>
+                        </select>
+                    </div>
+
+                    <div id="scopeCategoryWrap" class="tc-scope-list" hidden>
+                        <div class="tc-scope-title">Chọn danh mục</div>
+                        <div id="scopeCategories" class="tc-scope-grid"></div>
+                    </div>
+
+                    <div id="scopeTourWrap" class="tc-scope-list" hidden>
+                        <div class="tc-scope-title">Chọn tour</div>
+                        <div id="scopeTours" class="tc-scope-grid"></div>
+                    </div>
+
+                    <div class="tc-foot">
+                        <button type="button" id="btnDelete" class="tc-btn danger" style="display:none">Xóa</button>
+                        <button type="submit" class="tc-btn primary">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="tcToastWrap" class="tc-toastWrap"></div>
+
+    <div id="tcModal" class="tc-modalBackdrop">
+        <div class="tc-modal">
+            <div class="tc-modalHead">
+                <h3 id="tcModalTitle">Xác nhận</h3>
+                <button id="tcModalClose" class="tc-btn sm">Đóng</button>
+            </div>
+            <div id="tcModalBody" class="tc-modalBody"></div>
+            <div class="tc-modalFoot">
+                <button id="tcModalCancel" class="tc-btn">Hủy</button>
+                <button id="tcModalOk" class="tc-btn danger">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

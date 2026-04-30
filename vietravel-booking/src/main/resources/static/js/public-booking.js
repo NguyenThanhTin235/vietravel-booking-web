@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
      const subtotalAmountEl = document.getElementById("subtotalAmount");
      const totalAmountEl = document.getElementById("totalAmount");
      const couponInput = document.querySelector(".coupon-input input");
+     const couponApplyBtn = document.querySelector(".coupon-input .btn-apply");
      const payBtn = document.getElementById("payBtn");
      const stepInfo = document.querySelector(".booking-step[data-step='info']");
      const stepPay = document.querySelector(".booking-step[data-step='payment']");
@@ -30,6 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
      const childList = document.querySelector("[data-pax-list='child']");
      const adultTpl = document.getElementById("adultPassengerTpl");
      const childTpl = document.getElementById("childPassengerTpl");
+     let appliedCoupon = null;
+     let appliedDiscount = 0;
 
      const renderList = (listEl, tpl, count) => {
           if (!listEl || !tpl) return;
@@ -59,10 +62,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (discountAmountEl) discountAmountEl.textContent = "0 đ";
           if (couponInput) couponInput.value = "";
+          appliedCoupon = null;
+          appliedDiscount = 0;
 
           const subtotal = adultTotal + childTotal;
           if (subtotalAmountEl) subtotalAmountEl.textContent = fmt(subtotal);
           if (totalAmountEl) totalAmountEl.textContent = fmt(subtotal);
+     };
+
+     const getSubtotal = () => {
+          const adultVal = Number(document.querySelector("[data-pax='adult'] [data-value]")?.textContent || 0);
+          const childVal = Number(document.querySelector("[data-pax='child'] [data-value]")?.textContent || 0);
+          const adultPrice = parsePrice(bookingRoot?.getAttribute("data-adult-price"));
+          const childPrice = parsePrice(bookingRoot?.getAttribute("data-child-price"));
+          return adultVal * adultPrice + childVal * childPrice;
+     };
+
+     const applyCoupon = async () => {
+          if (!couponInput) return;
+          const code = couponInput.value.trim();
+          if (!code) {
+               alert("Vui lòng nhập mã giảm giá.");
+               return;
+          }
+          const slug = bookingRoot?.getAttribute("data-slug") || "";
+          const subtotal = getSubtotal();
+          try {
+               const res = await fetch("/api/public/campaigns/apply", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ code, tourSlug: slug, totalAmount: subtotal })
+               });
+               const data = await res.json().catch(() => ({}));
+               if (!data || data.valid !== true) {
+                    throw new Error(data.message || "Không thể áp dụng mã giảm giá");
+               }
+               appliedCoupon = code;
+               appliedDiscount = Number(data.discountAmount || 0);
+               if (discountAmountEl) discountAmountEl.textContent = fmt(appliedDiscount);
+               if (totalAmountEl) totalAmountEl.textContent = fmt(subtotal - appliedDiscount);
+               alert(data.message || "Áp dụng thành công");
+          } catch (e) {
+               appliedCoupon = null;
+               appliedDiscount = 0;
+               if (discountAmountEl) discountAmountEl.textContent = "0 đ";
+               if (totalAmountEl) totalAmountEl.textContent = fmt(subtotal);
+               alert(e.message || "Không thể áp dụng mã giảm giá");
+          }
      };
 
      const collectPassengers = () => {
@@ -106,7 +152,8 @@ document.addEventListener("DOMContentLoaded", () => {
                note,
                totalAdult,
                totalChild,
-               passengers: collectPassengers()
+               passengers: collectPassengers(),
+               couponCode: appliedCoupon
           };
 
           try {
@@ -199,6 +246,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
      if (payBtn) {
           payBtn.addEventListener("click", submitBooking);
+     }
+
+     if (couponApplyBtn) {
+          couponApplyBtn.addEventListener("click", applyCoupon);
      }
 
      if (retryPayBtn) {

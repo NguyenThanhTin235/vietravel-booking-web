@@ -15,7 +15,7 @@
                data-destination-trigger
                aria-haspopup="true"
                aria-expanded="false">Điểm đến</a>
-            <a class="nav-link" th:classappend="${active}=='promotion'?' is-active':''" href="#">Khuyến mãi</a>
+            <a class="nav-link" th:classappend="${active}=='promotion'?' is-active':''" th:href="@{/promotions}">Khuyến mãi</a>
             <a class="nav-link" th:classappend="${active}=='news'?' is-active':''" href="#">Tin tức</a>
             <a class="nav-link" th:classappend="${active}=='contact'?' is-active':''" th:href="@{/contact}">Liên hệ</a>
         </nav>
@@ -112,7 +112,7 @@
 
     <div class="mobile-nav" id="mobileNav">
         <a href="#">Điểm đến</a>
-        <a href="#">Khuyến mãi</a>
+        <a th:href="@{/promotions}">Khuyến mãi</a>
         <a href="#">Tin tức</a>
         <a th:href="@{/contact}">Liên hệ</a>
         <div class="mobile-actions">

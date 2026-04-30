@@ -1,0 +1,243 @@
+.campaigns-page .tc-breadcrumb {
+     display: flex;
+     gap: 8px;
+     align-items: center;
+     margin-bottom: 16px;
+     color: var(--muted)
+}
+
+.campaigns-page .tc-breadcrumb .sep {
+     opacity: .5
+}
+
+.campaigns-page .tc-card {
+     padding: 18px
+}
+
+.campaigns-page .tc-wrap {
+     display: flex;
+     flex-direction: column;
+     gap: 14px
+}
+
+.campaigns-page .tc-head {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     gap: 12px
+}
+
+.campaigns-page .tc-btn {
+     background: #fff;
+     border: 1px solid var(--border);
+     padding: 8px 14px;
+     border-radius: 999px;
+     font-weight: 800;
+     cursor: pointer
+}
+
+.campaigns-page .tc-btn.primary {
+     background: var(--primary);
+     color: #fff;
+     border-color: var(--primary)
+}
+
+.campaigns-page .tc-btn.danger {
+     background: #fee2e2;
+     color: #b91c1c;
+     border-color: #fecaca
+}
+
+.campaigns-page .tc-form {
+     display: flex;
+     flex-direction: column;
+     gap: 14px
+}
+
+.campaigns-page .tc-grid2 {
+     display: grid;
+     grid-template-columns: repeat(2, minmax(0, 1fr));
+     gap: 12px
+}
+
+.campaigns-page .tc-field {
+     display: flex;
+     flex-direction: column;
+     gap: 6px
+}
+
+.campaigns-page .tc-field label {
+     font-weight: 800
+}
+
+.campaigns-page .tc-foot {
+     display: flex;
+     gap: 10px;
+     justify-content: flex-end
+}
+
+.campaigns-page .tc-scope-list {
+     padding: 10px 0;
+     border-top: 1px dashed rgba(148, 163, 184, .5)
+}
+
+.campaigns-page .tc-scope-title {
+     font-weight: 900;
+     margin-bottom: 8px
+}
+
+.campaigns-page .tc-scope-grid {
+     display: grid;
+     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+     gap: 8px
+}
+
+.campaigns-page .tc-scope-item {
+     display: flex;
+     align-items: center;
+     gap: 8px;
+     background: #f8fafc;
+     border: 1px solid rgba(226, 232, 240, .9);
+     padding: 8px 10px;
+     border-radius: 12px;
+     font-weight: 700
+}
+
+.campaigns-page .tc-code {
+     font-weight: 900;
+     color: #0f172a
+}
+
+.campaigns-page .tc-banner-upload {
+     display: grid;
+     grid-template-columns: 1fr auto;
+     gap: 12px;
+     align-items: center
+}
+
+.campaigns-page .tc-banner-preview {
+     position: relative;
+     height: 160px;
+     border-radius: 16px;
+     border: 1px dashed rgba(148, 163, 184, .6);
+     background: #f8fafc;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     overflow: hidden
+}
+
+.campaigns-page .tc-banner-preview img {
+     width: 100%;
+     height: 100%;
+     object-fit: cover
+}
+
+.campaigns-page .tc-banner-empty {
+     color: var(--muted);
+     font-weight: 800
+}
+
+.campaigns-page .tc-banner-actions {
+     display: flex;
+     flex-direction: column;
+     gap: 8px
+}
+
+.tc-toastWrap {
+     position: fixed;
+     right: 18px;
+     bottom: 18px;
+     display: flex;
+     flex-direction: column;
+     gap: 10px;
+     z-index: 999
+}
+
+.tc-toast {
+     display: flex;
+     gap: 10px;
+     align-items: flex-start;
+     background: #fff;
+     border: 1px solid rgba(226, 232, 240, .9);
+     padding: 10px 12px;
+     border-radius: 12px;
+     box-shadow: 0 8px 20px rgba(15, 23, 42, .12)
+}
+
+.tc-toast .dot {
+     width: 8px;
+     height: 8px;
+     border-radius: 50%;
+     margin-top: 6px;
+     background: #22c55e
+}
+
+.tc-toast.err .dot {
+     background: #ef4444
+}
+
+.tc-toast .t {
+     font-weight: 900
+}
+
+.tc-toast .d {
+     font-size: 12px;
+     color: var(--muted)
+}
+
+.tc-toast .x {
+     border: 0;
+     background: transparent;
+     font-size: 16px;
+     cursor: pointer
+}
+
+.tc-modalBackdrop {
+     position: fixed;
+     inset: 0;
+     background: rgba(15, 23, 42, .4);
+     display: none;
+     align-items: center;
+     justify-content: center;
+     z-index: 999
+}
+
+.tc-modalBackdrop.show {
+     display: flex
+}
+
+.tc-modal {
+     background: #fff;
+     border-radius: 16px;
+     width: min(520px, 92%);
+     padding: 16px;
+     border: 1px solid rgba(226, 232, 240, .9)
+}
+
+.tc-modalHead {
+     display: flex;
+     align-items: center;
+     justify-content: space-between
+}
+
+.tc-modalBody {
+     margin: 12px 0;
+     color: var(--muted)
+}
+
+.tc-modalFoot {
+     display: flex;
+     justify-content: flex-end;
+     gap: 10px
+}
+
+@media (max-width: 880px) {
+     .campaigns-page .tc-grid2 {
+          grid-template-columns: 1fr
+     }
+
+     .campaigns-page .tc-banner-upload {
+          grid-template-columns: 1fr
+     }
+}

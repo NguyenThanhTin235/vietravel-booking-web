@@ -43,4 +43,18 @@ public class UploadAdminApiController {
         res.setUrl(url);
         return res;
     }
+
+    @PostMapping(value = "/campaigns/banner", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public CloudinaryUploadResponse uploadCampaignBanner(
+            @RequestPart("file") MultipartFile file,
+            @RequestParam(value = "name", required = false) String name) {
+        if (file == null || file.isEmpty())
+            throw new RuntimeException("Vui lòng chọn file");
+
+        String url = cloudinaryService.uploadCampaignBanner(name, file);
+
+        CloudinaryUploadResponse res = new CloudinaryUploadResponse();
+        res.setUrl(url);
+        return res;
+    }
 }
