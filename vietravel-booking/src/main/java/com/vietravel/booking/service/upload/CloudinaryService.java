@@ -88,4 +88,28 @@ public class CloudinaryService {
             throw new RuntimeException("Upload Cloudinary thất bại: " + e.getMessage());
         }
     }
+
+    public String uploadNewsThumbnail(String name, MultipartFile file) {
+        try {
+            Map<String, Object> options = new HashMap<>();
+            String baseFolder = (props.getFolder() != null && !props.getFolder().isBlank())
+                    ? props.getFolder() + "/news"
+                    : "news";
+            options.put("folder", baseFolder);
+            String safeName = (name == null || name.isBlank()) ? "news" : name.replaceAll("[^a-zA-Z0-9_-]", "_");
+            options.put("public_id", safeName + "_" + System.currentTimeMillis());
+            options.put("overwrite", true);
+            options.put("resource_type", "image");
+
+            Map<?, ?> res = cloudinary.uploader().upload(file.getBytes(), options);
+            Object secureUrl = res.get("secure_url");
+            Object url = res.get("url");
+            String out = (secureUrl != null ? secureUrl.toString() : (url != null ? url.toString() : ""));
+            if (out.isBlank())
+                throw new RuntimeException("Cloudinary không trả url");
+            return out;
+        } catch (Exception e) {
+            throw new RuntimeException("Upload Cloudinary thất bại: " + e.getMessage());
+        }
+    }
 }

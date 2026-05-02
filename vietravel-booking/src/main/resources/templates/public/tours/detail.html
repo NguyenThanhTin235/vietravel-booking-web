@@ -8,7 +8,6 @@
 	  )}">
 
 <th:block th:fragment="content">
-	<div id="authState" class="sr-only" th:attr="data-auth=${currentUser != null}"></div>
 	<div id="loginModal" class="auth-modal" aria-hidden="true">
 		<div class="auth-modal-backdrop" data-close-modal></div>
 		<div class="auth-modal-card" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle">
@@ -29,7 +28,14 @@
 			<div class="tour-detail-layout">
 				<div class="tour-detail-col">
 					<div class="tour-detail-hero">
-						<h1 class="tour-detail-title" th:text="${detail.title}">Tên tour</h1>
+						<div class="tour-detail-title-row">
+							<h1 class="tour-detail-title" th:text="${detail.title}">Tên tour</h1>
+							<button class="wishlist-toggle is-detail" type="button" aria-pressed="false"
+									th:attr="data-tour-id=${detail.id},data-tour-slug=${detail.slug}"
+									data-wishlist-btn>
+								<i class="fa-regular fa-heart"></i>
+							</button>
+						</div>
 						<div class="tour-detail-gallery">
 							<img id="tourMainImage" class="tour-detail-main"
 									 th:src="${#lists.isEmpty(detail.imageUrls) ? '/images/login-bg.jpg' : detail.imageUrls[0]}"

@@ -367,28 +367,18 @@ CREATE TABLE payments(
 -- =========================
 -- 8) NEWS
 -- =========================
-CREATE TABLE news_category(
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(150) NOT NULL,
-  slug VARCHAR(200) NOT NULL UNIQUE,
-  is_active TINYINT(1) NOT NULL DEFAULT 1
-) ENGINE=InnoDB;
-
 CREATE TABLE news(
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  category_id BIGINT NOT NULL,
   title VARCHAR(300) NOT NULL,
   slug VARCHAR(350) NOT NULL UNIQUE,
   thumbnail VARCHAR(600) NULL,
   summary TEXT NULL,
   content_html MEDIUMTEXT NOT NULL,
+  view_count INT NOT NULL DEFAULT 0,
   is_featured TINYINT(1) NOT NULL DEFAULT 0,
   status ENUM('DRAFT','PUBLISHED','HIDDEN') NOT NULL DEFAULT 'PUBLISHED',
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT fk_news_category FOREIGN KEY(category_id) REFERENCES news_category(id)
-    ON DELETE RESTRICT ON UPDATE CASCADE,
-  INDEX idx_news_category(category_id),
   INDEX idx_news_featured(is_featured),
   INDEX idx_news_status(status),
   INDEX idx_news_created(created_at)

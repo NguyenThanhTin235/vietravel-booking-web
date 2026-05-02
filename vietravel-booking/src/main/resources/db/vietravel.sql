@@ -357,23 +357,21 @@ DROP TABLE IF EXISTS `news`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `news` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `category_id` bigint NOT NULL,
   `title` varchar(300) COLLATE utf8mb4_unicode_ci NOT NULL,
   `slug` varchar(350) COLLATE utf8mb4_unicode_ci NOT NULL,
   `thumbnail` varchar(600) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `summary` text COLLATE utf8mb4_unicode_ci,
   `content_html` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `view_count` int NOT NULL DEFAULT '0',
   `is_featured` tinyint(1) NOT NULL DEFAULT '0',
   `status` enum('DRAFT','PUBLISHED','HIDDEN') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'PUBLISHED',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `slug` (`slug`),
-  KEY `idx_news_category` (`category_id`),
   KEY `idx_news_featured` (`is_featured`),
   KEY `idx_news_status` (`status`),
-  KEY `idx_news_created` (`created_at`),
-  CONSTRAINT `fk_news_category` FOREIGN KEY (`category_id`) REFERENCES `news_category` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+  KEY `idx_news_created` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -384,32 +382,6 @@ CREATE TABLE `news` (
 LOCK TABLES `news` WRITE;
 /*!40000 ALTER TABLE `news` DISABLE KEYS */;
 /*!40000 ALTER TABLE `news` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `news_category`
---
-
-DROP TABLE IF EXISTS `news_category`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `news_category` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `slug` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `is_active` tinyint(1) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `slug` (`slug`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `news_category`
---
-
-LOCK TABLES `news_category` WRITE;
-/*!40000 ALTER TABLE `news_category` DISABLE KEYS */;
-/*!40000 ALTER TABLE `news_category` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

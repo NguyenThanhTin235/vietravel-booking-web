@@ -165,6 +165,18 @@ document.addEventListener("DOMContentLoaded", () => {
         frame.replaceWith(link);
     });
 
+    const authEl = document.getElementById("authState");
+    const isAuthed = authEl && authEl.getAttribute("data-auth") === "true";
+    const loginModal = document.getElementById("loginModal");
+    const openLoginModal = () => {
+        if (loginModal) {
+            loginModal.classList.add("is-open");
+            loginModal.setAttribute("aria-hidden", "false");
+            return;
+        }
+        window.location.href = "/auth/login";
+    };
+
     const notiWrap = document.querySelector("[data-noti]");
     if (notiWrap) {
         const toggle = notiWrap.querySelector("[data-noti-toggle]");
@@ -336,5 +348,221 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         loadCount();
+    }
+
+    const wishlistWrap = document.querySelector("[data-wishlist]");
+    if (wishlistWrap) {
+        const toggle = wishlistWrap.querySelector("[data-wishlist-toggle]");
+        const list = wishlistWrap.querySelector("[data-wishlist-list]");
+        const badge = wishlistWrap.querySelector("[data-wishlist-count]");
+
+        const setBadge = (count) => {
+            if (!badge) return;
+            if (!count) {
+                badge.hidden = true;
+                badge.textContent = "";
+                return;
+            }
+            badge.hidden = false;
+            badge.textContent = count > 99 ? "99+" : String(count);
+        };
+
+        const formatPrice = (value) => {
+            if (value == null || value === "") return "0 đ";
+            const num = Number(value);
+            if (Number.isNaN(num)) return "0 đ";
+            return `${new Intl.NumberFormat("vi-VN").format(num)} đ`;
+        };
+
+        const renderList = (items) => {
+            if (!list) return;
+            list.innerHTML = "";
+            if (!items || !items.length) {
+                const empty = document.createElement("div");
+                empty.className = "wishlist-empty";
+                empty.textContent = "Chưa có tour yêu thích";
+                list.appendChild(empty);
+                return;
+            }
+
+            items.forEach((item) => {
+                const wrap = document.createElement("div");
+                wrap.className = "wishlist-item";
+                wrap.setAttribute("data-tour-id", item.tourId);
+
+                const link = document.createElement("a");
+                link.className = "wishlist-link";
+                link.href = `/tour/${encodeURIComponent(item.slug || "")}`;
+
+                const thumb = document.createElement("div");
+                thumb.className = "wishlist-thumb";
+
+                const img = document.createElement("img");
+                img.alt = item.title || "Tour";
+                img.src = item.thumbnailUrl || "/images/login-bg.jpg";
+                thumb.appendChild(img);
+
+                const info = document.createElement("div");
+                info.className = "wishlist-info";
+
+                const title = document.createElement("div");
+                title.className = "wishlist-item-title";
+                title.textContent = item.title || "Tour";
+
+                const price = document.createElement("div");
+                price.className = "wishlist-item-price";
+                price.textContent = formatPrice(item.basePrice);
+
+                info.appendChild(title);
+                info.appendChild(price);
+
+                link.appendChild(thumb);
+                link.appendChild(info);
+
+                const remove = document.createElement("button");
+                remove.className = "wishlist-remove";
+                remove.type = "button";
+                remove.setAttribute("aria-label", "Bỏ yêu thích");
+                remove.innerHTML = "×";
+
+                wrap.appendChild(link);
+                wrap.appendChild(remove);
+                list.appendChild(wrap);
+            });
+        };
+
+        const loadCount = async () => {
+            try {
+                const res = await fetch("/api/wishlist/count", { headers: { "X-Requested-With": "XMLHttpRequest" } });
+                const data = await res.json();
+                setBadge(data && typeof data.count === "number" ? data.count : 0);
+            } catch (_) {
+                setBadge(0);
+            }
+        };
+
+        const loadList = async () => {
+            try {
+                const res = await fetch("/api/wishlist?limit=20", { headers: { "X-Requested-With": "XMLHttpRequest" } });
+                const data = await res.json();
+                renderList(Array.isArray(data) ? data : []);
+            } catch (_) {
+                renderList([]);
+            }
+        };
+
+        const loadIds = async () => {
+            try {
+                const res = await fetch("/api/wishlist/ids", { headers: { "X-Requested-With": "XMLHttpRequest" } });
+                const data = await res.json();
+                return Array.isArray(data) ? data : [];
+            } catch (_) {
+                return [];
+            }
+        };
+
+        const updateButtons = (ids) => {
+            const set = new Set((ids || []).map(v => Number(v)));
+            document.querySelectorAll("[data-wishlist-btn]").forEach(btn => {
+                const id = Number(btn.getAttribute("data-tour-id"));
+                const active = set.has(id);
+                btn.classList.toggle("is-active", active);
+                btn.setAttribute("aria-pressed", active ? "true" : "false");
+                const icon = btn.querySelector("i");
+                if (icon) {
+                    icon.classList.toggle("fa-solid", active);
+                    icon.classList.toggle("fa-regular", !active);
+                }
+            });
+        };
+
+        const toggleWishlist = async (tourId, btn) => {
+            if (!tourId) return;
+            if (!isAuthed) {
+                openLoginModal();
+                return;
+            }
+            if (btn) btn.disabled = true;
+            try {
+                const res = await fetch(`/api/wishlist/${encodeURIComponent(tourId)}/toggle`, {
+                    method: "POST",
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
+                });
+                if (res.ok) {
+                    const data = await res.json().catch(() => ({}));
+                    const active = !!data.favorited;
+                    if (btn) {
+                        btn.classList.toggle("is-active", active);
+                        btn.setAttribute("aria-pressed", active ? "true" : "false");
+                        const icon = btn.querySelector("i");
+                        if (icon) {
+                            icon.classList.toggle("fa-solid", active);
+                            icon.classList.toggle("fa-regular", !active);
+                        }
+                    }
+                    const ids = await loadIds();
+                    updateButtons(ids);
+                    await loadCount();
+                    if (wishlistWrap.classList.contains("open")) {
+                        await loadList();
+                    }
+                }
+            } catch (_) {
+            }
+            if (btn) btn.disabled = false;
+        };
+
+        document.querySelectorAll("[data-wishlist-btn]").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.preventDefault();
+                const tourId = btn.getAttribute("data-tour-id");
+                toggleWishlist(tourId, btn);
+            });
+        });
+
+        if (list) {
+            list.addEventListener("click", async (e) => {
+                const removeBtn = e.target.closest(".wishlist-remove");
+                if (!removeBtn) return;
+                const item = removeBtn.closest("[data-tour-id]");
+                const tourId = item ? item.getAttribute("data-tour-id") : null;
+                if (!tourId) return;
+                try {
+                    await fetch(`/api/wishlist/${encodeURIComponent(tourId)}`, {
+                        method: "DELETE",
+                        headers: { "X-Requested-With": "XMLHttpRequest" }
+                    });
+                } catch (_) {
+                }
+                const ids = await loadIds();
+                updateButtons(ids);
+                await loadCount();
+                await loadList();
+            });
+        }
+
+        if (toggle) {
+            toggle.addEventListener("click", (e) => {
+                e.stopPropagation();
+                wishlistWrap.classList.toggle("open");
+                if (wishlistWrap.classList.contains("open")) {
+                    loadList();
+                    loadCount();
+                }
+            });
+        }
+
+        document.addEventListener("click", (e) => {
+            if (!wishlistWrap.contains(e.target)) wishlistWrap.classList.remove("open");
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") wishlistWrap.classList.remove("open");
+        });
+
+        if (isAuthed) {
+            loadCount();
+            loadIds().then(updateButtons);
+        }
     }
 });

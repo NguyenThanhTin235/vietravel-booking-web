@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(
+      pageTitle=${pageTitle},
+      activeNav=${activeNav},
+      content=~{::content},
+      additionalJs=~{::additionalJs}
+)}">
+
+<th:block th:fragment="additionalJs">
+    <link rel="stylesheet" th:href="@{/css/news.css}">
+    <script th:src="@{/js/public-news.js}"></script>
+</th:block>
+
+<th:block th:fragment="content">
+    <section class="news-detail">
+        <div class="container detail-head">
+            <div class="detail-thumb">
+                <img th:if="${news.thumbnail != null}" th:src="${news.thumbnail}" alt="Thumbnail">
+                <span th:if="${news.thumbnail == null}">Vietravel News</span>
+            </div>
+            <div class="detail-content">
+                <div class="detail-meta">
+                    <span th:text="${#temporals.format(news.createdAt,'dd/MM/yyyy')}" >01/01/2026</span>
+                </div>
+                <h1 class="detail-title" th:text="${news.title}">Tiêu đề</h1>
+                <div class="detail-views">Lượt xem: <span th:text="${news.viewCount}">0</span></div>
+                <p class="detail-summary" th:text="${news.summary}">Tóm tắt</p>
+            </div>
+        </div>
+
+        <div class="container detail-body">
+            <div class="news-content" th:utext="${news.contentHtml}"></div>
+        </div>
+    </section>
+</th:block>
+
+</html>
