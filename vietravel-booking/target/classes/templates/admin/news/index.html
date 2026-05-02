@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <div class="news-page" data-page="news-list">
+        <div class="card booking-process-card">
+            <div class="card-head">
+                <div class="card-actions process-actions">
+                    <div class="process-filter">
+                        <div class="process-search">
+                            <span class="process-search-icon">🔎</span>
+                            <input id="searchInput" class="search-input" placeholder="Tìm theo tiêu đề hoặc slug">
+                        </div>
+                        <div class="process-select">
+                            <span class="process-date-label">Trạng thái</span>
+                            <select id="statusFilter" class="select">
+                                <option value="">Tất cả</option>
+                                <option value="PUBLISHED">Đã đăng</option>
+                                <option value="DRAFT">Bản nháp</option>
+                                <option value="HIDDEN">Ẩn</option>
+                            </select>
+                        </div>
+                        <div class="process-select">
+                            <span class="process-date-label">Nổi bật</span>
+                            <select id="featuredFilter" class="select">
+                                <option value="">Tất cả</option>
+                                <option value="true">Có</option>
+                                <option value="false">Không</option>
+                            </select>
+                        </div>
+                        <a class="btn btn-ghost" href="/admin/news/create">Tạo tin tức</a>
+                    </div>
+                    <span class="process-count">Hiển thị: <b id="pageInfo">0</b></span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-wrap process-table">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tiêu đề</th>
+                            <th>Trạng thái</th>
+                            <th>Nổi bật</th>
+                            <th>Lượt xem</th>
+                            <th>Ngày tạo</th>
+                            <th>Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody id="rows">
+                        <tr>
+                            <td colspan="7" class="muted">Đang tải...</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="booking-pagination" id="pager">
+                    <button class="btn btn-ghost" id="btnPrev" type="button">← Trước</button>
+                    <div id="pageNums" class="pagination-numbers"></div>
+                    <button class="btn btn-ghost" id="btnNext" type="button">Sau →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

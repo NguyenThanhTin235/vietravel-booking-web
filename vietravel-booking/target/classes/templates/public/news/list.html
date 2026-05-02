@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(
+      pageTitle=${pageTitle},
+      activeNav=${activeNav},
+      content=~{::content},
+      additionalJs=~{::additionalJs}
+)}">
+
+<th:block th:fragment="additionalJs">
+    <link rel="stylesheet" th:href="@{/css/news.css}">
+    <script th:src="@{/js/public-news.js}"></script>
+</th:block>
+
+<th:block th:fragment="content">
+    <section class="news-hero">
+        <div class="container hero-inner">
+            <h1>Tin tức</h1>
+            <p class="muted">Cập nhật những thông tin mới nhất từ Vietravel.</p>
+        </div>
+    </section>
+
+    <section class="container news-grid">
+        <div th:if="${#lists.isEmpty(newsItems)}" class="muted">Chưa có tin tức.</div>
+        <article th:each="n : ${newsItems}" class="news-card">
+            <a class="news-thumb" th:href="@{'/news/' + ${n.slug}}">
+                <img th:if="${n.thumbnail != null}" th:src="${n.thumbnail}" alt="Thumbnail">
+                <span th:if="${n.thumbnail == null}">Vietravel News</span>
+            </a>
+            <div class="news-body">
+                <div class="news-meta">
+                    <span th:text="${#temporals.format(n.createdAt,'dd/MM/yyyy')}" >01/01/2026</span>
+                </div>
+                <a class="news-title" th:href="@{'/news/' + ${n.slug}}" th:text="${n.title}">Tiêu đề</a>
+                <div class="news-summary" th:text="${n.summary}">Tóm tắt</div>
+                <div class="news-footer">
+                    <span class="news-views">Lượt xem: <b th:text="${n.viewCount}">0</b></span>
+                    <a class="news-link" th:href="@{'/news/' + ${n.slug}}">Xem chi tiết</a>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <div class="container booking-pagination" th:if="${totalPages > 1}">
+        <a class="btn btn-ghost" th:if="${currentPage > 1}"
+           th:href="@{/news(page=${currentPage - 1})}">← Trước</a>
+        <span class="pagination-info">Trang <b th:text="${currentPage}">1</b> / <b th:text="${totalPages}">1</b></span>
+        <a class="btn btn-ghost" th:if="${currentPage < totalPages}"
+           th:href="@{/news(page=${currentPage + 1})}">Sau →</a>
+    </div>
+</th:block>
+
+</html>

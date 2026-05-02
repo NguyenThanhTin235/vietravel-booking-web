@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <div class="news-page">
+        <nav class="tc-breadcrumb">
+            <a href="/admin">Bảng điều khiển</a>
+            <span class="sep">/</span>
+            <a href="/admin/news">Tin tức</a>
+            <span class="sep">/</span>
+            <span class="current" th:text="${newsId!=null?'Cập nhật':'Thêm mới'}">Thêm mới</span>
+        </nav>
+
+        <div class="card reveal tc-card">
+            <div class="tc-wrap" data-page="news-form">
+                <div class="tc-head">
+                    <div class="tc-title">
+                        <h2 id="title">Tin tức</h2>
+                    </div>
+                    <a class="tc-btn" href="/admin/news">Quay lại</a>
+                </div>
+
+                <div id="err" style="display:none;padding:10px 12px;border-radius:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);color:#b42318;font-weight:900"></div>
+
+                <form id="form" class="tc-form">
+                    <input type="hidden" id="id" th:value="${newsId!=null?newsId:''}">
+
+                    <div class="tc-grid2">
+                        <div class="tc-field">
+                            <label>Tiêu đề</label>
+                            <input id="titleInput" class="input" placeholder="VD: Vietravel khai trương" required>
+                        </div>
+                        <div class="tc-field">
+                            <label>Slug</label>
+                            <input id="slug" class="input" placeholder="VD: vietravel-khai-truong">
+                        </div>
+                    </div>
+
+                    <div class="tc-field">
+                        <label>Trạng thái</label>
+                        <select id="status" class="input">
+                            <option value="PUBLISHED">Đã đăng</option>
+                            <option value="DRAFT">Bản nháp</option>
+                            <option value="HIDDEN">Ẩn</option>
+                        </select>
+                    </div>
+
+                    <div class="tc-grid2">
+                        <div class="tc-field">
+                            <label>Nổi bật</label>
+                            <select id="isFeatured" class="input">
+                                <option value="false">Không</option>
+                                <option value="true">Có</option>
+                            </select>
+                        </div>
+                        <div class="tc-field">
+                            <label>Lượt xem</label>
+                            <input id="viewCount" class="input" type="number" min="0" disabled>
+                        </div>
+                    </div>
+
+                    <div class="tc-field">
+                        <label>Ảnh đại diện</label>
+                        <div class="tc-banner-upload">
+                            <div class="tc-banner-preview" id="thumbPreviewWrap">
+                                <img id="thumbPreview" alt="Thumbnail" style="display:none">
+                                <div class="tc-banner-empty">Chưa có ảnh</div>
+                            </div>
+                            <div class="tc-banner-actions">
+                                <input id="thumbFile" type="file" accept="image/*" hidden>
+                                <button type="button" id="btnChooseThumb" class="tc-btn">Chọn ảnh</button>
+                                <button type="button" id="btnRemoveThumb" class="tc-btn">Gỡ ảnh</button>
+                            </div>
+                        </div>
+                        <input id="thumbnail" class="input" placeholder="https://">
+                    </div>
+
+                    <div class="tc-field">
+                        <label>Tóm tắt</label>
+                        <textarea id="summary" class="input" rows="3" placeholder="Nội dung tóm tắt"></textarea>
+                    </div>
+
+                    <div class="tc-field">
+                        <label>Nội dung (HTML)</label>
+                        <textarea id="contentHtml" class="input" rows="10" placeholder="Nội dung chi tiết" required></textarea>
+                    </div>
+
+                    <div class="tc-foot">
+                        <button type="button" id="btnDelete" class="tc-btn danger" style="display:none">Xóa</button>
+                        <button type="submit" class="tc-btn primary">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="tcToastWrap" class="tc-toastWrap"></div>
+
+    <div id="tcModal" class="tc-modalBackdrop">
+        <div class="tc-modal">
+            <div class="tc-modalHead">
+                <h3 id="tcModalTitle">Xác nhận</h3>
+                <button id="tcModalClose" class="tc-btn sm">Đóng</button>
+            </div>
+            <div id="tcModalBody" class="tc-modalBody"></div>
+            <div class="tc-modalFoot">
+                <button id="tcModalCancel" class="tc-btn">Hủy</button>
+                <button id="tcModalOk" class="tc-btn danger">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

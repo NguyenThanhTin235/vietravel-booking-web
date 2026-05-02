@@ -2,6 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <body>
 <header class="topbar" th:fragment="siteHeader(active)">
+    <div id="authState" class="sr-only" th:attr="data-auth=${currentUser != null}"></div>
     <div class="container topbar-inner">
         <a class="brand" th:href="@{/}">
             <img th:src="@{/images/logo.png}" alt="Vietravel">
@@ -16,7 +17,7 @@
                aria-haspopup="true"
                aria-expanded="false">Điểm đến</a>
             <a class="nav-link" th:classappend="${active}=='promotion'?' is-active':''" th:href="@{/promotions}">Khuyến mãi</a>
-            <a class="nav-link" th:classappend="${active}=='news'?' is-active':''" href="#">Tin tức</a>
+            <a class="nav-link" th:classappend="${active}=='news'?' is-active':''" th:href="@{/news}">Tin tức</a>
             <a class="nav-link" th:classappend="${active}=='contact'?' is-active':''" th:href="@{/contact}">Liên hệ</a>
         </nav>
 
@@ -80,6 +81,19 @@
                 </div>
             </div>
 
+            <div th:if="${currentUser}" class="wishlist-wrap" data-wishlist>
+                <button class="icon-btn wishlist-btn" type="button" title="Yêu thích" data-wishlist-toggle>
+                    <i class="fa-solid fa-heart"></i>
+                    <span class="noti-badge wishlist-badge" data-wishlist-count hidden>0</span>
+                </button>
+                <div class="wishlist-dropdown" data-wishlist-dropdown>
+                    <div class="wishlist-dropdown-head">
+                        <div class="wishlist-title">Yêu thích</div>
+                    </div>
+                    <div class="wishlist-list" data-wishlist-list></div>
+                </div>
+            </div>
+
             <div th:if="${currentUser}" class="user-profile-area">
                 <span class="user-name-display"
                       th:text="${currentUserProfile != null && currentUserProfile.fullName != null ? currentUserProfile.fullName : 'User'}">
@@ -113,7 +127,7 @@
     <div class="mobile-nav" id="mobileNav">
         <a href="#">Điểm đến</a>
         <a th:href="@{/promotions}">Khuyến mãi</a>
-        <a href="#">Tin tức</a>
+        <a th:href="@{/news}">Tin tức</a>
         <a th:href="@{/contact}">Liên hệ</a>
         <div class="mobile-actions">
             <th:block th:unless="${currentUser}">

@@ -1,0 +1,123 @@
+.news-page .tc-breadcrumb {
+     display: flex;
+     gap: 8px;
+     align-items: center;
+     margin-bottom: 16px;
+     color: var(--muted)
+}
+
+.news-page .tc-breadcrumb .sep {
+     opacity: .5
+}
+
+.news-page .tc-card {
+     padding: 18px
+}
+
+.news-page .tc-wrap {
+     display: flex;
+     flex-direction: column;
+     gap: 14px
+}
+
+.news-page .tc-head {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     gap: 12px
+}
+
+.news-page .tc-btn {
+     background: #fff;
+     border: 1px solid var(--border);
+     padding: 8px 14px;
+     border-radius: 999px;
+     font-weight: 800;
+     cursor: pointer
+}
+
+.news-page .tc-btn.primary {
+     background: var(--primary);
+     color: #fff;
+     border-color: var(--primary)
+}
+
+.news-page .tc-btn.danger {
+     background: #fee2e2;
+     color: #b91c1c;
+     border-color: #fecaca
+}
+
+.news-page .tc-form {
+     display: flex;
+     flex-direction: column;
+     gap: 14px
+}
+
+.news-page .tc-grid2 {
+     display: grid;
+     grid-template-columns: repeat(2, minmax(0, 1fr));
+     gap: 12px
+}
+
+.news-page .tc-field {
+     display: flex;
+     flex-direction: column;
+     gap: 6px
+}
+
+.news-page .tc-field label {
+     font-weight: 800
+}
+
+.news-page .tc-foot {
+     display: flex;
+     gap: 10px;
+     justify-content: flex-end
+}
+
+.news-page .tc-banner-upload {
+     display: grid;
+     grid-template-columns: 1fr auto;
+     gap: 12px;
+     align-items: center
+}
+
+.news-page .tc-banner-preview {
+     position: relative;
+     height: 160px;
+     border-radius: 16px;
+     border: 1px dashed rgba(148, 163, 184, .6);
+     background: #f8fafc;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     overflow: hidden
+}
+
+.news-page .tc-banner-preview img {
+     width: 100%;
+     height: 100%;
+     object-fit: cover
+}
+
+.news-page .tc-banner-empty {
+     color: var(--muted);
+     font-weight: 800
+}
+
+.news-page .tc-banner-actions {
+     display: flex;
+     flex-direction: column;
+     gap: 8px
+}
+
+@media (max-width: 880px) {
+     .news-page .tc-grid2 {
+          grid-template-columns: 1fr
+     }
+
+     .news-page .tc-banner-upload {
+          grid-template-columns: 1fr
+     }
+}

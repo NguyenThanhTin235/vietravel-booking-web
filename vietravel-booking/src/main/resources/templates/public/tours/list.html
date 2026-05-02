@@ -145,6 +145,11 @@
 							<div class="tour-thumb">
 								<img th:src="${t.thumbnailUrl != null ? t.thumbnailUrl : '/images/login-bg.jpg'}"
 									 alt="Tour">
+								<button class="wishlist-toggle" type="button" aria-pressed="false"
+										th:attr="data-tour-id=${t.id},data-tour-slug=${t.slug}"
+										data-wishlist-btn>
+										<i class="fa-regular fa-heart"></i>
+								</button>
 									<span class="tour-badge"
 										th:attr="data-line=${#strings.toLowerCase(t.tourLineName != null ? t.tourLineName : 'Tiêu chuẩn')}"
 										th:text="${t.tourLineName != null ? t.tourLineName : 'Tiêu chuẩn'}">Tiêu chuẩn</span>
