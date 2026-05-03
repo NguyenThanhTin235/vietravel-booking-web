@@ -563,20 +563,41 @@
 }
 
 .tour-form {
-     margin-top: 16px
+     margin-top: 16px;
+     counter-reset: tourSection
 }
 
 .tour-section {
-     background: #fff;
-     border: 1px solid var(--border);
-     border-radius: 16px;
-     padding: 14px;
-     margin-bottom: 16px
+     background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+     border: 1px solid rgba(148, 163, 184, .25);
+     border-radius: 18px;
+     padding: 16px;
+     margin-bottom: 16px;
+     box-shadow: 0 12px 24px rgba(2, 20, 60, .06)
 }
 
 .tour-section h3 {
      margin: 0 0 12px 0;
-     font-size: 16px
+     font-size: 16px;
+     font-weight: 900;
+     display: inline-flex;
+     align-items: center;
+     gap: 10px
+}
+
+.tour-section h3::before {
+     counter-increment: tourSection;
+     content: counter(tourSection);
+     width: 26px;
+     height: 26px;
+     border-radius: 10px;
+     display: grid;
+     place-items: center;
+     font-size: 12px;
+     font-weight: 900;
+     color: #0f172a;
+     background: linear-gradient(135deg, rgba(14, 165, 233, .18), rgba(20, 184, 166, .18));
+     border: 1px solid rgba(14, 165, 233, .35)
 }
 
 .tour-section-head {
@@ -590,7 +611,11 @@
      display: grid;
      grid-template-columns: repeat(2, minmax(0, 1fr));
      gap: 12px;
-     margin-bottom: 12px
+     margin-bottom: 12px;
+     background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+     border: 1px dashed rgba(148, 163, 184, .35);
+     border-radius: 14px;
+     padding: 12px
 }
 
 .tour-field {
@@ -600,8 +625,11 @@
 }
 
 .tour-field label {
-     font-weight: 800;
-     font-size: 12px
+     font-weight: 900;
+     font-size: 11px;
+     text-transform: uppercase;
+     letter-spacing: .08em;
+     color: #64748b
 }
 
 .tour-field .hint {

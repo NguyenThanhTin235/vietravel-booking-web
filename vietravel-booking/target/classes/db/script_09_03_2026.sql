@@ -288,37 +288,6 @@ INSERT INTO `email_verification_codes` VALUES (1,'thanhtin243@gmail.com','$2a$10
 UNLOCK TABLES;
 
 --
--- Table structure for table `faq`
---
-
-DROP TABLE IF EXISTS `faq`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `faq` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `question` varchar(400) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `answer` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `keywords` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `category` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `is_active` tinyint(1) NOT NULL DEFAULT '1',
-  `sort_order` int NOT NULL DEFAULT '0',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `idx_faq_active` (`is_active`),
-  KEY `idx_faq_sort` (`sort_order`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `faq`
---
-
-LOCK TABLES `faq` WRITE;
-/*!40000 ALTER TABLE `faq` DISABLE KEYS */;
-/*!40000 ALTER TABLE `faq` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `itinerary_days`
 --
 

@@ -11,9 +11,9 @@
     --warn: #f59e0b;
     --radius: 16px;
     --shadow: 0 14px 40px rgba(2, 20, 60, .08);
-    --accent-1: #8b5cf6;
-    --accent-2: #06b6d4;
-    --primary-gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 55%, #06b6d4 100%);
+    --accent-1: #0ea5e9;
+    --accent-2: #14b8a6;
+    --primary-gradient: linear-gradient(135deg, #2563eb 0%, #0ea5e9 52%, #14b8a6 100%);
     --card-glow: 0 14px 40px rgba(2, 20, 60, .08), 0 0 0 1px rgba(148, 163, 184, .12);
 }
 
@@ -28,12 +28,12 @@ body {
 
 body {
     margin: 0;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     color: var(--text);
     background:
-        radial-gradient(1200px 400px at 10% -10%, rgba(124, 58, 237, .16), transparent 70%),
-        radial-gradient(1200px 420px at 100% -20%, rgba(6, 182, 212, .15), transparent 70%),
-        linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+        radial-gradient(1200px 400px at 10% -10%, rgba(14, 165, 233, .16), transparent 70%),
+        radial-gradient(1200px 420px at 100% -20%, rgba(20, 184, 166, .15), transparent 70%),
+        linear-gradient(180deg, #f8fafc 0%, #eef6ff 100%);
     overflow: hidden;
 }
 
@@ -125,6 +125,14 @@ img {
 .admin-container {
     width: min(1200px, 94%);
     margin: 0 auto
+}
+
+.staff-shell .admin-container {
+    width: min(1200px, 90%);
+}
+
+.staff-shell .admin-content {
+    padding: 22px 0 28px;
 }
 
 /* ===== SIDEBAR ===== */
@@ -682,6 +690,16 @@ img {
 }
 
 /* ===== CONTENT UI ===== */
+.admin-dashboard {
+    padding: 0 8px
+}
+
+@media (max-width: 720px) {
+    .admin-dashboard {
+        padding: 0 4px
+    }
+}
+
 .grid-12 {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
@@ -1240,6 +1258,21 @@ img {
     gap: 8px;
     align-items: center;
     flex-wrap: wrap;
+}
+
+.booking-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 8px;
+    width: 100%;
+}
+
+.booking-pagination .pagination-numbers {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 /* ===== STAFF BOOKING DETAIL ===== */
@@ -2641,12 +2674,21 @@ body {
     display: flex;
     flex-direction: column;
     gap: 14px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    border: 1px solid rgba(148, 163, 184, .22);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8);
 }
 
 .tc-grid2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 14px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px dashed rgba(148, 163, 184, .35);
+    border-radius: 14px;
+    padding: 12px;
 }
 
 @media(max-width:720px) {
@@ -2662,30 +2704,35 @@ body {
 }
 
 .tc-field label {
-    font-size: 12.5px;
+    font-size: 11px;
     font-weight: 900;
-    color: #475569;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: .08em;
 }
 
 .tc-field .input {
     padding: 11px 12px;
     border-radius: 12px;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(148, 163, 184, .35);
     font-weight: 700;
+    background: #fff;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, .06);
 }
 
 .tc-field .input:focus {
     outline: none;
-    border-color: #bfdbfe;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, .15);
+    border-color: rgba(14, 165, 233, .6);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, .18);
 }
 
 /* FOOT */
 .tc-foot {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 10px;
-    padding-top: 6px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(148, 163, 184, .45);
 }
 
 /* SKELETON */

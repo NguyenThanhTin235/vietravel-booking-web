@@ -1,0 +1,20 @@
+@startuml
+title SSD - Staff huy tour
+
+actor "Nhan vien" as Staff
+boundary "He thong" as System
+
+Staff -> System: openProcessPage()
+System --> Staff: danhSachBooking
+
+Staff -> System: applyFilter(from, to, status)
+System --> Staff: danhSachBookingDaLoc
+
+Staff -> System: requestCancel(bookingId)
+System --> Staff: yeuCauChonLyDoHuy
+
+Staff -> System: submitCancelReason(bookingId, reason)
+System --> Staff: status, message
+System --> Staff: danhSachBookingDaCapNhat
+
+@enduml

@@ -1,0 +1,20 @@
+@startuml
+title SSD - Them lich khoi hanh (Cho con lai khong hop le)
+
+actor "Quan tri vien" as Admin
+boundary "He thong" as System
+
+Admin -> System: listTours()
+System --> Admin: danhSachTour
+
+Admin -> System: selectTour(tourId)
+System --> Admin: lichKhoiHanhTheoThang
+
+Admin -> System: openAddDepartureForm()
+System --> Admin: formNhapLichKhoiHanh
+
+Admin -> System: submitDepartureForm(soChoConLaiKhongHopLe)
+System --> Admin: thongBaoLoi("So cho con lai khong hop le")
+System --> Admin: formNhapLichKhoiHanh
+
+@enduml

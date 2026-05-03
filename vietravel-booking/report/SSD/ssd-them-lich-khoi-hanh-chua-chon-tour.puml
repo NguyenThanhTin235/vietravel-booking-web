@@ -1,0 +1,14 @@
+@startuml
+title SSD - Them lich khoi hanh (Chua chon tour)
+
+actor "Quan tri vien" as Admin
+boundary "He thong" as System
+
+Admin -> System: listTours()
+System --> Admin: danhSachTour
+
+Admin -> System: clickAddDeparture()
+System --> Admin: thongBaoLoi("Vui long chon tour truoc khi them")
+System --> Admin: trangQuanLyNgayKhoiHanh
+
+@enduml

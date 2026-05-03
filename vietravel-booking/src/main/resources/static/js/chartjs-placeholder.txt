@@ -1,0 +1,2 @@
+// Chart.js CDN fallback (if not using npm/yarn)
+// You can also download Chart.min.js and put it in static/js/

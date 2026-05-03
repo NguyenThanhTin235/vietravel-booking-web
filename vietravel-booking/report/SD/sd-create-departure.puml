@@ -1,0 +1,24 @@
+@startuml
+title SD - createDeparture
+
+actor "Quan tri vien" as Admin
+entity "Departure" as Departure
+entity "Tour" as Tour
+database "CSDL" as DB
+
+Admin -> Departure: createDeparture(req)
+Departure -> Departure: checkNull(tourId, startDate, startLocation, capacity)
+Departure -> Departure: validateCapacity(capacity)
+Departure -> Departure: setAvailableFromCapacity()
+Departure -> Departure: validateStatus(status)
+Departure -> DB: existsByTourIdAndStartDateAndStartLocation(tourId, startDate, startLocation)
+DB --> Departure: exists
+Departure -> Tour: findById(tourId)
+Tour -> DB: selectTourById(tourId)
+DB --> Tour: tourRow
+Tour --> Departure: tour
+Departure -> DB: insertDeparture(req)
+DB --> Departure: insertResult
+Departure --> Admin: DepartureAdminResponse
+
+@enduml

@@ -133,6 +133,12 @@
      margin: 0
 }
 
+.promo-detail .detail-content {
+     display: flex;
+     flex-direction: column;
+     gap: 10px
+}
+
 .promo-detail .detail-discount {
      display: inline-flex;
      gap: 10px;
@@ -157,7 +163,8 @@
 }
 
 .promo-detail .detail-meta {
-     color: #475569
+     color: #475569;
+     line-height: 1.6
 }
 
 .promo-detail .detail-box {
@@ -173,7 +180,8 @@
 .promo-detail .detail-actions {
      display: flex;
      gap: 10px;
-     flex-wrap: wrap
+     flex-wrap: wrap;
+     margin-top: 6px
 }
 
 @media (max-width: 900px) {

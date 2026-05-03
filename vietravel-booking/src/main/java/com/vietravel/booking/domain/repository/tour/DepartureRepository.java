@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,6 +30,12 @@ public interface DepartureRepository extends JpaRepository<Departure, Long> {
   @EntityGraph(attributePaths = { "tour", "startLocation" })
   @Query("select d from Departure d where d.id = :id")
   Optional<Departure> findDetailById(@Param("id") Long id);
+
+  long countByStartDateBetween(LocalDate from, LocalDate to);
+
+  @EntityGraph(attributePaths = { "tour" })
+  @Query("select d from Departure d where d.startDate >= :from order by d.startDate asc, d.id asc")
+  List<Departure> findUpcoming(@Param("from") LocalDate from, Pageable pageable);
 
   @Query("select distinct d.tour.id from Departure d where d.startDate = :date")
   List<Long> findTourIdsByStartDate(@Param("date") LocalDate date);

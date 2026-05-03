@@ -1,0 +1,68 @@
+@startuml
+title SD - Them tour (Tinh huong chinh - Thanh cong)
+
+actor "Quan tri vien" as Admin
+entity "Tour" as Tour
+database "CSDL" as DB
+entity "TourLine" as TourLine
+entity "TransportMode" as TransportMode
+entity "Destination" as Destination
+entity "TourCategory" as TourCategory
+
+Admin -> Tour: getTourLines()
+Tour -> TourLine: list()
+TourLine -> DB: selectTourLines()
+DB --> TourLine: tourLineRows
+TourLine --> Tour: tourLineOptions
+Tour --> Admin: tourLineOptions
+Admin -> Tour: getTransportModes()
+Tour -> TransportMode: list()
+TransportMode -> DB: selectTransportModes()
+DB --> TransportMode: transportModeRows
+TransportMode --> Tour: transportModeOptions
+Tour --> Admin: transportModeOptions
+Admin -> Tour: getDestinations()
+Tour -> Destination: list()
+Destination -> DB: selectDestinations()
+DB --> Destination: destinationRows
+Destination --> Tour: destinationOptions
+Tour --> Admin: destinationOptions
+Admin -> Tour: getCategories()
+Tour -> TourCategory: list()
+TourCategory -> DB: selectCategories()
+DB --> TourCategory: categoryRows
+TourCategory --> Tour: categoryOptions
+Tour --> Admin: categoryOptions
+
+Admin -> Tour: enterTourInfo()
+Tour -> Tour: checkNull()
+Tour -> Tour: validateDuration()
+Tour -> Tour: validateBasePrice()
+Tour --> Admin: status
+
+Admin -> Tour: enableSave()
+Admin -> Tour: save(Tour)
+Tour -> Tour: validateConstraints()
+Tour -> Tour: setTitle(title)
+Tour -> Tour: setTourLineId(tourLineId)
+Tour -> Tour: setTransportModeId(transportModeId)
+Tour -> Tour: setDurationDays(durationDays)
+Tour -> Tour: setDurationNights(durationNights)
+Tour -> Tour: setStartLocationId(startLocationId)
+Tour -> Tour: setBasePrice(basePrice)
+Tour -> Tour: setCode(code)
+Tour -> Tour: setSlug(slug)
+Tour -> Tour: setOverviewHtml(overviewHtml)
+Tour -> Tour: setAdditionalInfoHtml(additionalInfoHtml)
+Tour -> Tour: setNotesHtml(notesHtml)
+Tour -> Tour: setIsActive(isActive)
+Tour -> Tour: setCategoryIds(categoryIds)
+Tour -> Tour: setDestinationIds(destinationIds)
+Tour -> Tour: setImages(images)
+Tour -> Tour: setItineraryDays(itineraryDays)
+Tour -> DB: saveTour(Tour)
+DB --> Tour: saveResult
+Tour --> Admin: status, message
+
+
+@enduml

@@ -3,7 +3,8 @@
 <body>
 
 <div th:fragment="content">
-    <div class="grid-12">
+    <div class="admin-dashboard">
+        <div class="grid-12">
 
         <div class="col-12">
             <div class="kpi-row">
@@ -41,7 +42,7 @@
                          data-counter
                          data-currency
                          th:attr="data-to=${kpiRevenueRaw!=null?kpiRevenueRaw:0}"
-                         th:text="${kpiRevenue!=null?kpiRevenue:'0 ₫'}">0 ₫</div>
+                         th:text="${kpiRevenueRaw != null ? #numbers.formatDecimal(kpiRevenueRaw, 0, 'COMMA', 0, 'POINT') + ' ₫' : '0 ₫'}">0 ₫</div>
                     <div class="kpi-note">Theo đơn đã thanh toán</div>
                 </div>
 
@@ -60,7 +61,13 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="placeholder-chart">Biểu đồ sẽ được tích hợp sau</div>
+                    <canvas id="bookingChart" height="120"></canvas>
+                    <script th:inline="javascript">
+                        /*<![CDATA[*/
+                        const bookingChartLabels = [[${bookingChartLabels}]];
+                        const bookingChartData = [[${bookingChartData}]];
+                        /*]]>*/
+                    </script>
                 </div>
             </div>
 
@@ -72,7 +79,7 @@
                                style="max-width:240px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:#fff"
                                data-table-search placeholder="Tìm trong bảng...">
                         <span style="color:var(--muted);font-weight:700;font-size:13px">
-                            Hiển thị: <span data-table-count>3</span>
+                            Hiển thị: <span data-table-count th:text="${#lists.size(recentBookings)}">0</span>
                         </span>
                         <a class="btn btn-primary" th:href="@{/admin/bookings}">Xem tất cả</a>
                     </div>
@@ -91,29 +98,25 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr class="reveal">
-                                <td>#BK001</td>
-                                <td>Nguyễn Văn A</td>
-                                <td>Đà Nẵng 3N2Đ</td>
-                                <td>25/01/2026</td>
-                                <td>5.990.000 ₫</td>
-                                <td><span class="badge badge-pending">Chờ xử lý</span></td>
+                            <tr th:if="${#lists.isEmpty(recentBookings)}">
+                                <td colspan="6" class="muted">Chưa có đơn đặt tour.</td>
                             </tr>
-                            <tr class="reveal">
-                                <td>#BK002</td>
-                                <td>Trần Thị B</td>
-                                <td>Phú Quốc 4N3Đ</td>
-                                <td>28/01/2026</td>
-                                <td>8.490.000 ₫</td>
-                                <td><span class="badge badge-confirmed">Đã xác nhận</span></td>
-                            </tr>
-                            <tr class="reveal">
-                                <td>#BK003</td>
-                                <td>Lê Văn C</td>
-                                <td>Đà Lạt 2N1Đ</td>
-                                <td>02/02/2026</td>
-                                <td>2.990.000 ₫</td>
-                                <td><span class="badge badge-canceled">Đã hủy</span></td>
+                            <tr th:each="b : ${recentBookings}" class="reveal">
+                                <td th:text="${b.bookingCode}">BK</td>
+                                <td th:text="${b.contactName}">--</td>
+                                <td th:text="${b.departure != null && b.departure.tour != null ? b.departure.tour.title : 'Tour'}">Tour</td>
+                                <td th:text="${b.departure != null && b.departure.startDate != null ? #temporals.format(b.departure.startDate, 'dd/MM/yyyy') : #temporals.format(b.createdAt, 'dd/MM/yyyy')}">--/--/----</td>
+                                <td th:text="${#numbers.formatDecimal(b.totalAmount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</td>
+                                <td>
+                                    <span th:switch="${b.status != null ? b.status.name() : ''}">
+                                        <span th:case="'PENDING'" class="badge badge-pending">Chờ xử lý</span>
+                                        <span th:case="'CONFIRMED'" class="badge badge-confirmed">Đã xác nhận</span>
+                                        <span th:case="'CANCEL_REQUESTED'" class="badge badge-canceled">Yêu cầu hủy</span>
+                                        <span th:case="'CANCELED'" class="badge badge-canceled">Đã hủy</span>
+                                        <span th:case="'COMPLETED'" class="badge badge-confirmed">Hoàn tất</span>
+                                        <span th:case="*" class="badge badge-confirmed">Đang xử lý</span>
+                                    </span>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -132,7 +135,7 @@
                 <div class="card-body">
                     <div class="mini-calendar">
                         <div class="mini-cal-head">
-                            <span>Tháng 01/2026</span>
+                            <span th:text="${calendarLabel}">Tháng 01/2026</span>
                             <div class="mini-cal-actions">
                                 <button class="icon-btn" type="button">‹</button>
                                 <button class="icon-btn" type="button">›</button>
@@ -140,11 +143,10 @@
                         </div>
                         <div class="mini-cal-grid">
                             <div class="mini-cal-dow">CN</div><div class="mini-cal-dow">T2</div><div class="mini-cal-dow">T3</div><div class="mini-cal-dow">T4</div><div class="mini-cal-dow">T5</div><div class="mini-cal-dow">T6</div><div class="mini-cal-dow">T7</div>
-                            <div class="mini-cal-day muted">29</div><div class="mini-cal-day muted">30</div><div class="mini-cal-day muted">31</div><div class="mini-cal-day">1</div><div class="mini-cal-day">2</div><div class="mini-cal-day">3</div><div class="mini-cal-day">4</div>
-                            <div class="mini-cal-day">5</div><div class="mini-cal-day">6</div><div class="mini-cal-day">7</div><div class="mini-cal-day">8</div><div class="mini-cal-day">9</div><div class="mini-cal-day">10</div><div class="mini-cal-day">11</div>
-                            <div class="mini-cal-day">12</div><div class="mini-cal-day">13</div><div class="mini-cal-day">14</div><div class="mini-cal-day">15</div><div class="mini-cal-day">16</div><div class="mini-cal-day">17</div><div class="mini-cal-day">18</div>
-                            <div class="mini-cal-day">19</div><div class="mini-cal-day">20</div><div class="mini-cal-day">21</div><div class="mini-cal-day today">22</div><div class="mini-cal-day">23</div><div class="mini-cal-day">24</div><div class="mini-cal-day">25</div>
-                            <div class="mini-cal-day">26</div><div class="mini-cal-day">27</div><div class="mini-cal-day">28</div><div class="mini-cal-day">29</div><div class="mini-cal-day">30</div><div class="mini-cal-day">31</div><div class="mini-cal-day muted">1</div>
+                            <div th:each="d : ${calendarDays}"
+                                 class="mini-cal-day"
+                                   th:classappend="${(!d.inMonth ? ' muted' : '') + (d.today ? ' today' : '')}"
+                                 th:text="${d.day}">1</div>
                         </div>
                     </div>
                 </div>
@@ -156,31 +158,18 @@
                 </div>
                 <div class="card-body">
                     <div class="list">
-                        <div class="list-item reveal">
-                            <div class="thumb"></div>
-                            <div class="li-main">
-                                <div class="li-title">Phú Quốc 4N3Đ</div>
-                                <div class="li-sub">Khởi hành: 28/01/2026</div>
-                            </div>
-                            <span class="pill">Còn chỗ</span>
+                        <div th:if="${#lists.isEmpty(upcomingDepartures)}" class="muted">
+                            Chưa có tour sắp diễn ra.
                         </div>
-
-                        <div class="list-item reveal">
+                        <div th:each="d : ${upcomingDepartures}" class="list-item reveal">
                             <div class="thumb"></div>
                             <div class="li-main">
-                                <div class="li-title">Đà Nẵng 3N2Đ</div>
-                                <div class="li-sub">Khởi hành: 25/01/2026</div>
+                                <div class="li-title" th:text="${d.tour != null ? d.tour.title : 'Tour'}">Tour</div>
+                                <div class="li-sub" th:text="'Khởi hành: ' + ${#temporals.format(d.startDate, 'dd/MM/yyyy')}">Khởi hành</div>
                             </div>
-                            <span class="pill pill-blue">Sắp đầy</span>
-                        </div>
-
-                        <div class="list-item reveal">
-                            <div class="thumb"></div>
-                            <div class="li-main">
-                                <div class="li-title">Đà Lạt 2N1Đ</div>
-                                <div class="li-sub">Khởi hành: 02/02/2026</div>
-                            </div>
-                            <span class="pill pill-gray">Đang mở</span>
+                            <span th:if="${d.available != null && d.available <= 0}" class="pill pill-gray">Hết chỗ</span>
+                            <span th:if="${d.available != null && d.available > 0 && d.available <= 5}" class="pill pill-blue">Sắp đầy</span>
+                            <span th:if="${d.available == null || d.available > 5}" class="pill">Còn chỗ</span>
                         </div>
                     </div>
                 </div>
@@ -188,8 +177,46 @@
 
         </div>
 
+        </div>
     </div>
 </div>
 
 </body>
+<th:block th:fragment="additionalJs">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof Chart !== 'undefined' && document.getElementById('bookingChart')) {
+                const ctx = document.getElementById('bookingChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: bookingChartLabels,
+                        datasets: [{
+                            label: 'Số booking',
+                            data: bookingChartData,
+                            borderColor: '#007bff',
+                            backgroundColor: 'rgba(0,123,255,0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#007bff',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false },
+                            title: { display: false }
+                        },
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: { beginAtZero: true, grid: { color: '#eee' } }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</th:block>
 </html>

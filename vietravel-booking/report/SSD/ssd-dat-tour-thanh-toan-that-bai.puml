@@ -1,0 +1,15 @@
+@startuml
+title SSD - Dat tour (Thanh toan that bai)
+
+actor "Khach hang" as Customer
+boundary "He thong" as System
+actor "VNPAY" as VNPAY
+
+Customer -> System: createBooking()
+System --> Customer: BookingCreateResponse
+
+Customer -> VNPAY: Payment()
+VNPAY --> System: status, message
+System --> Customer: status, bookingCode
+
+@enduml

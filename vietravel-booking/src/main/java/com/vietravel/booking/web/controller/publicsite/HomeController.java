@@ -51,14 +51,6 @@ public class HomeController {
         return "✅ Vietravel Booking is running!";
     }
 
-    @GetMapping("/admin")
-    public String homeAdmin(Model model) {
-        model.addAttribute("pageTitle", "Bảng điều khiển");
-        model.addAttribute("activeMenu", "dashboard");
-        model.addAttribute("activeSubMenu", "");
-        return "admin/index";
-    }
-
     private String resolveDestinationImage(Destination destination, Set<String> usedImages) {
         if (destination == null || destination.getId() == null) {
             return null;

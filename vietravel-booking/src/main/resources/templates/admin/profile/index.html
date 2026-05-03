@@ -3,7 +3,12 @@
 
 <th:block th:fragment="content">
     <style>
-        .ap-wrap{padding:6px 0 18px}
+        .ap-wrap{
+            padding:6px 32px 18px 32px;
+            max-width:900px;
+            margin-left:auto;
+            margin-right:auto;
+        }
         .ap-card{background:#fff;border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);padding:20px}
         .ap-head{display:flex;gap:20px;align-items:center;flex-wrap:wrap;border-bottom:1px dashed var(--border);padding-bottom:16px;margin-bottom:16px}
         .ap-avatar{width:108px;height:108px;border-radius:50%;border:2px solid #e5e7eb;overflow:hidden;background:#f3f4f6;display:flex;align-items:center;justify-content:center}
@@ -34,6 +39,7 @@
         @media(max-width:760px){
             .ap-grid{grid-template-columns:1fr}
             .ap-head{flex-direction:column;align-items:flex-start}
+            .ap-wrap{padding-left:8px;padding-right:8px;}
         }
     </style>
 

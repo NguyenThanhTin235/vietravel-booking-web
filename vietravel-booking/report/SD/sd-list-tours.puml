@@ -1,0 +1,13 @@
+@startuml
+title SD - listTours
+
+actor "Quan tri vien" as Admin
+entity "Tour" as Tour
+database "CSDL" as DB
+
+Admin -> Tour: listTours()
+Tour -> DB: listTours()
+DB --> Tour: danhSachTour
+Tour --> Admin: danhSachTour
+
+@enduml

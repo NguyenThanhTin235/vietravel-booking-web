@@ -1,0 +1,47 @@
+@startuml SSD_ThemLichKhoiHanh
+title Sơ đồ Thứ tự - Thêm Lịch Khởi Hành (Dựa thuần túy trên đặc tả DacTa.md)
+
+actor "Quản trị viên (Admin)" as Admin
+participant "Hệ thống (System)" as System
+
+== Tình huống chính (1-14) ==
+Admin -> System: 1. Truy cập trang\nQuản lý ngày khởi hành
+System --> Admin: 1. Hiển thị trang Quản lý\ndanh sách + combo "Chọn tour"
+
+Admin -> System: 2. Chọn tour trong comboBox\n"Chọn tour"
+
+Admin -> System: 3. Bấm "+" Thêm ngày khởi hành
+System -> System: 4. Mở form nhập LKH\n(Ngày KH, Điểm KH, Giá NL/TRE,\nTổng chỗ, Chỗ còn, Trạng thái)
+
+Admin -> System: 5a. Nhập Ngày KH hợp lệ
+Admin -> System: 6a. Nhập Điểm KH hợp lệ  
+Admin -> System: 7a. Nhập Giá NL/TRE hợp lệ
+Admin -> System: 8a. Nhập Tổng số chỗ > 0
+System -> System: 9. Tự động cập nhật\nChỗ còn lại = Tổng chỗ
+
+Admin -> System: 10. Bấm Lưu
+System -> System: 11. Kiểm tra dữ liệu hợp lệ
+
+alt Tình huống thay thế a)\nNgày KH/Điểm KH invalid\nhoặc duplicate tour+date+điểm
+  System -> System: Kiểm tra invalid/duplicate
+  System --> Admin: 12. Thông báo lỗi\n"Lịch KH đã tồn tại cho ngày và\nđiểm KH này" hoặc "Dữ liệu KH không hợp lệ"
+  Admin -> System: Quay lại bước 5 (sửa form)
+else b) Tổng chỗ <= 0
+  System --> Admin: 12. "Số chỗ phải lớn hơn 0"
+  Admin -> System: Quay lại bước 8
+else c) Chỗ còn lại invalid
+  System --> Admin: 12. "Số chỗ còn lại KH không hợp lệ"
+  Admin -> System: Quay lại bước 9
+else Hợp lệ
+  System -> System: 12. Tạo lịch KH mới (save DB)
+  System --> Admin: 13. Thông báo "Lưu thành công"\n+ cập nhật danh sách
+end
+
+System --> Admin: 14. Kết thúc
+
+note over Admin, System: 
+  Điều kiện trước: Đã login, truy cập\ntrang Quản lý ngày KH
+end note
+
+@enduml
+

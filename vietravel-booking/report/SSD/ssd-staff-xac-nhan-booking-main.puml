@@ -1,0 +1,17 @@
+@startuml
+title SSD - Staff xac nhan dat tour (Tinh huong chinh)
+
+actor "Nhan vien" as Staff
+boundary "He thong" as System
+
+Staff -> System: openProcessPage()
+System --> Staff: danhSachBooking
+
+Staff -> System: applyFilter(fromDate, toDate, status)
+System --> Staff: danhSachBookingDaLoc
+
+Staff -> System: confirmBooking(bookingId)
+System --> Staff: status, message
+System --> Staff: danhSachBookingDaCapNhat
+
+@enduml

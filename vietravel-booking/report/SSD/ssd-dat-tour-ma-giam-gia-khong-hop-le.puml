@@ -1,0 +1,11 @@
+@startuml
+title SSD - Dat tour (Ma giam gia khong hop le)
+
+actor "Khach hang" as Customer
+boundary "He thong" as System
+
+Customer -> System: applyCoupon(code)
+System --> Customer: status, message
+System --> Customer: giamGia=0
+
+@enduml

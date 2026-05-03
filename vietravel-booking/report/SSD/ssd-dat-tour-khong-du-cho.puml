@@ -1,0 +1,10 @@
+@startuml
+title SSD - Dat tour (Khong du cho con lai)
+
+actor "Khach hang" as Customer
+boundary "He thong" as System
+
+Customer -> System: createBooking()
+System --> Customer: status, message
+
+@enduml

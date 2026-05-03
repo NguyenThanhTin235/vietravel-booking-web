@@ -385,23 +385,7 @@ CREATE TABLE news(
 ) ENGINE=InnoDB;
 
 -- =========================
--- 9) FAQ Chatbot
--- =========================
-CREATE TABLE faq(
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  question VARCHAR(400) NOT NULL,
-  answer MEDIUMTEXT NOT NULL,
-  keywords VARCHAR(500) NULL,
-  category VARCHAR(100) NULL,
-  is_active TINYINT(1) NOT NULL DEFAULT 1,
-  sort_order INT NOT NULL DEFAULT 0,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  INDEX idx_faq_active(is_active),
-  INDEX idx_faq_sort(sort_order)
-) ENGINE=InnoDB;
-
--- =========================
--- 10) CONTACT
+-- 9) CONTACT
 -- =========================
 CREATE TABLE contact_inquiries(
   id BIGINT AUTO_INCREMENT PRIMARY KEY,

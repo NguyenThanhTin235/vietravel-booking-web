@@ -1,0 +1,45 @@
+@startuml
+title SD - Them lich khoi hanh (Tinh huong chinh - Thanh cong)
+
+actor "Quan tri vien" as Admin
+entity "Departure" as Departure
+entity "Tour" as Tour
+entity "StartLocation" as StartLocation
+database "CSDL" as DB
+
+Admin -> Departure: getTours()
+Departure -> Tour: list()
+Tour -> DB: selectTours()
+DB --> Tour: tourRows
+Tour --> Departure: tourOptions
+Departure --> Admin: tourOptions
+
+Admin -> Departure: openCreateForm()
+Departure --> Admin: formNhapLichKhoiHanh
+
+Admin -> Departure: enterDepartureInfo()
+Departure -> Departure: checkNull(tourId, startDate, startLocation, capacity)
+Departure -> Departure: validateCapacity(capacity)
+Departure -> Departure: setAvailableFromCapacity()
+Departure -> Departure: validateStatus(status)
+Departure -> DB: existsByTourIdAndStartDateAndStartLocation(tourId, startDate, startLocation)
+DB --> Departure: exists
+Departure --> Admin: status
+
+Admin -> Departure: enableSave()
+Admin -> Departure: save(Departure)
+Departure -> Departure: setTourId(tourId)
+Departure -> Departure: setStartDate(startDate)
+Departure -> Departure: setStartLocation(startLocation)
+Departure -> Departure: setCapacity(capacity)
+Departure -> Departure: setAvailable(available)
+Departure -> Departure: setPriceAdult(priceAdult)
+Departure -> Departure: setPriceChild(priceChild)
+Departure -> Departure: setStatus(status)
+Departure -> Departure: validateConstraints()
+Departure -> DB: insertDeparture(Departure)
+DB --> Departure: insertResult
+Departure --> Admin: status, message
+Departure --> Admin: updateDepartureList(createdDeparture)
+
+@enduml

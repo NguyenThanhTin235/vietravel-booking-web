@@ -1,0 +1,19 @@
+@startuml
+title SSD - Staff xem chi tiet booking
+
+actor "Nhan vien" as Staff
+boundary "He thong" as System
+
+Staff -> System: openProcessPage()
+System --> Staff: danhSachBooking
+
+Staff -> System: applyFilter(from, to, status)
+System --> Staff: danhSachBookingDaLoc
+
+Staff -> System: viewBookingDetail(bookingId)
+System --> Staff: thongTinChiTietBooking
+
+Staff -> System: backToList()
+System --> Staff: danhSachBookingDaLoc
+
+@enduml

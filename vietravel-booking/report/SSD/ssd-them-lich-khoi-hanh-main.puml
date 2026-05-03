@@ -1,0 +1,16 @@
+@startuml
+title SSD - Them lich khoi hanh (Tinh huong chinh)
+
+actor "Quan tri vien" as Admin
+boundary "He thong" as System
+
+Admin -> System: listTours()
+System --> Admin: danhSachTour
+
+
+
+Admin -> System: createDeparture()
+System --> Admin: DepartureAdminResponse
+
+
+@enduml
