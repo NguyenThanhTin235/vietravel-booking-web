@@ -55,9 +55,10 @@
                 <div class="card-head">
                     <div class="card-title">Tổng quan</div>
                     <div class="card-actions">
-                        <button class="btn btn-ghost" type="button">Tuần</button>
-                        <button class="btn btn-ghost" type="button">Tháng</button>
-                        <button class="btn btn-primary" type="button" data-demo-loading>Tải demo</button>
+                        <button class="btn btn-primary chart-period-btn" type="button" data-period="week" onclick="loadBookingChart('week', this)">Tuần</button>
+                        <button class="btn btn-ghost chart-period-btn" type="button" data-period="month" onclick="loadBookingChart('month', this)">Tháng</button>
+                        <button class="btn btn-ghost chart-period-btn" type="button" data-period="year" onclick="loadBookingChart('year', this)">Năm</button>
+                        <button class="btn btn-ghost" type="button" onclick="downloadChart('bookingChart', 'booking_report')">📥 Tải ảnh</button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -73,54 +74,20 @@
 
             <div class="card mt-16 reveal" data-skeleton>
                 <div class="card-head">
-                    <div class="card-title">Đơn đặt tour gần đây</div>
-                    <div class="card-actions" style="display:flex;gap:10px;align-items:center">
-                        <input class="search-input"
-                               style="max-width:240px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:#fff"
-                               data-table-search placeholder="Tìm trong bảng...">
-                        <span style="color:var(--muted);font-weight:700;font-size:13px">
-                            Hiển thị: <span data-table-count th:text="${#lists.size(recentBookings)}">0</span>
-                        </span>
-                        <a class="btn btn-primary" th:href="@{/admin/bookings}">Xem tất cả</a>
+                    <div class="card-title">Doanh thu năm nay</div>
+                    <div class="card-actions">
+                        <span class="badge badge-confirmed">Tổng quan 12 tháng</span>
+                        <button class="btn btn-ghost" type="button" onclick="downloadChart('revenueChart', 'revenue_report')">📥 Tải ảnh</button>
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-wrap">
-                        <table class="table" data-table>
-                            <thead>
-                            <tr>
-                                <th>Mã</th>
-                                <th>Khách hàng</th>
-                                <th>Tour</th>
-                                <th>Ngày</th>
-                                <th>Tổng tiền</th>
-                                <th>Trạng thái</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:if="${#lists.isEmpty(recentBookings)}">
-                                <td colspan="6" class="muted">Chưa có đơn đặt tour.</td>
-                            </tr>
-                            <tr th:each="b : ${recentBookings}" class="reveal">
-                                <td th:text="${b.bookingCode}">BK</td>
-                                <td th:text="${b.contactName}">--</td>
-                                <td th:text="${b.departure != null && b.departure.tour != null ? b.departure.tour.title : 'Tour'}">Tour</td>
-                                <td th:text="${b.departure != null && b.departure.startDate != null ? #temporals.format(b.departure.startDate, 'dd/MM/yyyy') : #temporals.format(b.createdAt, 'dd/MM/yyyy')}">--/--/----</td>
-                                <td th:text="${#numbers.formatDecimal(b.totalAmount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</td>
-                                <td>
-                                    <span th:switch="${b.status != null ? b.status.name() : ''}">
-                                        <span th:case="'PENDING'" class="badge badge-pending">Chờ xử lý</span>
-                                        <span th:case="'CONFIRMED'" class="badge badge-confirmed">Đã xác nhận</span>
-                                        <span th:case="'CANCEL_REQUESTED'" class="badge badge-canceled">Yêu cầu hủy</span>
-                                        <span th:case="'CANCELED'" class="badge badge-canceled">Đã hủy</span>
-                                        <span th:case="'COMPLETED'" class="badge badge-confirmed">Hoàn tất</span>
-                                        <span th:case="*" class="badge badge-confirmed">Đang xử lý</span>
-                                    </span>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <canvas id="revenueChart" height="120"></canvas>
+                    <script th:inline="javascript">
+                        /*<![CDATA[*/
+                        const revenueChartLabels = [[${revenueChartLabels}]];
+                        const revenueChartData = [[${revenueChartData}]];
+                        /*]]>*/
+                    </script>
                 </div>
             </div>
 
@@ -177,6 +144,61 @@
 
         </div>
 
+        <div class="col-12 mt-16">
+            <div class="card reveal" data-skeleton>
+                <div class="card-head">
+                    <div class="card-title">Đơn đặt tour gần đây</div>
+                    <div class="card-actions" style="display:flex;gap:10px;align-items:center">
+                        <input class="search-input"
+                               style="max-width:240px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:#fff"
+                               data-table-search placeholder="Tìm trong bảng...">
+                        <span style="color:var(--muted);font-weight:700;font-size:13px">
+                            Hiển thị: <span data-table-count th:text="${#lists.size(recentBookings)}">0</span>
+                        </span>
+                        <a class="btn btn-primary" th:href="@{/admin/bookings}">Xem tất cả</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-wrap">
+                        <table class="table" data-table>
+                            <thead>
+                            <tr>
+                                <th>Mã</th>
+                                <th>Khách hàng</th>
+                                <th>Tour</th>
+                                <th>Ngày</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${#lists.isEmpty(recentBookings)}">
+                                <td colspan="6" class="muted">Chưa có đơn đặt tour.</td>
+                            </tr>
+                            <tr th:each="b : ${recentBookings}" class="reveal">
+                                <td th:text="${b.bookingCode}">BK</td>
+                                <td th:text="${b.contactName}">--</td>
+                                <td th:text="${b.departure != null && b.departure.tour != null ? b.departure.tour.title : 'Tour'}">Tour</td>
+                                <td th:text="${b.departure != null && b.departure.startDate != null ? #temporals.format(b.departure.startDate, 'dd/MM/yyyy') : #temporals.format(b.createdAt, 'dd/MM/yyyy')}">--/--/----</td>
+                                <td th:text="${#numbers.formatDecimal(b.totalAmount, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</td>
+                                <td>
+                                    <span th:switch="${b.status != null ? b.status.name() : ''}">
+                                        <span th:case="'PENDING'" class="badge badge-pending">Chờ xử lý</span>
+                                        <span th:case="'CONFIRMED'" class="badge badge-confirmed">Đã xác nhận</span>
+                                        <span th:case="'CANCEL_REQUESTED'" class="badge badge-canceled">Yêu cầu hủy</span>
+                                        <span th:case="'CANCELED'" class="badge badge-canceled">Đã hủy</span>
+                                        <span th:case="'COMPLETED'" class="badge badge-confirmed">Hoàn tất</span>
+                                        <span th:case="*" class="badge badge-confirmed">Đang xử lý</span>
+                                    </span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         </div>
     </div>
 </div>
@@ -185,10 +207,28 @@
 <th:block th:fragment="additionalJs">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script th:inline="javascript">
+        window.downloadChart = function(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const newCanvas = document.createElement('canvas');
+            newCanvas.width = canvas.width;
+            newCanvas.height = canvas.height;
+            const ctx = newCanvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+            ctx.drawImage(canvas, 0, 0);
+            const link = document.createElement('a');
+            link.download = filename + '.png';
+            link.href = newCanvas.toDataURL('image/png');
+            link.click();
+        };
+
         document.addEventListener('DOMContentLoaded', function () {
+            // Booking Chart
+            let bookingChartInstance = null;
             if (typeof Chart !== 'undefined' && document.getElementById('bookingChart')) {
                 const ctx = document.getElementById('bookingChart').getContext('2d');
-                new Chart(ctx, {
+                bookingChartInstance = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: bookingChartLabels,
@@ -207,11 +247,100 @@
                         responsive: true,
                         plugins: {
                             legend: { display: false },
-                            title: { display: false }
+                            tooltip: {
+                                backgroundColor: 'rgba(0,0,0,0.8)',
+                                padding: 12,
+                                borderRadius: 8
+                            }
                         },
                         scales: {
                             x: { grid: { display: false } },
-                            y: { beginAtZero: true, grid: { color: '#eee' } }
+                            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }
+                        }
+                    }
+                });
+            }
+
+            // Dynamic period switching
+            window.loadBookingChart = function(period, btn) {
+                // Toggle active button style
+                document.querySelectorAll('.chart-period-btn').forEach(function(b) {
+                    b.classList.remove('btn-primary');
+                    b.classList.add('btn-ghost');
+                });
+                btn.classList.remove('btn-ghost');
+                btn.classList.add('btn-primary');
+
+                fetch('/admin/api/booking-chart?period=' + period)
+                    .then(function(res) { return res.json(); })
+                    .then(function(json) {
+                        if (bookingChartInstance) {
+                            bookingChartInstance.data.labels = json.labels;
+                            bookingChartInstance.data.datasets[0].data = json.data;
+                            bookingChartInstance.update();
+                        }
+                    })
+                    .catch(function(err) { console.error('Chart load error:', err); });
+            };
+
+            // Revenue Chart
+            if (typeof Chart !== 'undefined' && document.getElementById('revenueChart')) {
+                const ctx = document.getElementById('revenueChart').getContext('2d');
+                const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                gradient.addColorStop(0, 'rgba(40, 167, 69, 0.2)');
+                gradient.addColorStop(1, 'rgba(40, 167, 69, 0)');
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: revenueChartLabels,
+                        datasets: [{
+                            label: 'Doanh thu (₫)',
+                            data: revenueChartData,
+                            borderColor: '#28a745',
+                            backgroundColor: gradient,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#28a745',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(0,0,0,0.8)',
+                                padding: 12,
+                                borderRadius: 8,
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) label += ': ';
+                                        if (context.parsed.y !== null) {
+                                            label += new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.parsed.y);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(0,0,0,0.05)' },
+                                ticks: {
+                                    callback: function(value) {
+                                        if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+                                        if (value >= 1000) return (value / 1000).toFixed(0) + 'k';
+                                        return value;
+                                    }
+                                }
+                            }
                         }
                     }
                 });

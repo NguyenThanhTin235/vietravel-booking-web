@@ -10,6 +10,7 @@ import com.vietravel.booking.web.dto.content.NewsUpsertRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.vietravel.booking.domain.elasticsearch.NewsDocument;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -18,9 +19,11 @@ import java.util.Objects;
 public class NewsService {
 
      private final NewsRepository newsRepository;
+     private final com.vietravel.booking.service.tour.ElasticsearchSyncService elasticsearchSyncService;
 
-     public NewsService(NewsRepository newsRepository) {
+     public NewsService(NewsRepository newsRepository, com.vietravel.booking.service.tour.ElasticsearchSyncService elasticsearchSyncService) {
           this.newsRepository = newsRepository;
+          this.elasticsearchSyncService = elasticsearchSyncService;
      }
 
      @Transactional(readOnly = true)
@@ -44,7 +47,9 @@ public class NewsService {
           }
           News news = new News();
           applyToEntity(news, req);
-          return toResponse(newsRepository.save(news));
+          News saved = newsRepository.save(news);
+          elasticsearchSyncService.syncNewsAsync(saved.getId());
+          return toResponse(saved);
      }
 
      @Transactional
@@ -61,7 +66,9 @@ public class NewsService {
           });
 
           applyToEntity(news, req);
-          return toResponse(newsRepository.save(news));
+          News saved = newsRepository.save(news);
+          elasticsearchSyncService.syncNewsAsync(saved.getId());
+          return toResponse(saved);
      }
 
      @Transactional
@@ -71,6 +78,7 @@ public class NewsService {
                throw new RuntimeException("Không tìm thấy tin tức");
           }
           newsRepository.deleteById(id);
+          elasticsearchSyncService.deleteNewsAsync(id);
      }
 
      @Transactional(readOnly = true)
@@ -79,6 +87,45 @@ public class NewsService {
                     .sorted(Comparator.comparing(News::getCreatedAt).reversed())
                     .map(this::toPublicListItem)
                     .toList();
+     }
+
+     @Transactional(readOnly = true)
+     public List<NewsPublicListItem> searchPublic(String q) {
+          if (q == null || q.isBlank()) {
+               return listPublic();
+          }
+
+          co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery.Builder boolQueryBuilder = 
+               new co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery.Builder();
+          
+          boolQueryBuilder.must(co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders.term(t -> t.field("status").value("PUBLISHED")));
+          boolQueryBuilder.must(co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders.multiMatch(m -> m
+                    .fields("title", "summary")
+                    .query(q)
+                    .fuzziness("AUTO")));
+
+          org.springframework.data.elasticsearch.client.elc.NativeQuery query = 
+               org.springframework.data.elasticsearch.client.elc.NativeQuery.builder()
+                    .withQuery(boolQueryBuilder.build()._toQuery())
+                    .build();
+
+          org.springframework.data.elasticsearch.core.SearchHits<NewsDocument> searchHits = 
+               elasticsearchSyncService.getElasticsearchOperations().search(query, NewsDocument.class);
+
+          return searchHits.getSearchHits().stream()
+                    .map(hit -> toPublicListItemFromDoc(hit.getContent()))
+                    .toList();
+     }
+
+     private NewsPublicListItem toPublicListItemFromDoc(NewsDocument doc) {
+          NewsPublicListItem item = new NewsPublicListItem();
+          item.setId(doc.getId());
+          item.setTitle(doc.getTitle());
+          item.setSlug(doc.getSlug());
+          item.setThumbnail(doc.getThumbnail());
+          item.setSummary(doc.getSummary());
+          // Note: CreatedAt is not in doc, but for search results it might be fine or we add it to doc
+          return item;
      }
 
      @Transactional

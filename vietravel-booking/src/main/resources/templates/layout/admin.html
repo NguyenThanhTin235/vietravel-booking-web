@@ -6,6 +6,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title th:text="${pageTitle}?:'Quản trị'">Quản trị</title>
+    
+    <script>
+        (function() {
+            var saved = localStorage.getItem("theme-preference") || "light";
+            document.documentElement.setAttribute("data-theme", saved);
+        })();
+    </script>
 
     <link rel="stylesheet" th:href="@{/css/admin.css}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,7 +46,7 @@
 
 
         <section class="admin-content">
-            <div class="admin-container" th:replace="${content}"></div>
+            <div class="admin-container" th:insert="${content}"></div>
         </section>
 
         <footer class="admin-footer">

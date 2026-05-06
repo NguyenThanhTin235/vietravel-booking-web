@@ -92,6 +92,7 @@
 										<div><span>Thời gian</span><b id="calendarInfoDuration">--</b></div>
 										<div><span>Giá người lớn</span><b id="calendarInfoPriceAdult">--</b></div>
 										<div><span>Giá trẻ em</span><b id="calendarInfoPriceChild">--</b></div>
+										<div><span>Chỗ còn lại</span><b id="calendarInfoSlots">--</b></div>
 									</div>
 								</div>
 								<div class="calendar-panel"
@@ -118,9 +119,12 @@
 												th:classappend="${!d.inMonth ? ' is-outside' : (d.available ? ' is-available' : '')}">
 											<button class="calendar-day-btn" type="button"
 													th:if="${d.available}"
-													th:attr="data-date=${#temporals.format(d.date, 'yyyy-MM-dd')}, data-price-adult=${d.priceAdult}, data-price-adult-label=${d.priceLabel}, data-price-child=${d.priceChild}, data-price-child-label=${d.priceChildLabel != null ? d.priceChildLabel : ''}">
+													th:attr="data-date=${#temporals.format(d.date, 'yyyy-MM-dd')}, data-price-adult=${d.priceAdult}, data-price-adult-label=${d.priceLabel}, data-price-child=${d.priceChild}, data-price-child-label=${d.priceChildLabel != null ? d.priceChildLabel : ''}, data-slots-available=${d.slotsAvailable != null ? d.slotsAvailable : 0}, data-slots-total=${d.slotsTotal != null ? d.slotsTotal : 0}">
 													<span class="day-num" th:text="${d.day}">5</span>
 													<span class="day-price" th:text="${d.priceLabel}">4,290K</span>
+													<span class="day-slots"
+														  th:text="${d.slotsAvailable != null ? d.slotsAvailable : 0}"
+														  th:classappend="${(d.slotsAvailable != null && d.slotsAvailable <= 5) ? ' is-low' : ''}">0</span>
 											</button>
 											<div class="calendar-day-cell" th:if="${!d.available}">
 												<span class="day-num" th:text="${d.day}">1</span>

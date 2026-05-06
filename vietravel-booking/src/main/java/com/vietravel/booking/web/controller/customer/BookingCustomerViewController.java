@@ -4,6 +4,9 @@ import com.vietravel.booking.service.booking.BookingService;
 import com.vietravel.booking.domain.entity.booking.BookingStatus;
 import com.vietravel.booking.domain.entity.booking.PaymentStatus;
 import com.vietravel.booking.web.dto.booking.BookingHistoryView;
+import com.vietravel.booking.service.payment.PaymentService;
+import com.vietravel.booking.service.payment.VnpayService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,9 +23,49 @@ import java.util.List;
 public class BookingCustomerViewController {
 
      private final BookingService bookingService;
+     private final PaymentService paymentService;
+     private final VnpayService vnpayService;
 
-     public BookingCustomerViewController(BookingService bookingService) {
+     public BookingCustomerViewController(BookingService bookingService, PaymentService paymentService,
+               VnpayService vnpayService) {
           this.bookingService = bookingService;
+          this.paymentService = paymentService;
+          this.vnpayService = vnpayService;
+     }
+
+     /**
+      * Retry payment for a booking (thanh toán lại)
+      */
+     @PostMapping("/{id}/pay")
+     public String repay(@PathVariable("id") Long id, HttpServletRequest request, Model model) {
+          BookingHistoryView view = bookingService.getMyBookingDetail(id);
+          if (view == null || view.getBooking() == null) {
+               return "redirect:/customer/bookings";
+          }
+          // Only allow retry if payment failed or unpaid (INIT)
+          PaymentStatus status = view.getPaymentStatus();
+          if (status != PaymentStatus.FAILED && status != PaymentStatus.INIT) {
+               return "redirect:/customer/bookings/" + id + "?pay=not-allowed";
+          }
+          var payment = paymentService.createPaymentForBooking(view.getBooking());
+          String ipAddress = getClientIp(request);
+          String paymentUrl = vnpayService.buildPaymentUrl(payment, view.getBooking(), ipAddress);
+          return "redirect:" + paymentUrl;
+     }
+
+     private String getClientIp(HttpServletRequest request) {
+          if (request == null) {
+               return "127.0.0.1";
+          }
+          String forwarded = request.getHeader("X-Forwarded-For");
+          if (forwarded != null && !forwarded.isBlank()) {
+               return forwarded.split(",")[0].trim();
+          }
+          String realIp = request.getHeader("X-Real-IP");
+          if (realIp != null && !realIp.isBlank()) {
+               return realIp;
+          }
+          return request.getRemoteAddr();
      }
 
      @GetMapping

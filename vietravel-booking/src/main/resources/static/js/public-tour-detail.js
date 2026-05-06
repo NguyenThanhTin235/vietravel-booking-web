@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
      const calendarInfoDuration = document.getElementById("calendarInfoDuration");
      const calendarInfoPriceAdult = document.getElementById("calendarInfoPriceAdult");
      const calendarInfoPriceChild = document.getElementById("calendarInfoPriceChild");
+     const calendarInfoSlots = document.getElementById("calendarInfoSlots");
 
      const monthItems = Array.from(document.querySelectorAll(".calendar-month-item"));
      const panels = Array.from(document.querySelectorAll(".calendar-panel"));
@@ -114,6 +115,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     calendarInfoDuration.textContent = calendarInfo.getAttribute("data-duration") || "--";
                     calendarInfoPriceAdult.textContent = priceAdultLabel || "--";
                     calendarInfoPriceChild.textContent = priceChildLabel || "--";
+                    if (calendarInfoSlots) {
+                         const avail = parseInt(btn.getAttribute("data-slots-available") || "0", 10);
+                         const total = parseInt(btn.getAttribute("data-slots-total") || "0", 10);
+                         if (total > 0) {
+                              calendarInfoSlots.textContent = `${avail}/${total} chỗ`;
+                              calendarInfoSlots.style.color = avail <= 5 ? "#e03131" : avail <= 15 ? "#f08c00" : "#2f9e44";
+                         } else {
+                              calendarInfoSlots.textContent = "--";
+                              calendarInfoSlots.style.color = "";
+                         }
+                    }
                     calendarInfo.classList.add("is-open");
                     calendarInfo.setAttribute("aria-hidden", "false");
                }

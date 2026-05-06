@@ -11,15 +11,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 @Controller
@@ -74,6 +79,25 @@ public class AdminDashboardController {
           model.addAttribute("bookingChartLabels", bookingChartLabels);
           model.addAttribute("bookingChartData", bookingChartData);
 
+          // Monthly revenue chart data
+          List<String> revenueChartLabels = Arrays.asList(
+                    "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
+                    "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12");
+          BigDecimal[] revenueDataArr = new BigDecimal[12];
+          for (int i = 0; i < 12; i++)
+               revenueDataArr[i] = BigDecimal.ZERO;
+
+          List<Object[]> monthlyRevenue = paymentRepository.getMonthlyRevenue(today.getYear());
+          for (Object[] row : monthlyRevenue) {
+               int month = (int) row[0];
+               BigDecimal sum = (BigDecimal) row[1];
+               if (month >= 1 && month <= 12) {
+                    revenueDataArr[month - 1] = sum;
+               }
+          }
+          model.addAttribute("revenueChartLabels", revenueChartLabels);
+          model.addAttribute("revenueChartData", Arrays.asList(revenueDataArr));
+
           CalendarView calendarView = buildCalendar(today);
           model.addAttribute("calendarLabel", calendarView.label());
           model.addAttribute("calendarDays", calendarView.days());
@@ -82,6 +106,54 @@ public class AdminDashboardController {
           model.addAttribute("activeMenu", "dashboard");
           model.addAttribute("activeSubMenu", "");
           return "admin/index";
+     }
+
+     @GetMapping("/api/booking-chart")
+     @ResponseBody
+     public Map<String, Object> bookingChartApi(
+               @RequestParam(defaultValue = "week") String period) {
+          LocalDate today = LocalDate.now();
+          List<String> labels = new ArrayList<>();
+          List<Long> data = new ArrayList<>();
+
+          switch (period) {
+               case "month" -> {
+                    // Last 30 days
+                    for (int i = 29; i >= 0; i--) {
+                         LocalDate d = today.minusDays(i);
+                         long count = bookingRepository.countByCreatedAtBetween(
+                                   d.atStartOfDay(), d.plusDays(1).atStartOfDay());
+                         labels.add(d.format(DateTimeFormatter.ofPattern("dd/MM")));
+                         data.add(count);
+                    }
+               }
+               case "year" -> {
+                    // 12 months of current year
+                    for (int m = 1; m <= 12; m++) {
+                         LocalDate start = LocalDate.of(today.getYear(), m, 1);
+                         LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+                         long count = bookingRepository.countByCreatedAtBetween(
+                                   start.atStartOfDay(), end.plusDays(1).atStartOfDay());
+                         labels.add("Tháng " + m);
+                         data.add(count);
+                    }
+               }
+               default -> {
+                    // week: last 7 days
+                    for (int i = 6; i >= 0; i--) {
+                         LocalDate d = today.minusDays(i);
+                         long count = bookingRepository.countByCreatedAtBetween(
+                                   d.atStartOfDay(), d.plusDays(1).atStartOfDay());
+                         labels.add(d.format(DateTimeFormatter.ofPattern("dd/MM")));
+                         data.add(count);
+                    }
+               }
+          }
+
+          Map<String, Object> result = new HashMap<>();
+          result.put("labels", labels);
+          result.put("data", data);
+          return result;
      }
 
      private CalendarView buildCalendar(LocalDate today) {

@@ -398,7 +398,15 @@ public class CampaignService {
           res.setViewCount(campaign.getViewCount());
           res.setStartAt(campaign.getStartAt());
           res.setEndAt(campaign.getEndAt());
-          res.setStatus(campaign.getStatus());
+          // Thiết lập trạng thái động theo ngày
+          java.time.LocalDateTime now = java.time.LocalDateTime.now();
+          if (campaign.getStartAt() != null && now.isBefore(campaign.getStartAt())) {
+               res.setStatus(CampaignStatus.SCHEDULE); // Khởi tạo
+          } else if (campaign.getEndAt() != null && now.isAfter(campaign.getEndAt())) {
+               res.setStatus(CampaignStatus.EXPIRED); // Hết hạn
+          } else {
+               res.setStatus(CampaignStatus.ACTIVE); // Đang được áp dụng
+          }
           res.setDiscountType(campaign.getDiscountType());
           res.setDiscountValue(campaign.getDiscountValue());
           res.setCode(campaign.getCode());

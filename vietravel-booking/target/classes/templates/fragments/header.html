@@ -10,6 +10,7 @@
         </a>
 
         <nav class="nav">
+            <a class="nav-link" th:classappend="${active}=='home'?' is-active':''" th:href="@{/}">Trang chủ</a>
             <a class="nav-link"
                th:classappend="${active}=='destination'?' is-active':''"
                href="#"
@@ -125,6 +126,7 @@
     </div>
 
     <div class="mobile-nav" id="mobileNav">
+        <a th:href="@{/}">Trang chủ</a>
         <a href="#">Điểm đến</a>
         <a th:href="@{/promotions}">Khuyến mãi</a>
         <a th:href="@{/news}">Tin tức</a>

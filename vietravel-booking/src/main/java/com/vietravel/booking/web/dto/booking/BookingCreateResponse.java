@@ -6,6 +6,7 @@ public class BookingCreateResponse {
      private String bookingCode;
      private BookingStatus status;
      private String paymentUrl;
+     private String message;
 
      public BookingCreateResponse() {
      }
@@ -43,5 +44,13 @@ public class BookingCreateResponse {
 
      public void setPaymentUrl(String paymentUrl) {
           this.paymentUrl = paymentUrl;
+     }
+
+     public String getMessage() {
+          return message;
+     }
+
+     public void setMessage(String message) {
+          this.message = message;
      }
 }

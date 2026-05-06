@@ -267,18 +267,18 @@ function renderDetail() {
      }
 
      if (badges) {
-          badges.innerHTML = ""
+          badges.innerHTML = "";
           if (current) {
-               const statusBadge = document.createElement("span")
-               statusBadge.className = "departure-badge" + (current.status === "CLOSED" ? " closed" : "")
-               statusBadge.textContent = current.status === "CLOSED" ? "Đã đóng" : "Đang mở"
-               badges.appendChild(statusBadge)
-
                if (current.completed) {
-                    const done = document.createElement("span")
-                    done.className = "departure-badge completed"
-                    done.textContent = "Đã hoàn thành"
-                    badges.appendChild(done)
+                    const done = document.createElement("span");
+                    done.className = "departure-badge completed";
+                    done.textContent = "Đã hoàn thành";
+                    badges.appendChild(done);
+               } else {
+                    const statusBadge = document.createElement("span");
+                    statusBadge.className = "departure-badge" + (current.status === "CLOSED" ? " closed" : "");
+                    statusBadge.textContent = current.status === "CLOSED" ? "Đã đóng" : "Đang mở";
+                    badges.appendChild(statusBadge);
                }
           }
      }

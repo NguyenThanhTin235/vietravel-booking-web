@@ -1,11 +1,15 @@
+
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout/base :: layout(
-            pageTitle=${pageTitle},
-            activeNav=${activeNav},
-            content=~{::content},
-            additionalJs=~{::additionalJs}
-      )}">
+    th:replace="~{layout/base :: layout(
+        pageTitle=${pageTitle},
+        activeNav=${activeNav},
+        content=~{::content},
+        additionalJs=~{::additionalJs}
+    )}">
+<head>
+    <link rel="stylesheet" th:href="@{/css/contact-custom.css}" href="/css/contact-custom.css" />
+</head>
 
 <th:block th:fragment="content">
     <section class="contact-hero">

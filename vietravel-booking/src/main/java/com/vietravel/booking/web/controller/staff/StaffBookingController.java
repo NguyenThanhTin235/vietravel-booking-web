@@ -2,15 +2,17 @@ package com.vietravel.booking.web.controller.staff;
 
 import com.vietravel.booking.domain.entity.booking.BookingStatus;
 import com.vietravel.booking.domain.repository.booking.BookingRepository;
+import com.vietravel.booking.service.ExcelExportService;
 import com.vietravel.booking.service.booking.BookingService;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
@@ -21,10 +23,12 @@ public class StaffBookingController {
 
      private final BookingRepository bookingRepository;
      private final BookingService bookingService;
+     private final ExcelExportService excelExportService;
 
-     public StaffBookingController(BookingRepository bookingRepository, BookingService bookingService) {
+     public StaffBookingController(BookingRepository bookingRepository, BookingService bookingService, ExcelExportService excelExportService) {
           this.bookingRepository = bookingRepository;
           this.bookingService = bookingService;
+          this.excelExportService = excelExportService;
      }
 
      @GetMapping("/create")
@@ -80,6 +84,31 @@ public class StaffBookingController {
           model.addAttribute("selectedStatus", status != null ? status.name() : "");
           model.addAttribute("statusOptions", BookingStatus.values());
           return "staff/bookings/process";
+     }
+
+     @GetMapping("/export")
+     public ResponseEntity<InputStreamResource> export(
+               @RequestParam(value = "from", required = false) LocalDate from,
+               @RequestParam(value = "to", required = false) LocalDate to,
+               @RequestParam(value = "status", required = false) BookingStatus status) throws IOException {
+
+          LocalDateTime start = from != null ? from.atStartOfDay() : null;
+          LocalDateTime end = to != null ? to.plusDays(1).atStartOfDay() : null;
+
+          var bookings = (start != null && end != null)
+                    ? bookingRepository.findByCreatedAtBetweenOrderByCreatedAtDesc(start, end)
+                    : bookingRepository.findTop50ByOrderByCreatedAtDesc();
+
+          if (status != null) {
+               bookings = bookings.stream().filter(b -> status.equals(b.getStatus())).collect(Collectors.toList());
+          }
+
+          InputStreamResource file = new InputStreamResource(excelExportService.exportBookings(bookings));
+
+          return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=staff_process_bookings.xlsx")
+                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .body(file);
      }
 
      @GetMapping("/{id}")

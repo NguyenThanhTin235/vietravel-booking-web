@@ -26,4 +26,9 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
      @Query("select coalesce(sum(p.amount), 0) from Payment p where p.status = :status")
      BigDecimal sumAmountByStatus(@Param("status") PaymentStatus status);
+
+     @Query("SELECT MONTH(p.createdAt), SUM(p.amount) FROM Payment p " +
+               "WHERE p.status = 'SUCCESS' AND YEAR(p.createdAt) = :year " +
+               "GROUP BY MONTH(p.createdAt)")
+     List<Object[]> getMonthlyRevenue(@Param("year") int year);
 }

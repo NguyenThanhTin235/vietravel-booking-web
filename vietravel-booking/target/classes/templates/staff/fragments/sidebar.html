@@ -14,6 +14,11 @@
     </div>
 
     <nav class="sidebar-nav">
+        <a class="nav-item nav-item-ghost" th:href="@{/}">
+            <span class="nav-ic">🏠</span>
+            <span class="nav-tx">Trang chủ</span>
+        </a>
+
         <a class="nav-item"
            th:classappend="${activeMenu=='dashboard'} ? ' active' : ''"
            th:href="@{/staff}">

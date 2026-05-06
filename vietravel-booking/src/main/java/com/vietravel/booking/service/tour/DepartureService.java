@@ -84,12 +84,15 @@ public class DepartureService {
           Departure d = departureRepository.findDetailById(id)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch khởi hành"));
 
+          // Không cho xóa ngày khởi hành đã qua ngày khởi hành
+          if (d.getStartDate() != null && d.getStartDate().isBefore(java.time.LocalDate.now())) {
+               throw new RuntimeException("Không thể xóa lịch khởi hành đã qua ngày khởi hành");
+          }
           Integer capacity = d.getCapacity();
           Integer available = d.getAvailable();
           if (capacity == null || available == null || !available.equals(capacity)) {
                throw new RuntimeException("Không thể xóa lịch trình vì đã có người đặt");
           }
-
           departureRepository.deleteById(id);
      }
 
@@ -102,6 +105,10 @@ public class DepartureService {
           }
           if (req.getStartDate() == null) {
                throw new RuntimeException("Ngày khởi hành không được rỗng");
+          }
+          // Không cho thêm ngày khởi hành bé hơn ngày hiện tại
+          if (req.getStartDate().isBefore(java.time.LocalDate.now())) {
+               throw new RuntimeException("Không thể thêm ngày khởi hành nhỏ hơn ngày hiện tại");
           }
           if (req.getStartLocation() == null) {
                throw new RuntimeException("Điểm khởi hành không được rỗng");
@@ -150,8 +157,21 @@ public class DepartureService {
           r.setPriceChild(d.getPriceChild());
           r.setStartLocation(d.getStartLocation());
           r.setStartLocationName(d.getStartLocation() != null ? d.getStartLocation().getLabel() : null);
-          r.setStatus(d.getStatus());
-          r.setCompleted(d.getStartDate() != null && d.getStartDate().isBefore(LocalDate.now()));
+
+          // Logic trạng thái động
+          LocalDate today = LocalDate.now();
+          LocalDate startDate = d.getStartDate();
+          boolean isCompleted = (startDate != null && startDate.isBefore(today));
+          r.setCompleted(isCompleted);
+          if (isCompleted) {
+               r.setStatus(DepartureStatus.CLOSED); // Hoặc tạo thêm status DONE nếu muốn
+          } else if (capacity != null && booked != null && booked >= capacity) {
+               r.setStatus(DepartureStatus.CLOSED); // Đủ số lượng: Đóng
+          } else if (startDate != null && !startDate.isAfter(today.plusDays(1))) {
+               r.setStatus(DepartureStatus.CLOSED); // Quá hạn đặt: Đóng
+          } else {
+               r.setStatus(DepartureStatus.OPEN); // Chưa đủ: Mở
+          }
           return r;
      }
 }

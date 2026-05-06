@@ -30,7 +30,9 @@ public class StaffBookingApiController {
                paymentService.createCounterPaymentSuccess(booking);
                return ResponseEntity.ok(new BookingCreateResponse(booking.getBookingCode(), booking.getStatus()));
           } catch (IllegalArgumentException ex) {
-               return ResponseEntity.badRequest().body(new BookingCreateResponse());
+               BookingCreateResponse res = new BookingCreateResponse();
+               res.setMessage(ex.getMessage());
+               return ResponseEntity.badRequest().body(res);
           }
      }
 }

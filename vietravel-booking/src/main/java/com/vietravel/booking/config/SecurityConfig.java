@@ -57,7 +57,18 @@ public class SecurityConfig {
                                                                 "/logout",
                                                                 "/login/**",
                                                                 "/css/**", "/js/**", "/images/**", "/vendor/**",
-                                                                "/favicon.ico")
+                                                                "/favicon.ico",
+                                                                "/news/**",
+                                                                "/promotions/**",
+                                                                "/contact/**")
+                                                .permitAll()
+
+                                                // ===== PUBLIC API (GET ONLY) =====
+                                                .requestMatchers(org.springframework.http.HttpMethod.GET,
+                                                                "/api/tour-categories", "/api/tour-categories/**",
+                                                                "/api/tour-lines", "/api/tour-lines/**",
+                                                                "/api/admin/tour-categories", "/api/admin/tour-categories/**",
+                                                                "/api/admin/destinations", "/api/admin/destinations/**")
                                                 .permitAll()
 
                                                 // ===== API =====

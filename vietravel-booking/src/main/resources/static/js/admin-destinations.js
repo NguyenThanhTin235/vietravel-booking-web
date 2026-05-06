@@ -7,7 +7,7 @@ function debounce(fn,ms){
 }
 
 async function api(url,opts){
-    const res=await fetch(url,Object.assign({headers:{"Content-Type":"application/json"}},opts||{}))
+    const res=await fetch(url,Object.assign({headers:{"Content-Type":"application/json"},credentials:"include"},opts||{}))
     if(res.status===204)return null
     const ct=res.headers.get("content-type")||""
     let data=null

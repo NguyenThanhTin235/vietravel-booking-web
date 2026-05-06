@@ -30,12 +30,12 @@
 
                 <div class="tl-bar">
                     <div class="tl-search">
-                        <select id="categoryId" class="input" style="min-width:240px">
+                        <select id="categoryId" class="input" style="width: 200px">
                             <option value="">Tất cả danh mục</option>
                             <option th:each="c:${categories}" th:value="${c.id}" th:text="${c.name}">Danh mục</option>
                         </select>
 
-                        <input id="q" class="input" placeholder="Tìm theo tên hoặc slug...">
+                        <input id="q" class="input" style="width: 320px" placeholder="Tìm theo tên hoặc slug...">
                         <button id="btnReload" class="tl-btn">Tải lại</button>
                     </div>
                     <div id="msg" class="tl-hint"></div>

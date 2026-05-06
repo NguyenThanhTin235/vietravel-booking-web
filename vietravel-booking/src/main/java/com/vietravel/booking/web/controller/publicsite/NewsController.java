@@ -25,7 +25,7 @@ public class NewsController {
      @GetMapping
      public String list(@RequestParam(value = "page", required = false, defaultValue = "1") int page, Model model) {
           List<NewsPublicListItem> all = newsService.listPublic();
-          int pageSize = 6;
+          int pageSize = 4;
           int totalItems = all.size();
           int totalPages = (int) Math.ceil(totalItems / (double) pageSize);
           int safePage = Math.max(1, Math.min(page, Math.max(totalPages, 1)));

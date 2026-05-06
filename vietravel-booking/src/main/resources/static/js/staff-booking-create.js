@@ -408,7 +408,7 @@
                          state.tours.forEach(function (t) {
                               var opt = document.createElement("option");
                               opt.value = t.id;
-                              opt.textContent = (t.code ? t.code + " - " : "") + t.title;
+                              var title = (t.code ? t.code + " - " : "") + t.title; if (title.length > 80) title = title.substr(0, 77) + "..."; opt.textContent = title;
                               tourSelect.appendChild(opt);
                          });
                     })
@@ -487,11 +487,18 @@
                     fetch("/api/staff/bookings", {
                          method: "POST",
                          headers: { "Content-Type": "application/json" },
+                         credentials: "include",
                          body: JSON.stringify(payload)
                     })
                          .then(function (res) {
                               if (!res.ok) return res.text().then(function (t) {
-                                   throw new Error(t || "Không thể tạo booking");
+                                   var msg = t;
+                                   try {
+                                        var obj = JSON.parse(t);
+                                        if (obj.message) msg = obj.message;
+                                        else if (obj.errorMessage) msg = obj.errorMessage;
+                                   } catch(e) {}
+                                   throw new Error(msg || "Không thể tạo booking");
                               });
                               return res.json();
                          })

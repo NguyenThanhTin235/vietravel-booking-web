@@ -41,17 +41,19 @@
 .tl-chip {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 10px;
+    gap: 5px;
+    padding: 3px 10px;
     border-radius: 999px;
     background: rgba(59, 130, 246, .10);
     border: 1px solid rgba(59, 130, 246, .18);
     color: var(--text);
-    font-weight: 800
+    font-weight: 800;
+    font-size: 12px;
 }
 
 .tl-chip input {
-    transform: scale(1.05)
+    transform: scale(0.65);
+    margin-right: 1px;
 }
 
 .tl-bar {
@@ -66,11 +68,10 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    flex-wrap: wrap
 }
 
 .tl-search .input {
-    min-width: 320px
+    min-width: 200px;
 }
 
 .tl-hint {
@@ -92,7 +93,7 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    background: #fff
+    background: var(--card)
 }
 
 .tl-table th,
@@ -103,7 +104,7 @@
 }
 
 .tl-table th {
-    background: linear-gradient(180deg, #ffffff, rgba(245, 247, 251, .75));
+    background: var(--bg-alt);
     position: sticky;
     top: 0;
     z-index: 2;
@@ -177,7 +178,7 @@
     padding: 10px 12px;
     border-radius: 12px;
     border: 1px solid var(--border);
-    background: #fff;
+    background: var(--card);
     font-weight: 900;
     cursor: pointer;
     transition: transform .12s ease, box-shadow .12s ease, background .12s ease
@@ -280,10 +281,10 @@
 .tl-toast {
     min-width: 280px;
     max-width: 360px;
-    background: #fff;
+    background: var(--card);
     border: 1px solid var(--border);
     border-radius: 16px;
-    box-shadow: 0 18px 50px rgba(2, 20, 60, .18);
+    box-shadow: var(--shadow);
     padding: 12px 14px;
     display: flex;
     gap: 10px;
@@ -350,10 +351,10 @@
 
 .tl-modal {
     width: min(520px, 92%);
-    background: #fff;
+    background: var(--card);
     border-radius: 20px;
     border: 1px solid var(--border);
-    box-shadow: 0 24px 70px rgba(2, 20, 60, .26);
+    box-shadow: var(--shadow);
     padding: 16px
 }
 
@@ -404,19 +405,18 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
-    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-    border: 1px solid rgba(148, 163, 184, .22);
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 16px;
     padding: 16px;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8)
 }
 
 .tl-grid2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
-    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-    border: 1px dashed rgba(148, 163, 184, .35);
+    background: var(--bg-alt);
+    border: 1px dashed var(--border);
     border-radius: 14px;
     padding: 12px
 }
@@ -429,6 +429,10 @@
     .tl-search .input {
         min-width: unset;
         width: 100%
+    }
+
+    .tl-search {
+        flex-wrap: wrap;
     }
 }
 
@@ -446,10 +450,9 @@
     width: 100%;
     padding: 11px 12px;
     border-radius: 12px;
-    border: 1px solid rgba(148, 163, 184, .35);
-    background: #fff;
+    border: 1px solid var(--border);
+    background: var(--input-bg);
     font-weight: 700;
-    box-shadow: 0 8px 18px rgba(15, 23, 42, .06)
 }
 
 .tl-field .input:focus {
@@ -474,7 +477,7 @@
     border-radius: 12px;
     border: 1px solid var(--border);
     outline: none;
-    background: #fff;
+    background: var(--input-bg);
     font-weight: 800;
     transition: box-shadow .12s ease, border-color .12s ease
 }
@@ -485,8 +488,8 @@
 }
 
 .tl-chip {
-    border: 1px solid #e5e7eb;
-    background: #f8fafc;
+    border: 1px solid var(--border);
+    background: var(--bg-alt);
     transition: .2s ease;
 }
 
@@ -509,17 +512,17 @@
     padding: 6px 4px;
     margin-bottom: 12px;
     margin-left: 18px;
-    color: #64748b;
+    color: var(--text);
     font-weight: 700;
     font-size: 14px;
 }
 
 .tl-breadcrumb .current {
-    color: #1d4ed8;
+    color: var(--primary);
     text-decoration: none;
     padding: 6px 10px;
     border-radius: 999px;
-    background: rgba(59, 130, 246, .08);
+    background: var(--primary-weak);
     border: 1px solid rgba(59, 130, 246, .18);
     transition: .15s ease;
 }
@@ -550,9 +553,9 @@
 }
 
 .tl-breadcrumb a {
-    color: #0f172a;
-    background: rgba(15, 23, 42, .06);
-    border: 1px solid rgba(15, 23, 42, .10);
+    color: var(--text);
+    background: var(--input-bg);
+    border: 1px solid var(--border);
     padding: 6px 10px;
     border-radius: 999px;
 }

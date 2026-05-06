@@ -175,20 +175,21 @@ function renderListPage() {
           }[x.status] || "--"
           const featuredLabel = x.isFeatured ? "Co" : "Khong"
           return `
-            <tr>
-                <td>${x.id}</td>
-                <td>${x.title || ""}</td>
-                <td><span class="${statusBadge}">${statusLabel}</span></td>
-                <td>${featuredLabel}</td>
-                <td>${x.viewCount || 0}</td>
-                <td>${formatDate(x.createdAt)}</td>
-                <td>
-                    <div class="table-actions process-actions-row">
-                        <a class="btn btn-ghost" href="/admin/news/edit?id=${x.id}">Sua</a>
-                    </div>
-                </td>
-            </tr>
-        `
+               <tr>
+                    <td>${x.id}</td>
+                    <td>${x.title || ""}</td>
+                    <td><span class="${statusBadge}">${statusLabel}</span></td>
+                    <td>${featuredLabel}</td>
+                    <td>${x.viewCount || 0}</td>
+                    <td>${formatDate(x.createdAt)}</td>
+                    <td>
+                         <div class="table-actions process-actions-row">
+                              <a class="btn btn-ghost" href="/admin/news/${x.id}">Xem chi tiết</a>
+                              <a class="btn btn-ghost" href="/admin/news/edit?id=${x.id}">Sửa</a>
+                         </div>
+                    </td>
+               </tr>
+          `
      }).join("")
 }
 
@@ -370,3 +371,4 @@ document.addEventListener("DOMContentLoaded", () => {
           loadForm().catch(() => { })
      }
 })
+

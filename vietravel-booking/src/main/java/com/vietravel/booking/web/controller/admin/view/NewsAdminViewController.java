@@ -35,4 +35,9 @@ public class NewsAdminViewController {
           model.addAttribute("newsId", id);
           return "admin/news/form-page";
      }
+
+     @GetMapping("/detail")
+     public String detail(@RequestParam("id") Long id) {
+          return "redirect:/admin/news/" + id;
+     }
 }

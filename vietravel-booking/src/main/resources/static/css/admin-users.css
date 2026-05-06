@@ -41,8 +41,8 @@
 
 .tl-pill.role {
     background: rgba(14, 165, 233, .10);
-    border-color: rgba(14, 165, 233, .22);
-    color: #0b4a6f;
+    border-color: rgba(14, 165, 233, .3);
+    color: #38bdf8;
 }
 
 .tl-pill.status-active {
@@ -85,7 +85,7 @@
     height: 76px;
     border-radius: 18px;
     border: 1px solid var(--border);
-    background: linear-gradient(180deg, #fff, rgba(245, 247, 251, .75));
+    background: var(--bg-alt);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -134,7 +134,7 @@
     border-radius: 16px;
     border: 1px solid var(--border);
     overflow: hidden;
-    background: linear-gradient(180deg, #fff, rgba(245, 247, 251, .75));
+    background: var(--bg-alt);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -192,6 +192,6 @@
 }
 
 .input[readonly] {
-    background: rgba(245, 247, 251, .75);
-    border-color: rgba(15, 23, 42, .10);
+    background: var(--bg-alt);
+    border-color: var(--border);
 }

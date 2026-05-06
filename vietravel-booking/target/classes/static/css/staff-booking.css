@@ -1,0 +1,31 @@
+/* booking-create-card: chỉnh viền trái/phải cho giao diện tạo booking staff */
+.booking-create-card,
+.inquiry-card,
+.kpi {
+     margin-left: 24px;
+     margin-right: 24px;
+     border-radius: 18px;
+     border: 1.5px solid var(--border);
+     box-shadow: 0 4px 24px rgba(2, 20, 60, 0.07);
+     background: var(--card);
+}
+
+.kpi-card {
+     margin-left: 24px;
+     margin-right: 24px;
+     border-radius: 18px;
+     border: 1.5px solid var(--border);
+     box-shadow: 0 4px 24px rgba(2, 20, 60, 0.07);
+     background: var(--card);
+}
+
+@media (max-width: 900px) {
+
+     .booking-create-card,
+     .inquiry-card,
+     .kpi,
+     .kpi-card {
+          margin-left: 8px;
+          margin-right: 8px;
+     }
+}

@@ -52,6 +52,10 @@ public class TourCalendarMonth {
           private String priceLabel;
           private BigDecimal priceChild;
           private String priceChildLabel;
+          private Integer slotsAvailable;
+          private Integer slotsTotal;
+          private Integer booked; // số lượng đã đặt
+          private Integer capacity; // tổng số chỗ
 
           public LocalDate getDate() {
                return date;
@@ -115,6 +119,38 @@ public class TourCalendarMonth {
 
           public void setPriceChildLabel(String priceChildLabel) {
                this.priceChildLabel = priceChildLabel;
+          }
+
+          public Integer getSlotsAvailable() {
+               return slotsAvailable;
+          }
+
+          public void setSlotsAvailable(Integer slotsAvailable) {
+               this.slotsAvailable = slotsAvailable;
+          }
+
+          public Integer getSlotsTotal() {
+               return slotsTotal;
+          }
+
+          public void setSlotsTotal(Integer slotsTotal) {
+               this.slotsTotal = slotsTotal;
+          }
+
+          public Integer getBooked() {
+               return booked;
+          }
+
+          public void setBooked(Integer booked) {
+               this.booked = booked;
+          }
+
+          public Integer getCapacity() {
+               return capacity;
+          }
+
+          public void setCapacity(Integer capacity) {
+               this.capacity = capacity;
           }
      }
 }

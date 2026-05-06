@@ -10,8 +10,11 @@ spring:
   application:
     name: vietravel-booking
 
+  elasticsearch:
+    uris: http://localhost:9200
+
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/vietravel_booking?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci&useSSL=false&serverTimezone=Asia/Ho_Chi_Minh
+    url: jdbc:mysql://127.0.0.1:3306/vietravel?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci&useSSL=false&serverTimezone=Asia/Ho_Chi_Minh
     username: root
     password: "23092005"
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -19,7 +22,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: none   # DB bạn đã tạo bằng SQL => none / validate
+      ddl-auto: none # DB bạn đã tạo bằng SQL => none / validate
     properties:
       hibernate:
         format_sql: true
@@ -29,7 +32,7 @@ spring:
 
   sql:
     init:
-      mode: never     # bạn đã chạy schema.sql/seed.sql thủ công => never
+      mode: never # bạn đã chạy schema.sql/seed.sql thủ công => never
       encoding: UTF-8
 
   thymeleaf:
@@ -41,8 +44,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: tinthanhn81@gmail.com
-    password: onrcrcgevjclevax
+    username: thanhtin23122@gmail.com
+    password: cyirtryicnrudyxf
     properties:
       mail:
         smtp:
@@ -53,8 +56,6 @@ spring:
   messages:
     basename: messages
     encoding: UTF-8
-
-
 
 logging:
   level:
@@ -91,8 +92,3 @@ app:
     cloud-name: dmxxo6wgl
     api-key: 315628768938735
     api-secret: w9ziEUTs3giXY9hR8O1S75NBIF4
-
-
-
-
-

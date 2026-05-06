@@ -3,6 +3,7 @@ com\vietravel\booking\web\controller\admin\api\TourAdminApiController.class
 com\vietravel\booking\domain\entity\tour\TourImage.class
 com\vietravel\booking\config\VnpayProperties.class
 com\vietravel\booking\domain\entity\tour\TourCategory.class
+com\vietravel\booking\domain\elasticsearch\NewsDocument$NewsDocumentBuilder.class
 com\vietravel\booking\domain\entity\booking\PaymentType.class
 com\vietravel\booking\web\dto\tour\TourLineUpsertRequest.class
 com\vietravel\booking\service\promotion\CampaignService$CampaignDiscountResult.class
@@ -14,6 +15,7 @@ com\vietravel\booking\web\dto\auth\LoginRequest.class
 com\vietravel\booking\web\dto\promotion\CampaignPublicDetailView.class
 com\vietravel\booking\service\auth\ProfileService.class
 com\vietravel\booking\domain\repository\tour\WishlistRepository.class
+com\vietravel\booking\web\controller\admin\AdminNewsController.class
 com\vietravel\booking\domain\entity\tour\TourLine.class
 com\vietravel\booking\common\exception\GlobalExceptionHandler.class
 com\vietravel\booking\domain\repository\tour\DestinationRepository$DestinationCount.class
@@ -27,6 +29,7 @@ com\vietravel\booking\web\dto\profile\ProfileUpdateRequest.class
 com\vietravel\booking\domain\entity\tour\TransportMode.class
 com\vietravel\booking\web\controller\admin\view\DestinationAdminViewController.class
 com\vietravel\booking\web\controller\admin\view\TransportModeAdminViewController.class
+com\vietravel\booking\web\controller\admin\AdminDashboardController$CalendarDay.class
 com\vietravel\booking\domain\entity\support\ContactInquiry.class
 com\vietravel\booking\domain\entity\booking\Booking.class
 com\vietravel\booking\config\GlobalControllerAdvice.class
@@ -54,6 +57,7 @@ com\vietravel\booking\web\controller\publicsite\PaymentReturnController.class
 com\vietravel\booking\web\controller\staff\StaffProfileController.class
 com\vietravel\booking\domain\entity\support\ContactInquiryStatus.class
 com\vietravel\booking\web\controller\admin\api\TourCategoryAdminApiController.class
+com\vietravel\booking\domain\elasticsearch\TourDocument$TourDocumentBuilder.class
 com\vietravel\booking\web\controller\admin\view\DepartureAdminViewController.class
 com\vietravel\booking\web\dto\tour\WishlistItemResponse.class
 com\vietravel\booking\web\controller\staff\api\StaffDepartureApiController.class
@@ -83,7 +87,9 @@ com\vietravel\booking\web\dto\tour\DestinationResponse.class
 com\vietravel\booking\domain\entity\support\NotificationType.class
 com\vietravel\booking\domain\entity\promotion\CampaignScope.class
 com\vietravel\booking\domain\entity\promotion\CampaignDiscountType.class
+com\vietravel\booking\domain\elasticsearch\TourDocument.class
 com\vietravel\booking\domain\repository\promotion\CampaignRepository.class
+com\vietravel\booking\domain\elasticsearch\TourSearchRepository.class
 com\vietravel\booking\web\dto\booking\BookingHistoryView.class
 com\vietravel\booking\domain\repository\tour\TourLineRepository.class
 com\vietravel\booking\web\dto\auth\VerifyRequest.class
@@ -104,6 +110,7 @@ com\vietravel\booking\domain\repository\support\ContactInquiryRepository.class
 com\vietravel\booking\web\controller\admin\view\TourLineAdminViewController.class
 com\vietravel\booking\domain\entity\auth\EmailVerificationCode.class
 com\vietravel\booking\web\dto\content\NewsPublicListItem.class
+com\vietravel\booking\domain\elasticsearch\NewsDocument.class
 com\vietravel\booking\service\payment\PaymentService.class
 com\vietravel\booking\web\controller\admin\api\AdminUserApiController.class
 com\vietravel\booking\web\controller\publicsite\AuthController.class
@@ -127,16 +134,20 @@ com\vietravel\booking\web\controller\staff\StaffContactController.class
 com\vietravel\booking\web\controller\admin\api\UploadAdminApiController.class
 com\vietravel\booking\web\controller\publicsite\PromotionController.class
 com\vietravel\booking\domain\repository\promotion\CampaignScopeRepository.class
+com\vietravel\booking\web\controller\admin\AdminDashboardController.class
 com\vietravel\booking\config\AppConfig.class
 com\vietravel\booking\web\dto\tour\TourPublicDetailView$ItineraryDayView.class
+com\vietravel\booking\domain\proxy\DepartureProxy.class
 com\vietravel\booking\domain\entity\tour\WishlistId.class
 com\vietravel\booking\domain\entity\promotion\CampaignRedemption.class
+com\vietravel\booking\domain\proxy\DepartureAvailabilityProxy.class
 com\vietravel\booking\web\controller\publicsite\HomeController$PopularDestinationView.class
 com\vietravel\booking\domain\repository\content\NewsRepository.class
 com\vietravel\booking\web\controller\admin\view\AdminBookingViewController.class
 com\vietravel\booking\domain\entity\tour\StartLocation.class
 com\vietravel\booking\domain\entity\promotion\CampaignScopeType.class
 com\vietravel\booking\web\dto\profile\ProfileResponse.class
+com\vietravel\booking\domain\elasticsearch\NewsSearchRepository.class
 com\vietravel\booking\config\SecurityConfig.class
 com\vietravel\booking\config\CloudinaryConfig.class
 com\vietravel\booking\web\controller\staff\StaffBookingController.class
@@ -145,6 +156,7 @@ com\vietravel\booking\web\controller\admin\view\AdminUserAdminViewController.cla
 com\vietravel\booking\web\dto\auth\RegisterRequest.class
 com\vietravel\booking\web\controller\publicsite\ProfilePageController.class
 com\vietravel\booking\web\dto\tour\DepartureAdminResponse.class
+com\vietravel\booking\service\tour\ElasticsearchSyncService.class
 com\vietravel\booking\web\dto\booking\BookingCreateResponse.class
 com\vietravel\booking\web\controller\admin\view\CampaignAdminViewController.class
 com\vietravel\booking\service\payment\VnpayService.class
@@ -170,6 +182,7 @@ com\vietravel\booking\domain\repository\tour\DestinationRepository.class
 com\vietravel\booking\web\controller\publicsite\FaviconController.class
 com\vietravel\booking\web\controller\publicsite\ContactController$BranchRegionGroup.class
 com\vietravel\booking\service\promotion\CampaignService.class
+com\vietravel\booking\config\ElasticsearchInitializer.class
 com\vietravel\booking\web\controller\admin\api\DestinationAdminApiController.class
 com\vietravel\booking\domain\repository\auth\EmailVerificationCodeRepository.class
 com\vietravel\booking\service\support\BranchService.class
@@ -183,6 +196,7 @@ com\vietravel\booking\domain\entity\auth\UserRole.class
 com\vietravel\booking\domain\entity\booking\BookingPassenger.class
 com\vietravel\booking\web\dto\tour\TourUpsertRequest.class
 com\vietravel\booking\domain\entity\tour\Departure.class
+com\vietravel\booking\service\ExcelExportService.class
 com\vietravel\booking\service\tour\TourAdminService.class
 com\vietravel\booking\service\content\NewsService.class
 com\vietravel\booking\web\controller\admin\AdminBranchController.class
@@ -195,4 +209,5 @@ com\vietravel\booking\web\controller\publicsite\NewsController.class
 com\vietravel\booking\service\upload\CloudinaryService.class
 com\vietravel\booking\web\dto\tour\TourCategoryUpsertRequest.class
 com\vietravel\booking\web\controller\publicsite\ContactController.class
+com\vietravel\booking\web\controller\admin\AdminDashboardController$CalendarView.class
 com\vietravel\booking\web\controller\staff\api\StaffBookingApiController.class

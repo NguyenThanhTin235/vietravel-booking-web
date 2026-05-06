@@ -393,6 +393,37 @@
         loadCount();
     }
 
+    function initThemeToggle() {
+        var toggle = qs("#themeToggle");
+        if (!toggle) return;
+
+        var sun = qs(".theme-sun", toggle);
+        var moon = qs(".theme-moon", toggle);
+        var html = document.documentElement;
+
+        function setTheme(theme) {
+            html.setAttribute("data-theme", theme);
+            localStorage.setItem("theme-preference", theme);
+            if (theme === "dark") {
+                if (sun) sun.style.display = "none";
+                if (moon) moon.style.display = "block";
+            } else {
+                if (sun) sun.style.display = "block";
+                if (moon) moon.style.display = "none";
+            }
+        }
+
+        // Load saved theme
+        var saved = localStorage.getItem("theme-preference") || "light";
+        setTheme(saved);
+
+        toggle.addEventListener("click", function () {
+            var current = html.getAttribute("data-theme") || "light";
+            var next = current === "light" ? "dark" : "light";
+            setTheme(next);
+        });
+    }
+
     initDropdowns();
     initSidebarToggle();
     initPageTransitions();
@@ -403,6 +434,7 @@
     initActiveNavInk();
     initSidebarAutoScroll();
     initNotifications();
+    initThemeToggle();
 
     window.AdminUI = { toast: toast };
 })();

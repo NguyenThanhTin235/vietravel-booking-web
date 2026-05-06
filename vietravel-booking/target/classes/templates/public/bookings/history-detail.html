@@ -23,6 +23,7 @@
                     <div>
                         <b th:text="${bookingView.booking.departure != null && bookingView.booking.departure.tour != null ? bookingView.booking.departure.tour.title : 'Tour'}">Tour</b>
                         <div class="summary-code">Mã đặt tour: <span th:text="${bookingView.booking.bookingCode}">BK</span></div>
+                        <div class="summary-date">Ngày đặt: <span th:text="${#temporals.format(bookingView.booking.createdAt, 'dd/MM/yyyy HH:mm')}">--/--/---- --:--</span></div>
                         <div class="summary-date" th:if="${bookingView.booking.departure != null && bookingView.booking.departure.startDate != null}">
                             Ngày khởi hành: <span th:text="${#temporals.format(bookingView.booking.departure.startDate, 'dd/MM/yyyy')}">--/--/----</span>
                         </div>
@@ -55,6 +56,14 @@
                                     <span th:case="*" th:text="${bookingView.paymentStatus}">Thanh toán</span>
                                 </span>
                             </b>
+                            <span th:if="${(bookingView.paymentStatus != null && (bookingView.paymentStatus.name() == 'INIT' || bookingView.paymentStatus.name() == 'FAILED'))
+                                && (bookingView.booking.status != null && bookingView.booking.status.name() != 'CANCELED' && bookingView.booking.status.name() != 'CANCEL_REQUESTED')}"
+                                style="margin-left:12px">
+                                <form th:action="@{'/customer/bookings/' + ${bookingView.booking.id} + '/pay'}" method="post" style="display:inline">
+                                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <button class="btn-pay" type="submit">Thanh toán lại</button>
+                                </form>
+                            </span>
                         </div>
                         <div class="summary-row">
                             <span>Tổng tiền</span>

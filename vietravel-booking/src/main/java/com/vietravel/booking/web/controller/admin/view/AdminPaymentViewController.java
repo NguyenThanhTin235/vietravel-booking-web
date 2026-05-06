@@ -6,6 +6,11 @@ import com.vietravel.booking.domain.entity.booking.PaymentMethod;
 import com.vietravel.booking.domain.entity.booking.PaymentStatus;
 import com.vietravel.booking.domain.entity.booking.PaymentType;
 import com.vietravel.booking.domain.repository.booking.PaymentRepository;
+import com.vietravel.booking.service.ExcelExportService;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,9 +27,11 @@ import java.util.stream.Collectors;
 public class AdminPaymentViewController {
 
      private final PaymentRepository paymentRepository;
+     private final ExcelExportService excelExportService;
 
-     public AdminPaymentViewController(PaymentRepository paymentRepository) {
+     public AdminPaymentViewController(PaymentRepository paymentRepository, ExcelExportService excelExportService) {
           this.paymentRepository = paymentRepository;
+          this.excelExportService = excelExportService;
      }
 
      @GetMapping
@@ -82,6 +90,37 @@ public class AdminPaymentViewController {
           model.addAttribute("methodOptions", PaymentMethod.values());
           model.addAttribute("typeOptions", PaymentType.values());
           return "admin/payments/page";
+     }
+
+     @GetMapping("/export")
+     public ResponseEntity<InputStreamResource> export(
+               @RequestParam(value = "status", required = false) PaymentStatus status,
+               @RequestParam(value = "method", required = false) PaymentMethod method,
+               @RequestParam(value = "type", required = false) PaymentType type,
+               @RequestParam(value = "q", required = false) String q) throws IOException {
+
+          List<Payment> payments = paymentRepository.findTop50ByOrderByCreatedAtDesc();
+          String keyword = normalize(q);
+
+          if (status != null) {
+               payments = payments.stream().filter(p -> status.equals(p.getStatus())).collect(Collectors.toList());
+          }
+          if (method != null) {
+               payments = payments.stream().filter(p -> method.equals(p.getMethod())).collect(Collectors.toList());
+          }
+          if (type != null) {
+               payments = payments.stream().filter(p -> type.equals(p.getPaymentType())).collect(Collectors.toList());
+          }
+          if (!keyword.isEmpty()) {
+               payments = payments.stream().filter(p -> matchesKeyword(p, keyword)).collect(Collectors.toList());
+          }
+
+          InputStreamResource file = new InputStreamResource(excelExportService.exportPayments(payments));
+
+          return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=payments.xlsx")
+                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .body(file);
      }
 
      @GetMapping("/{id}")

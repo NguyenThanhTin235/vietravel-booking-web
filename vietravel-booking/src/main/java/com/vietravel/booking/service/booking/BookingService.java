@@ -16,6 +16,8 @@ import com.vietravel.booking.service.support.NotificationService;
 import com.vietravel.booking.web.dto.booking.BookingCreateRequest;
 import com.vietravel.booking.service.promotion.CampaignService;
 import com.vietravel.booking.web.dto.booking.BookingCreateRequest.PassengerRequest;
+import com.vietravel.booking.domain.proxy.DepartureProxy;
+import com.vietravel.booking.domain.proxy.DepartureAvailabilityProxy;
 import com.vietravel.booking.web.dto.booking.BookingHistoryView;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -80,6 +82,16 @@ public class BookingService {
 
           int totalAdult = Math.max(0, req.getTotalAdult());
           int totalChild = Math.max(0, req.getTotalChild());
+          int totalRequest = totalAdult + totalChild;
+
+          DepartureAvailabilityProxy proxy = new DepartureAvailabilityProxy();
+          if (!proxy.isAvailable(departure, totalRequest)) {
+               throw new IllegalArgumentException(proxy.getUnavailableMessage());
+          }
+          if (!proxy.validateAges(req.getPassengers(), req.getDate())) {
+               throw new IllegalArgumentException(proxy.getUnavailableMessage());
+          }
+
           BigDecimal adultPrice = departure.getPriceAdult() != null ? departure.getPriceAdult() : BigDecimal.ZERO;
           BigDecimal childPrice = departure.getPriceChild() != null ? departure.getPriceChild() : BigDecimal.ZERO;
           BigDecimal totalAmount = adultPrice.multiply(BigDecimal.valueOf(totalAdult))
@@ -173,6 +185,16 @@ public class BookingService {
 
           int totalAdult = Math.max(0, req.getTotalAdult());
           int totalChild = Math.max(0, req.getTotalChild());
+          int totalRequest = totalAdult + totalChild;
+
+          DepartureAvailabilityProxy proxy = new DepartureAvailabilityProxy();
+          if (!proxy.isAvailable(departure, totalRequest)) {
+               throw new IllegalArgumentException(proxy.getUnavailableMessage());
+          }
+          if (!proxy.validateAges(req.getPassengers(), req.getDate())) {
+               throw new IllegalArgumentException(proxy.getUnavailableMessage());
+          }
+
           BigDecimal adultPrice = departure.getPriceAdult() != null ? departure.getPriceAdult() : BigDecimal.ZERO;
           BigDecimal childPrice = departure.getPriceChild() != null ? departure.getPriceChild() : BigDecimal.ZERO;
           BigDecimal totalAmount = adultPrice.multiply(BigDecimal.valueOf(totalAdult))

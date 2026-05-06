@@ -20,9 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
+
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
@@ -177,28 +175,4 @@ public class VietravelBookingApplication {
         log.info("✅ Seeded tour category: {}", name);
     }
 
-    @Bean
-    @Order(0)
-    SecurityFilterChain publicApiSecurity(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher(
-                        "/api/tour-categories/**",
-                        "/api/tour-lines/**",
-                        "/api/admin/tour-categories/**",
-                        "/api/admin/destinations/**")
-                .csrf(csrf -> csrf.ignoringRequestMatchers(
-                        "/api/tour-categories", "/api/tour-categories/**",
-                        "/api/tour-lines", "/api/tour-lines/**",
-                        "/api/admin/tour-categories", "/api/admin/tour-categories/**",
-                        "/api/admin/destinations", "/api/admin/destinations/**"))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/admin/tour-categories/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/tour-categories", "/api/tour-categories/**",
-                                "/api/tour-lines", "/api/tour-lines/**",
-                                "/api/admin/destinations", "/api/admin/destinations/**")
-                        .permitAll()
-                        .anyRequest().authenticated());
-        return http.build();
-    }
 }

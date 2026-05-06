@@ -85,7 +85,7 @@
                             <div class="list-item">
                                 <div class="li-main">
                                     <div class="li-title">Mã booking: <span th:text="${bookingView.booking.bookingCode}">BK</span></div>
-                                    <div class="li-sub">Ngày tạo: <span th:text="${#temporals.format(bookingView.booking.createdAt, 'dd/MM/yyyy')}">--/--/----</span></div>
+                                    <div class="li-sub">Ngày đặt: <span th:text="${#temporals.format(bookingView.booking.createdAt, 'dd/MM/yyyy HH:mm')}">--/--/---- --:--</span></div>
                                 </div>
                                 <span th:switch="${bookingView.booking.status != null ? bookingView.booking.status.name() : ''}">
                                     <span th:case="'PENDING'" class="badge badge-pending">Chờ xác nhận</span>
@@ -136,7 +136,7 @@
                         </div>
                         <div class="booking-info-section" th:if="${bookingView.booking.note != null && !#strings.isEmpty(bookingView.booking.note)}">
                             <div class="section-title">Ghi chú</div>
-                            <div class="li-sub detail-note" th:text="${bookingView.booking.note}">Ghi chú</div>
+                            <div class="li-sub detail-note" th:text="${#strings.replace(bookingView.booking.note, 'PrevStatus: PENDING', '')}">Ghi chú</div>
                         </div>
                         <div class="booking-info-section booking-info-actions">
                             <div class="section-title">Thao tác</div>

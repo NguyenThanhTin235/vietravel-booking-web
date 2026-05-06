@@ -20,6 +20,7 @@ public class TourAdminService {
      private final TourLineRepository tourLineRepository;
      private final TransportModeRepository transportModeRepository;
      private final ItineraryDayRepository itineraryDayRepository;
+     private final ElasticsearchSyncService elasticsearchSyncService;
 
      public TourAdminService(
                TourRepository tourRepository,
@@ -27,13 +28,15 @@ public class TourAdminService {
                DestinationRepository destinationRepository,
                TourLineRepository tourLineRepository,
                TransportModeRepository transportModeRepository,
-               ItineraryDayRepository itineraryDayRepository) {
+               ItineraryDayRepository itineraryDayRepository,
+               ElasticsearchSyncService elasticsearchSyncService) {
           this.tourRepository = tourRepository;
           this.tourCategoryRepository = tourCategoryRepository;
           this.destinationRepository = destinationRepository;
           this.tourLineRepository = tourLineRepository;
           this.transportModeRepository = transportModeRepository;
           this.itineraryDayRepository = itineraryDayRepository;
+          this.elasticsearchSyncService = elasticsearchSyncService;
      }
 
      @Transactional(readOnly = true)
@@ -60,6 +63,7 @@ public class TourAdminService {
           apply(t, req);
 
           Tour saved = Objects.requireNonNull(tourRepository.save(t), "savedTour");
+          elasticsearchSyncService.syncTourAsync(saved.getId());
           return toDetailRes(saved);
      }
 
@@ -74,6 +78,7 @@ public class TourAdminService {
 
           apply(t, req);
           Tour saved = Objects.requireNonNull(tourRepository.save(t), "savedTour");
+          elasticsearchSyncService.syncTourAsync(saved.getId());
           return toDetailRes(saved);
      }
 
@@ -85,6 +90,7 @@ public class TourAdminService {
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy tour"));
           t.setIsActive(t.getIsActive() == null || !t.getIsActive());
           Tour saved = Objects.requireNonNull(tourRepository.save(t), "savedTour");
+          elasticsearchSyncService.syncTourAsync(saved.getId());
           return toDetailRes(saved);
      }
 

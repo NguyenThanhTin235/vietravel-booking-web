@@ -7,7 +7,15 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<title th:text="${pageTitle}?:'Staff'">Staff</title>
 
+	<script>
+		(function() {
+			var saved = localStorage.getItem("theme-preference") || "light";
+			document.documentElement.setAttribute("data-theme", saved);
+		})();
+	</script>
+
 	<link rel="stylesheet" th:href="@{/css/admin.css}">
+	<link rel="stylesheet" th:href="@{/css/staff-booking.css}">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -33,7 +41,7 @@
 		</header>
 
 		<section class="admin-content">
-			<div class="admin-container" th:replace="${content}"></div>
+			<div class="admin-container" th:insert="${content}"></div>
 		</section>
 
 		<footer class="admin-footer">

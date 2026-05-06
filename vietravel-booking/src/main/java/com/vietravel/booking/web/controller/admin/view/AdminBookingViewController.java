@@ -4,8 +4,13 @@ import com.vietravel.booking.domain.entity.auth.UserProfile;
 import com.vietravel.booking.domain.entity.booking.Booking;
 import com.vietravel.booking.domain.entity.booking.BookingStatus;
 import com.vietravel.booking.domain.repository.booking.BookingRepository;
+import com.vietravel.booking.service.ExcelExportService;
 import com.vietravel.booking.service.booking.BookingService;
 import com.vietravel.booking.web.dto.booking.BookingHistoryView;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,10 +28,12 @@ public class AdminBookingViewController {
 
      private final BookingRepository bookingRepository;
      private final BookingService bookingService;
+     private final ExcelExportService excelExportService;
 
-     public AdminBookingViewController(BookingRepository bookingRepository, BookingService bookingService) {
+     public AdminBookingViewController(BookingRepository bookingRepository, BookingService bookingService, ExcelExportService excelExportService) {
           this.bookingRepository = bookingRepository;
           this.bookingService = bookingService;
+          this.excelExportService = excelExportService;
      }
 
      @GetMapping
@@ -74,6 +82,42 @@ public class AdminBookingViewController {
           model.addAttribute("selectedTour", tour != null ? tour : "");
           model.addAttribute("statusOptions", BookingStatus.values());
           return "admin/bookings/page";
+     }
+
+     @GetMapping("/export")
+     public ResponseEntity<InputStreamResource> export(
+               @RequestParam(value = "status", required = false) BookingStatus status,
+               @RequestParam(value = "customer", required = false) String customer,
+               @RequestParam(value = "tour", required = false) String tour) throws IOException {
+
+          List<Booking> bookings = status != null
+                    ? bookingRepository.findTop50ByStatusOrderByCreatedAtDesc(status)
+                    : bookingRepository.findTop50ByOrderByCreatedAtDesc();
+
+          String customerKey = normalize(customer);
+          String tourKey = normalize(tour);
+
+          if (!customerKey.isEmpty() || !tourKey.isEmpty()) {
+               List<BookingHistoryView> allViews = bookingService.buildBookingViews(bookings, false);
+               if (!customerKey.isEmpty()) {
+                    allViews = allViews.stream()
+                              .filter(view -> matchesCustomer(view, customerKey))
+                              .collect(Collectors.toList());
+               }
+               if (!tourKey.isEmpty()) {
+                    allViews = allViews.stream()
+                              .filter(view -> matchesTour(view, tourKey))
+                              .collect(Collectors.toList());
+               }
+               bookings = allViews.stream().map(BookingHistoryView::getBooking).collect(Collectors.toList());
+          }
+
+          InputStreamResource file = new InputStreamResource(excelExportService.exportBookings(bookings));
+
+          return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=bookings.xlsx")
+                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .body(file);
      }
 
      @GetMapping("/{id}")

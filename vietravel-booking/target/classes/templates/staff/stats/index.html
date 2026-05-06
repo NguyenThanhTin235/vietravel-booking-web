@@ -9,6 +9,23 @@
 )}">
 
 <th:block th:fragment="content">
+    <form method="get" th:action="@{/staff/stats}" class="mb-3">
+        <div style="display: flex; justify-content: center;">
+            <div style="display: flex; gap: 1.5rem; align-items: center; background: var(--card); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); padding: 18px 32px; margin-bottom: 18px;">
+                <div style="display: flex; flex-direction: column;">
+                    <label for="startDate" style="font-weight: 500; margin-bottom: 4px; color: var(--text);">Từ ngày</label>
+                    <input type="date" id="startDate" name="startDate" th:value="${startDate}" class="form-control" style="min-width: 140px;" />
+                </div>
+                <div style="display: flex; flex-direction: column;">
+                    <label for="endDate" style="font-weight: 500; margin-bottom: 4px; color: var(--text);">Đến ngày</label>
+                    <input type="date" id="endDate" name="endDate" th:value="${endDate}" class="form-control" style="min-width: 140px;" />
+                </div>
+                <div style="display: flex; align-items: flex-end; height: 100%;">
+                    <button type="submit" class="btn btn-primary" style="height: 38px; margin-top: 18px;">Xem thống kê</button>
+                </div>
+            </div>
+        </div>
+    </form>
     <div class="grid-12">
         <div class="col-12">
             <div class="kpi-row">
@@ -43,39 +60,22 @@
         </div>
 
         <div class="col-8">
-            <div class="card reveal" data-skeleton>
+            <div class="card kpi-card reveal" data-skeleton>
                 <div class="card-head">
-                    <div class="card-title">Xu hướng booking</div>
+                    <div class="card-title">Biểu đồ xu hướng booking</div>
                     <div class="card-actions">
-                        <span class="pill">Theo ngày trong tháng</span>
+                        <span class="pill">Dữ liệu theo ngày</span>
+                        <button class="btn btn-ghost" type="button" onclick="downloadChart('dailyBookingChart', 'daily_booking_trend')">📥 Tải ảnh</button>
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-wrap">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Ngày</th>
-                                <th>Số booking</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:if="${#lists.isEmpty(dailyCounts)}">
-                                <td colspan="2" class="muted">Chưa có dữ liệu trong tháng.</td>
-                            </tr>
-                            <tr th:each="d : ${dailyCounts}">
-                                <td th:text="${#temporals.format(d.day, 'dd/MM/yyyy')}">--/--/----</td>
-                                <td th:text="${d.total}">0</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <canvas id="dailyBookingChart" height="150"></canvas>
                 </div>
             </div>
         </div>
 
         <div class="col-4">
-            <div class="card reveal" data-skeleton>
+            <div class="card kpi-card reveal" data-skeleton>
                 <div class="card-head">
                     <div class="card-title">Top tour đặt nhiều</div>
                 </div>
@@ -93,9 +93,174 @@
                 </div>
             </div>
         </div>
+        <div class="col-12 mt-16">
+            <div class="card kpi-card reveal" data-skeleton>
+                <div class="card-head">
+                    <div class="card-title">Doanh thu năm nay</div>
+                    <div class="card-actions">
+                        <span class="badge badge-confirmed">Tổng quan 12 tháng</span>
+                        <button class="btn btn-ghost" type="button" onclick="downloadChart('revenueChart', 'yearly_revenue_stats')">📥 Tải ảnh</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="revenueChart" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 mt-16">
+            <div class="card kpi-card reveal" data-skeleton>
+                <div class="card-head">
+                    <div class="card-title">Chi tiết số lượng booking</div>
+                </div>
+                <div class="card-body">
+                    <div class="table-wrap">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Ngày</th>
+                                <th>Số booking</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${#lists.isEmpty(dailyChartLabels)}">
+                                <td colspan="2" class="muted">Chưa có dữ liệu trong khoảng thời gian này.</td>
+                            </tr>
+                            <tr th:each="label, iter : ${dailyChartLabels}">
+                                <td th:text="${label}">--/--</td>
+                                <td th:text="${dailyChartData[iter.index]}">0</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </th:block>
 
-<th:block th:fragment="additionalJs"></th:block>
+<th:block th:fragment="additionalJs">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const dailyChartLabels = [[${dailyChartLabels}]];
+        const dailyChartData = [[${dailyChartData}]];
+        const revenueChartLabels = [[${revenueChartLabels}]];
+        const revenueChartData = [[${revenueChartData}]];
+        /*]]>*/
+
+        window.downloadChart = function(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const newCanvas = document.createElement('canvas');
+            newCanvas.width = canvas.width;
+            newCanvas.height = canvas.height;
+            const ctx = newCanvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+            ctx.drawImage(canvas, 0, 0);
+            const link = document.createElement('a');
+            link.download = filename + '.png';
+            link.href = newCanvas.toDataURL('image/png');
+            link.click();
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Daily Booking Chart
+            if (typeof Chart !== 'undefined' && document.getElementById('dailyBookingChart')) {
+                const ctx = document.getElementById('dailyBookingChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dailyChartLabels,
+                        datasets: [{
+                            label: 'Số booking',
+                            data: dailyChartData,
+                            borderColor: '#007bff',
+                            backgroundColor: 'rgba(0,123,255,0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#007bff',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }
+                        }
+                    }
+                });
+            }
+
+            // Revenue Chart
+            if (typeof Chart !== 'undefined' && document.getElementById('revenueChart')) {
+                const ctx = document.getElementById('revenueChart').getContext('2d');
+                const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                gradient.addColorStop(0, 'rgba(40, 167, 69, 0.2)');
+                gradient.addColorStop(1, 'rgba(40, 167, 69, 0)');
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: revenueChartLabels,
+                        datasets: [{
+                            label: 'Doanh thu (₫)',
+                            data: revenueChartData,
+                            borderColor: '#28a745',
+                            backgroundColor: gradient,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#28a745',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(0,0,0,0.8)',
+                                padding: 12,
+                                borderRadius: 8,
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) label += ': ';
+                                        if (context.parsed.y !== null) {
+                                            label += new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.parsed.y);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(0,0,0,0.05)' },
+                                ticks: {
+                                    callback: function(value) {
+                                        if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+                                        if (value >= 1000) return (value / 1000).toFixed(0) + 'k';
+                                        return value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</th:block>
 
 </html>
