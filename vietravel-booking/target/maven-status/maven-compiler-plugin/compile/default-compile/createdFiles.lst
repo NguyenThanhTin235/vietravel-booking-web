@@ -38,6 +38,7 @@ com\vietravel\booking\domain\repository\tour\TourRepository.class
 com\vietravel\booking\domain\entity\booking\BookingStatus.class
 com\vietravel\booking\web\controller\admin\api\CampaignAdminApiController.class
 com\vietravel\booking\service\tour\TourLineApiService.class
+com\vietravel\booking\common\filter\RateLimitFilter.class
 com\vietravel\booking\domain\entity\auth\UserStatus.class
 com\vietravel\booking\domain\repository\support\BranchRepository.class
 com\vietravel\booking\web\dto\tour\TourLineResponse.class
@@ -87,6 +88,7 @@ com\vietravel\booking\web\dto\tour\DestinationResponse.class
 com\vietravel\booking\domain\entity\support\NotificationType.class
 com\vietravel\booking\domain\entity\promotion\CampaignScope.class
 com\vietravel\booking\domain\entity\promotion\CampaignDiscountType.class
+com\vietravel\booking\config\RateLimitConfig.class
 com\vietravel\booking\domain\elasticsearch\TourDocument.class
 com\vietravel\booking\domain\repository\promotion\CampaignRepository.class
 com\vietravel\booking\domain\elasticsearch\TourSearchRepository.class
